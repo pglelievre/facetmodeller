@@ -613,17 +613,23 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
      */
     private MyPoint2D shiftNode(Node node, Section currentSection, int shiftX, int shiftY) {
 
-        // Check if node lies on current section (don't shift the coordinates if it does):
-        if ( !node.isOff() && node.getSection().equals(currentSection) ) {
-            return node.getPoint2D(); // image pixel coordinates
+        // Check if we need to project (if node lies on the current section then we don't need to):
+        MyPoint2D p2;
+        boolean nodeSectionEqualsCurrentSection = node.getSection().equals(currentSection);
+        if ( !node.isOff() && nodeSectionEqualsCurrentSection ) {
+            p2 = node.getPoint2D(); // image pixel coordinates
+        } else {
+            // Get the node point in spatial coordinates:
+            MyPoint3D p3 = node.getPoint3D(); // spatial coordinates
+            if (p3==null) { return null; }
+            // Project onto the current section:
+            p2 = currentSection.projectOnto(p3); // image pixel coordinates
         }
-        
-        // Get the node point:
-        MyPoint3D p3 = node.getPoint3D(); // spatial coordinates
-        if (p3==null) { return null; }
-        MyPoint2D p2 = currentSection.projectOnto(p3); // image pixel coordinates
         if (p2==null) { return null; }
-
+        
+        // Don't shift if the node lies on the current section:
+        if ( nodeSectionEqualsCurrentSection ) { return p2; }
+        
         // Shift the coordinates as necessary:
         p2.plus(shiftX,shiftY); // shifting is in image pixel coordinates
         // There is no way to make the shifting work in panel pixel coordinates!

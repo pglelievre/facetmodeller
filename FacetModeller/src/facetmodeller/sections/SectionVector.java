@@ -297,5 +297,13 @@ public class SectionVector {
         }
         return nodesToRemove;
     }
-
+    
+    public boolean areAllSectionsCalibrated() {
+        // Loop over each section:
+        for (int i=0 ; i<size() ; i++ ) {
+            // Check if the ith section is calibrated:
+            if (!get(i).isCalibrated()) { return false; }
+        }
+        return true;
+    }
 }

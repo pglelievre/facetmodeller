@@ -86,7 +86,7 @@ public final class FileIOManager extends PreviousSession {
         if (out.message!=null) {
             String s = "Failed to open session.";
             if (!out.message.isEmpty()) {
-                s = s + ". Error message follows:\n" + out.message;
+                s = s + " Error message follows:\n" + out.message;
             }
             Dialogs.error(controller,s,title);
             return;
@@ -218,6 +218,7 @@ public final class FileIOManager extends PreviousSession {
 
         // Get or make the required plc and reset the ID's:
         PLC plc;
+        controller.resetIDs();
         switch (whatToExport) {
             case EXPORT_CURRENT:
                 Group g = controller.getSelectedCurrentGroup();
@@ -235,7 +236,6 @@ public final class FileIOManager extends PreviousSession {
                 plc.resetIDs();
                 break;
             default:
-                controller.resetIDs();
                 plc = controller.getPLC();
                 break;
         }
@@ -332,6 +332,7 @@ public final class FileIOManager extends PreviousSession {
 
         // Get or make the required plc and reset the ID's:
         PLC plc;
+        controller.resetIDs();
         switch (whatToExport) {
             case EXPORT_CURRENT:
                 Group g = controller.getSelectedCurrentGroup();
@@ -353,7 +354,6 @@ public final class FileIOManager extends PreviousSession {
                 plc.resetIDs();
                 break;
             default:
-                controller.resetIDs();
                 plc = controller.getPLC();
                 break;
         }

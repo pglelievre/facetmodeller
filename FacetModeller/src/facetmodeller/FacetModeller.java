@@ -309,6 +309,7 @@ public final class FacetModeller extends JFrameExit {
     public Section getSection(int i) { return modelManager.getSection(i); } // TODO: check this is used sparingly
     public Group getGroup(int i) { return modelManager.getGroup(i); } // TODO: check this is used sparingly
     public void copyCalibration(double step) { modelManager.copyCalibration(getSelectedCurrentSection(),step); } // TODO: check this is used sparingly
+    public boolean areAllSectionsCalibrated() { return modelManager.areAllSectionsCalibrated(); }
     
     // Wrappers for the ModelManager class:
     public boolean hasVOI() { return modelManager.hasVOI(); }

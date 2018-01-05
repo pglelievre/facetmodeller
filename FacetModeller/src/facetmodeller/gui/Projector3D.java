@@ -239,27 +239,36 @@ public final class Projector3D implements SessionIO {
         // Read the space origin:
         textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading space origin line."; }
-        textLine = textLine.trim();
-        String[] ss = textLine.split("[ ]+",4);
-        double x,y,z;
-        try {
-            x = Double.parseDouble(ss[0].trim()); // converts to Double
-            y = Double.parseDouble(ss[1].trim()); // converts to Double
-            z = Double.parseDouble(ss[2].trim()); // converts to Double
-        } catch (NumberFormatException e) { return "Parsing space origin."; }
-        spaceOrigin = new MyPoint3D(x,y,z);
+        if (textLine.startsWith("null")) {
+            spaceOrigin = null;
+        } else {
+            textLine = textLine.trim();
+            String[] ss = textLine.split("[ ]+",4);
+            double x,y,z;
+            try {
+                x = Double.parseDouble(ss[0].trim()); // converts to Double
+                y = Double.parseDouble(ss[1].trim()); // converts to Double
+                z = Double.parseDouble(ss[2].trim()); // converts to Double
+           } catch (NumberFormatException e) { return "Parsing space origin."; }
+          spaceOrigin = new MyPoint3D(x,y,z);
+        }
         
         // Read the image origin:
         textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading image origin line."; }
-        textLine = textLine.trim();
-        ss = textLine.split("[ ]+",4);
-        try {
-            x = Double.parseDouble(ss[0].trim()); // converts to Double
-            y = Double.parseDouble(ss[1].trim()); // converts to Double
-            z = Double.parseDouble(ss[2].trim()); // converts to Double
-        } catch (NumberFormatException e) { return "Parsing image origin."; }
-        imageOrigin = new MyPoint3D(x,y,z);
+        if (textLine.startsWith("null")) {
+            imageOrigin = null;
+        } else {
+            textLine = textLine.trim();
+            String[] ss = textLine.split("[ ]+",4);
+            double x,y,z;
+            try {
+                x = Double.parseDouble(ss[0].trim()); // converts to Double
+                y = Double.parseDouble(ss[1].trim()); // converts to Double
+                z = Double.parseDouble(ss[2].trim()); // converts to Double
+            } catch (NumberFormatException e) { return "Parsing image origin."; }
+            imageOrigin = new MyPoint3D(x,y,z);
+        }
         
         // Read the scaling factors:
         textLine = FileUtils.readLine(reader);

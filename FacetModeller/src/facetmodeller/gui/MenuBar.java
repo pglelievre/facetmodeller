@@ -547,6 +547,7 @@ public final class MenuBar extends JMenuBar {
         Section currentSection = controller.getSelectedCurrentSection();
         ModelManager model = controller.getModelManager();
         boolean showConfirmationDialogs = controller.getShowConfirmationDialogs();
+        boolean allSectionsCalibrated = controller.areAllSectionsCalibrated();
         
         // Create some booleans based on the information above:
         boolean is3D = ( ndim == 3 );
@@ -556,6 +557,8 @@ public final class MenuBar extends JMenuBar {
         boolean hasFacets = model.hasFacets();
         boolean hasRegions = model.hasRegions();
         boolean hasPLC = ( hasNodes && hasFacets );
+        boolean hasPLCandAllCalibrated = ( hasPLC && allSectionsCalibrated );
+        boolean hasNodesandAllCalibrated = ( hasNodes && allSectionsCalibrated );
         
         // FacetModeller menu items:
         miAbout.setEnabled(true);
@@ -564,17 +567,17 @@ public final class MenuBar extends JMenuBar {
         // File menu items:
         miOpenSession.setEnabled(true);
         miOpenPreviousSession.setEnabled(true);
-        miExportPoly.setEnabled(hasPLC);
-        miExportPair.setEnabled(hasPLC);
-        miExportVTU.setEnabled(hasPLC);
-        miExportNodes.setEnabled(hasNodes);
-        miExportPolyGroup.setEnabled(hasPLC);
-        miExportPairGroup.setEnabled(hasPLC);
-        miExportPolyDisplayed.setEnabled(hasPLC);
-        miExportPairDisplayed.setEnabled(hasPLC);
-        miExportFacets.setEnabled(hasFacets);
-        miExportRegions.setEnabled(hasRegions);
-        miExportAll.setEnabled(hasPLC);
+        miExportPoly.setEnabled(hasPLCandAllCalibrated);
+        miExportPair.setEnabled(hasPLCandAllCalibrated);
+        miExportVTU.setEnabled(hasPLCandAllCalibrated);
+        miExportNodes.setEnabled(hasNodes && allSectionsCalibrated);
+        miExportPolyGroup.setEnabled(hasNodesandAllCalibrated);
+        miExportPairGroup.setEnabled(hasNodesandAllCalibrated);
+        miExportPolyDisplayed.setEnabled(hasNodesandAllCalibrated);
+        miExportPairDisplayed.setEnabled(hasNodesandAllCalibrated);
+        miExportFacets.setEnabled(hasFacets && allSectionsCalibrated);
+        miExportRegions.setEnabled(hasRegions && allSectionsCalibrated);
+        miExportAll.setEnabled(hasPLCandAllCalibrated);
 
         // Sections menu items:
         miChangeSectionColor.setEnabled( hasCurrentSection );

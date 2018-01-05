@@ -178,6 +178,7 @@ public class ModelManager implements SessionIO {
     }
     public void scalePixels(double factor) { sections.scalePixels(factor); }
     public NodeVector removeNodesCalibrationRange() { return sections.removeNodesRange(); }
+    public boolean areAllSectionsCalibrated() { return sections.areAllSectionsCalibrated(); }
     
     /** Displays information about the plc.
      * @param con */
