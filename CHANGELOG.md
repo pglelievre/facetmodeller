@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## 2018-01-011
+### Changed
+- Added better cross-platform support (newline characters for non *nix platforms).
+
 ## 2018-01-05
 ### Bugs squashed
 - Bug fix where node group ID's were not being written out correctly when only writing out displayed or selected groups.
