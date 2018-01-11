@@ -224,7 +224,7 @@ public class VOI implements SessionIO {
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write the values:
-        String textLine = x1 + " " + x2 + " " + y1 + " " + y2 + " " + z1 + " " + z2 + "\n";
+        String textLine = x1 + " " + x2 + " " + y1 + " " + y2 + " " + z1 + " " + z2;
         return FileUtils.writeLine(writer,textLine);
     }
 

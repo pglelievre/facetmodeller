@@ -594,7 +594,7 @@ public class PLC {
         if (writer==null) { return false; }
 
         // Write the nodes information line:
-        String textLine = nodes.size() + " " + ndim + " 0 0 \n"; // no attributes or boundary markers
+        String textLine = nodes.size() + " " + ndim + " 0 0"; // no attributes or boundary markers
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the node list:
@@ -602,7 +602,7 @@ public class PLC {
         if (!ok) { FileUtils.close(writer); return false; }
         
         // Write the facets information line:
-        textLine = facets.size() + " 0 \n"; // no boundary markers
+        textLine = facets.size() + " 0"; // no boundary markers
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the facet list:
@@ -610,11 +610,11 @@ public class PLC {
         if (!ok) { FileUtils.close(writer); return false; }
 
         // Write the hole information:
-        textLine = "0 \n"; // no holes
+        textLine = "0"; // no holes
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the regions information line:
-        textLine = regions.numberOfRegionPoints() + " \n"; // the poly file should only contain the true region points
+        textLine = Integer.toString( regions.numberOfRegionPoints() ); // the poly file should only contain the true region points
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the region list:
@@ -644,7 +644,7 @@ public class PLC {
         }
 
         // Write the nodes information line:
-        String textLine = nodes.size() + " " + ndim + " 2 0 \"nodeGroup\",\"nodeIndex\" \n"; // no boundary markers
+        String textLine = nodes.size() + " " + ndim + " 2 0 \"nodeGroup\",\"nodeIndex\""; // no boundary markers
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the node list:
@@ -703,7 +703,7 @@ public class PLC {
                 textLine = nf + " " + n0; // non-variable nodes-per-facet
             }
         }
-        textLine += " 2 \"facetGroup\",\"facetIndex\" \n"; // 2 attributes
+        textLine += " 2 \"facetGroup\",\"facetIndex\""; // 2 attributes
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the facet list:
@@ -742,7 +742,7 @@ public class PLC {
         } else {
             n = regions.numberOfRegionPoints();
         }
-        textLine = n + " " + ndim + " 1 0 \n"; // one attribute, no boundary markers
+        textLine = n + " " + ndim + " 1 0"; // one attribute, no boundary markers
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the region list:
@@ -780,7 +780,6 @@ public class PLC {
                 int gid = node.getGroup().getID() + 1;
                 textLine += " " + gid + " " + (i+1); // node group and index
             }
-            textLine += "\n";
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
         
@@ -799,7 +798,7 @@ public class PLC {
             // (because in the header I write ndim as the number of nodes per cell for that situation)
             String textLine;
             if ( polyFormat && ndim==3 ) {
-                textLine = "1 0\n"; // one polygon, no holes
+                textLine = "1 0"; // one polygon, no holes
                 if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
                 textLine = Integer.toString(n); // number of nodes
             } else {
@@ -816,7 +815,6 @@ public class PLC {
                 int gid = facet.getGroup().getID() + 1;
                 textLine += " " + gid + " " + (i+1); // facet group and index
             }
-            textLine += "\n";
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
 
@@ -848,10 +846,10 @@ public class PLC {
                 textLine += p2.toString(TOLZERO);
             }
             if (byIndex) {
-                textLine += " " + (i+1) + "\n"; // region index
+                textLine += " " + (i+1); // region index
             } else {
                 int gid = region.getGroup().getID() + 1;
-                textLine += " " + gid + "\n"; // region group
+                textLine += " " + gid; // region group
             }
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
@@ -886,19 +884,19 @@ public class PLC {
         }
 
         // Write first 2 lines:
-        String textLine = "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"LittleEndian\">\n";
+        String textLine = "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"LittleEndian\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "<UnstructuredGrid>\n";
+        textLine = "<UnstructuredGrid>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write piece information:
-        textLine = "<Piece NumberOfPoints=\"" + nodes.size() + "\" NumberOfCells=\"" + facets.size() + "\">\n";
+        textLine = "<Piece NumberOfPoints=\"" + nodes.size() + "\" NumberOfCells=\"" + facets.size() + "\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write the node coordinates:
-        textLine = "<Points>\n";
+        textLine = "<Points>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "<DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         for (int i=0; i<nodes.size() ; i++ ) {
             Node node = nodes.get(i);
@@ -907,18 +905,18 @@ public class PLC {
                 p = p.deepCopy();
                 p.flipZ();
             }
-            textLine = p.toString(TOLZERO) + "\n";
+            textLine = p.toString(TOLZERO);
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "</Points>\n";
+        textLine = "</Points>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the facet specifications:
-        textLine = "<Cells>\n";
+        textLine = "<Cells>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "<DataArray type=\"Int32\" Name=\"connectivity\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Int32\" Name=\"connectivity\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         for (int i=0; i<facets.size() ; i++ ) {
             NodeVector facetNodes = facets.get(i).getNodes();
@@ -930,14 +928,13 @@ public class PLC {
             if (isvar) {
                 textLine += " " + facetNodes.get(0).getID(); // explicitly closes the polygon
             }
-            textLine += "\n";
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the offsets for each facet:
-        textLine = "<DataArray type=\"Int32\" Name=\"offsets\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Int32\" Name=\"offsets\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         int n = 0;
         for (int i=0; i<facets.size() ; i++ ) {
@@ -946,96 +943,96 @@ public class PLC {
             if (isvar) {
                 n += 1; // because we are explicitly closing the polygon
             }
-            textLine = n + "\n";
+            textLine = Integer.toString(n);
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write the facet types:
-        textLine = "<DataArray type=\"Int32\" Name=\"types\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Int32\" Name=\"types\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         for (int i=0; i<facets.size() ; i++ ) {
             if (isvar) {
-                textLine = "7\n";
+                textLine = "7";
             } else {
                 int ni = facets.get(i).getNodes().size();
                 switch (ni) {
                     case 2:
                         // line element
-                        textLine = "3\n"; // (VTK_LINE)
+                        textLine = "3"; // (VTK_LINE)
                         break;
                     case 3:
                         // triangular facet
-                        textLine = "5\n"; // (VTK_TRIANGLE)
+                        textLine = "5"; // (VTK_TRIANGLE)
                         break;
                     default:
                         // closed polygon
-                        textLine = "7\n"; // (VTK_POLYGON)
+                        textLine = "7"; // (VTK_POLYGON)
                         break;
                 }
             }
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "</Cells>\n";
+        textLine = "</Cells>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write node groups and indices as attribute values:
-        textLine = "<PointData Scalars=\"nodeGroup nodeIndex\">\n";
+        textLine = "<PointData Scalars=\"nodeGroup nodeIndex\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "<DataArray type=\"Float32\" Name=\"nodeGroup\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Float32\" Name=\"nodeGroup\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         for (int i=0; i<nodes.size() ; i++ ) {
             Node node = nodes.get(i);
             int gid = node.getGroup().getID() + 1;
-            textLine = gid + "\n";
+            textLine = Integer.toString( gid );
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "<DataArray type=\"Float32\" Name=\"nodeIndex\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Float32\" Name=\"nodeIndex\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         for (int i=0; i<nodes.size() ; i++ ) {
-            textLine = (i+1) + "\n";
+            textLine = Integer.toString( i+1 );
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "</PointData>\n";
+        textLine = "</PointData>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write cell groups and indices as attribute values:
-        textLine = "<CellData Scalars=\"facetGroup facetIndex\">\n";
+        textLine = "<CellData Scalars=\"facetGroup facetIndex\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "<DataArray type=\"Float32\" Name=\"facetGroup\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Float32\" Name=\"facetGroup\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         for (int i=0; i<facets.size() ; i++ ) {
             Facet facet = facets.get(i);
             int gid = facet.getGroup().getID() + 1;
-            textLine = gid + "\n";
+            textLine = Integer.toString( gid );
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "<DataArray type=\"Float32\" Name=\"facetIndex\" Format=\"ascii\">\n";
+        textLine = "<DataArray type=\"Float32\" Name=\"facetIndex\" Format=\"ascii\">";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         for (int i=0; i<facets.size() ; i++ ) {
-            textLine = (i+1) + "\n";
+            textLine = Integer.toString( i+1 );
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
-        textLine = "</DataArray>\n";
+        textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "</CellData>\n";
+        textLine = "</CellData>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write final 3 lines:
-        textLine = "</Piece>\n";
+        textLine = "</Piece>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "</UnstructuredGrid>\n";
+        textLine = "</UnstructuredGrid>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
-        textLine = "</VTKFile>\n";
+        textLine = "</VTKFile>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Close the file:

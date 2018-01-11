@@ -69,7 +69,7 @@ public class NodeOffSection extends Node {
     
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
-        String textLine = p3.toString() + "\n";
+        String textLine = p3.toString();
         return FileUtils.writeLine(writer,textLine);
     }
     

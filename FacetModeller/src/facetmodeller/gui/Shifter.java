@@ -39,7 +39,7 @@ public class Shifter implements SessionIO {
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write x, y and scale on a single line:
-        String textLine = Integer.toString(x) + " " + Integer.toString(y) + " " + Integer.toString(scale) + "\n";
+        String textLine = Integer.toString(x) + " " + Integer.toString(y) + " " + Integer.toString(scale);
         return FileUtils.writeLine(writer,textLine);
     }
     

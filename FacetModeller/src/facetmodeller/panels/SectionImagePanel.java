@@ -838,9 +838,9 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         // Write the origin coordinates:
         String textLine;
         if (origin==null) {
-            textLine = "null\n";
+            textLine = "null";
         } else {
-            textLine = origin.toString() + "\n";
+            textLine = origin.toString();
         }
         return FileUtils.writeLine(writer,textLine);
     }

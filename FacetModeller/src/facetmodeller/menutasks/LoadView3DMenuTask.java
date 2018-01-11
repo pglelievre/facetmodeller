@@ -69,7 +69,7 @@ public final class LoadView3DMenuTask extends ControlledMenuTask {
         if (msg==null) {
             Dialogs.inform(controller,"File read successfully.",title());
         } else {
-            Dialogs.error(controller, "Failed to read the file.\n" + msg.trim() ,title());
+            Dialogs.error(controller, "Failed to read the file." + System.lineSeparator() + msg.trim() ,title());
         }
         
         // Redraw the 3D view:

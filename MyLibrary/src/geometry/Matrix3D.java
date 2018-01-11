@@ -170,7 +170,6 @@ public final class Matrix3D extends Matrix implements SessionIO {
         //       d[0][0] + " " + d[0][1] + " " + d[0][2] +
         //     + d[1][0] + " " + d[1][1] + " " + d[1][2] +
         //     + d[2][0] + " " + d[2][1] + " " + d[2][2];
-        textLine += "\n";
         return FileUtils.writeLine(writer,textLine);
     }
     

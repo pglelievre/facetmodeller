@@ -168,25 +168,26 @@ public class DefaultSectionInfo {
     public boolean writeSessionInformation(BufferedWriter writer) {
     
         // Write special line for use in readSessionInformation:
-        String textLine = "COLOREXISTS\n";
+        String textLine = "COLOREXISTS";
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
         // Check the section is calibrated:
         if (isCalibrated()) {
             // Write the typed points:
-            textLine = typed1.toString() + "\n";
+            textLine = typed1.toString();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
-            textLine = typed2.toString() + "\n";
+            textLine = typed2.toString();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         } else {
             // Write "null" twice:
-            textLine = "null\nnull\n";
+            textLine = "null";
+            if (!FileUtils.writeLine(writer,textLine)) { return false; }
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         }
         
         // Write the section color:
         Color col = getColor();
-        textLine = Integer.toString(col.getRGB()) + "\n";
+        textLine = Integer.toString(col.getRGB());
         return FileUtils.writeLine(writer,textLine);
         
     }

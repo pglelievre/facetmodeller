@@ -109,13 +109,13 @@ public class CommonPaintingOptions implements SessionIO {
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write calibration colour:
-        String textLine = Integer.toString(calibrationColor.getRGB()) + "\n";
+        String textLine = Integer.toString(calibrationColor.getRGB());
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write point width:
-        textLine = Integer.toString(pointWidth) + "\n";
+        textLine = Integer.toString(pointWidth);
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write line width:
-        textLine = Integer.toString(lineWidth) + "\n";
+        textLine = Integer.toString(lineWidth);
         return FileUtils.writeLine(writer,textLine);
     }
     

@@ -222,7 +222,7 @@ public final class ShiftOrPanPanel extends JPanel implements SessionIO { // TODO
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write the button grid mode:
-        String textLine = Integer.toString(buttonGridMode) + "\n";
+        String textLine = Integer.toString(buttonGridMode);
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write the shift information:
         if (!shift2D.writeSessionInformation(writer)) { return false; }

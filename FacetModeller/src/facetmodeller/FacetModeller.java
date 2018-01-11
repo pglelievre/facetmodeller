@@ -122,8 +122,8 @@ public final class FacetModeller extends JFrameExit {
     }
     @Override
     protected String rulesString() {
-        return "FOR INTERNAL USE WITHIN COLIN FARQUHARSON'S\n"
-                + "RESEARCH GROUP (OR EXTERNALLY BY PERMISSION).\n"
+        return "FOR INTERNAL USE WITHIN COLIN FARQUHARSON'S" + System.lineSeparator()
+                + "RESEARCH GROUP (OR EXTERNALLY BY PERMISSION)." + System.lineSeparator()
                 + "FOR ACADEMIC RESEARCH ONLY.";
     }
     @Override

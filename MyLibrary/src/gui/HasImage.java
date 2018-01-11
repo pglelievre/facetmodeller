@@ -155,7 +155,7 @@ public class HasImage implements SessionIO {
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write the image file name:
-        String textLine = fileURIString() + "\n";
+        String textLine = fileURIString();
         return FileUtils.writeLine(writer,textLine);
     }
     

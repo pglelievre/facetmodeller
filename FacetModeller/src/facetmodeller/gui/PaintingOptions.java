@@ -139,23 +139,23 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         // Write common painting options:
         if(!super.writeSessionInformation(writer)) { return false; }
         // Write edge colour:
-        String textLine = Integer.toString(edgeColor.getRGB()) + "\n";
+        String textLine = Integer.toString(edgeColor.getRGB());
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write facet definition edge colour:
-        textLine = Integer.toString(defineFacetEdgeColor.getRGB()) + "\n";
+        textLine = Integer.toString(defineFacetEdgeColor.getRGB());
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write origin of the 3D viewer:
         if (origin3D==null) {
-            textLine = "null\n";
+            textLine = "null";
         } else {
-            textLine = origin3D.toString() + "\n";
+            textLine = origin3D.toString();
         }
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write the index of the node to use as the origin of the 3D viewer:
         if (originNode3D==null) {
-            textLine = "null\n";
+            textLine = "null";
         } else {
-            textLine = originNode3D.getID() + "\n";
+            textLine = Integer.toString( originNode3D.getID() );
         }
         return FileUtils.writeLine(writer,textLine);
     }

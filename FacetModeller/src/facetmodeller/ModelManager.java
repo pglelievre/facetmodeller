@@ -186,7 +186,7 @@ public class ModelManager implements SessionIO {
         String t = "PLC has " + numberOfNodes() + " nodes, " + numberOfFacets() + " facets.";
         for (int i=0 ; i<numberOfGroups() ; i++ ) {
             Group g = getGroup(i);
-            t = t + "\nGroup " + g.getName() + " has "
+            t = t + System.lineSeparator() + "Group " + g.getName() + " has "
                     + g.numberOfNodes() + " nodes, "
                     + g.numberOfFacets() + " facets, "
                     + g.numberOfRegions() + " regions, ";
@@ -198,7 +198,7 @@ public class ModelManager implements SessionIO {
         }
         for (int i=0 ; i<numberOfSections() ; i++ ) {
             Section s = getSection(i);
-            t = t + "\nSection " + s.shortName() + " has " + s.numberOfNodes() + " nodes, " + s.numberOfFacets() + " facets, " + s.numberOfRegions() + " regions.";
+            t = t + System.lineSeparator() + "Section " + s.shortName() + " has " + s.numberOfNodes() + " nodes, " + s.numberOfFacets() + " facets, " + s.numberOfRegions() + " regions.";
         }
         Dialogs.inform(con,t,"PLC Information");
     }
@@ -322,26 +322,26 @@ public class ModelManager implements SessionIO {
         int nregions =  numberOfRegions();
         int nsections = numberOfSections();
         int ngroups = numberOfGroups();
-        String textLine = ndim + " " + nnodes + " " + nfacets + " " + nregions + " " + nsections + " " + ngroups + "\n";
+        String textLine = ndim + " " + nnodes + " " + nfacets + " " + nregions + " " + nsections + " " + ngroups;
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
 
         // ---------- IN THE FIRST PASS I WRITE ALL INFORMATION OTHER THAN ID'S ----------
 
         // Comment start of node definitions:
-        if (!FileUtils.writeLine(writer,"# NODES\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# NODES")) { return false; }
 
         // Loop over each node:
         for (int i=0 ; i<nnodes ; i++ ) {
             Node node = getNode(i);
             // Write node ID and indication of ith node type:
-            textLine = node.getID() + " " + node.getType() + "\n";
+            textLine = node.getID() + " " + node.getType();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
             // Write the node information:
             if (!node.writeSessionInformation(writer)) { return false; }
         }
 
         // Comment start of region definitions:
-        if (!FileUtils.writeLine(writer,"# REGIONS\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# REGIONS")) { return false; }
 
         // Loop over each region:
         for (int i=0 ; i<nregions ; i++ ) {
@@ -351,23 +351,23 @@ public class ModelManager implements SessionIO {
         }
 
         // Comment start of section definitions:
-        if (!FileUtils.writeLine(writer,"# SECTIONS\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# SECTIONS")) { return false; }
 
         // Loop over each section:
         for (int i=0 ; i<nsections ; i++ ) {
             Section section = getSection(i);
             // Comment start of ith section definition:
-            textLine = "# Section " + section.getID() + "\n";
+            textLine = "# Section " + section.getID();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
             // Write indication of the type of section:
-            textLine = Integer.toString(section.getType()) + "\n";
+            textLine = Integer.toString(section.getType());
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
             // Write the section information:
             if (!section.writeSessionInformation(writer)) { return false; }
         }
 
         // Comment start of group definitions:
-        if (!FileUtils.writeLine(writer,"# GROUPS\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# GROUPS")) { return false; }
 
         // Loop over each group:
         for (int i=0 ; i<ngroups ; i++ ) {
@@ -379,7 +379,7 @@ public class ModelManager implements SessionIO {
         // ---------- IN THE SECOND PASS I WRITE THE ID'S ----------
 
         // Comment start of node linkages:
-        if (!FileUtils.writeLine(writer,"# NODE LINKS\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# NODE LINKS")) { return false; }
 
         // Loop over each node:
         for (int i=0 ; i<nnodes ; i++ ) {
@@ -388,12 +388,12 @@ public class ModelManager implements SessionIO {
             /* I don't need to write the facet id's here because
              * the same information is written below in the loop over each facet. */
             // Write the section id and group id:
-            textLine = node.getSection().getID() + " " + node.getGroup().getID() + "\n";
+            textLine = node.getSection().getID() + " " + node.getGroup().getID();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         }
 
         // Comment start of node linkages:
-        if (!FileUtils.writeLine(writer,"# FACET LINKS\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# FACET LINKS")) { return false; }
 
         // Loop over each facet:
         for (int i=0 ; i<nfacets ; i++ ) {
@@ -406,7 +406,6 @@ public class ModelManager implements SessionIO {
             for (int j=0 ; j<n ; j++ ) {
                 textLine = textLine + " " + nodes.get(j).getID();
             }
-            textLine += "\n";
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
             // Write the section id's:
             n = facetSections.size();
@@ -414,24 +413,23 @@ public class ModelManager implements SessionIO {
             for (int j=0 ; j<n ; j++ ) {
                 textLine = textLine + " " + facetSections.get(j).getID();
             }
-            textLine += "\n";
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
             // Write the group id:
-            textLine = facet.getGroup().getID() + "\n";
+            textLine = Integer.toString( facet.getGroup().getID() );
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         }
 
         // Comment start of node linkages:
-        if (!FileUtils.writeLine(writer,"# REGION LINKS\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# REGION LINKS")) { return false; }
 
         // Loop over each region:
         for (int i=0 ; i<nregions ; i++ ) {
             Region region = getRegion(i);
             // Write the section id:
-            textLine = region.getSection().getID() + "\n";
+            textLine = Integer.toString( region.getSection().getID() );
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
             // Write the group id:
-            textLine = region.getGroup().getID() + "\n";
+            textLine = Integer.toString( region.getGroup().getID() );
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         }
 
@@ -441,13 +439,13 @@ public class ModelManager implements SessionIO {
         // ---------- Write the VOI information: ----------
 
         // Comment start of VOI information:
-        if (!FileUtils.writeLine(writer,"# VOI\n")) { return false; }
+        if (!FileUtils.writeLine(writer,"# VOI")) { return false; }
 
         // Write the VOI:
         if (hasVOI()) {
             if (!getVOI().writeSessionInformation(writer)) { return false; }
         } else {
-            if (!FileUtils.writeLine(writer,"null\n")) { return false; }
+            if (!FileUtils.writeLine(writer,"null")) { return false; }
         }
         
         // Return true:
@@ -514,7 +512,7 @@ public class ModelManager implements SessionIO {
             }
             if (node==null) { return "Unexpected empty new Node created."; }
             String msg = node.readSessionInformation(reader,merge);
-            if (msg!=null) { return "Reading information for node " + i + ".\n" + msg.trim(); }
+            if (msg!=null) { return "Reading information for node " + i + "." + System.lineSeparator() + msg.trim(); }
             plc2.addNode(node);
         }
 
@@ -574,7 +572,7 @@ public class ModelManager implements SessionIO {
             }
             if (section==null) { return "Unexpected empty new Section created."; }
             String msg = section.readSessionInformation(reader,merge);
-            if (msg!=null) { return "Reading information for section " + i + ".\n" + msg.trim(); }
+            if (msg!=null) { return "Reading information for section " + i + "." + System.lineSeparator() + msg.trim(); }
             sections2.add(section);
         }
 
@@ -588,7 +586,7 @@ public class ModelManager implements SessionIO {
             Group group = new Group();
             // Read the group information:
             String msg = group.readSessionInformation(reader,merge);
-            if (msg!=null) { return "Reading information for group" + i + ".\n" + msg.trim(); }
+            if (msg!=null) { return "Reading information for group" + i + "." + System.lineSeparator() + msg.trim(); }
             // Add the group to the list of groups:
             groups2.add(group);
         }

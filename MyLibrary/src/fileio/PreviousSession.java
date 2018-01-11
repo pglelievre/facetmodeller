@@ -90,19 +90,19 @@ public class PreviousSession extends OpenAndSave {
         File f3 = getSessionFile();
         // Set the three lines to write:
         if (f1==null) {
-            t1 = "null\n";
+            t1 = "null";
         } else {
-            t1 = f1.toURI().toString() + "\n";
+            t1 = f1.toURI().toString();
         }
         if (f2==null) {
-            t2 = "null\n";
+            t2 = "null";
         } else {
-            t2 = f2.toURI().toString() + "\n";
+            t2 = f2.toURI().toString();
         }
         if (f3==null) {
-            t3 = "null\n";
+            t3 = "null";
         } else {
-            t3 = f3.toURI().toString() + "\n";
+            t3 = f3.toURI().toString();
         }
         // Write those lines:
         if (FileUtils.writeLine(writer,t1)) {

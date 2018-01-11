@@ -23,7 +23,6 @@ public class JListSelector extends JList<String> implements SessionIO {
         for ( int i=0 ; i<n ; i++ ) {
             textLine += " " + Integer.toString(selection[i]);
         }
-        textLine += "\n";
         return FileUtils.writeLine(writer,textLine);
     }
     

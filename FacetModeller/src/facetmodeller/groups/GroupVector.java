@@ -283,7 +283,7 @@ public class GroupVector {
         if (writer==null) { return false; }
 
         // Write the number of group definitions:
-        textLine = Integer.toString(size()) + "\n";
+        textLine = Integer.toString(size());
         boolean ok = FileUtils.writeLine(writer,textLine);
         if (!ok) { FileUtils.close(writer); return false; }
         
@@ -292,7 +292,7 @@ public class GroupVector {
             // Write the information for the current group:
             Group group = get(i);
             Color col = group.getNodeColor();
-            textLine = group.getName() + " " + col.getRed() + " " + col.getGreen() + " " + col.getBlue() + "\n";
+            textLine = group.getName() + " " + col.getRed() + " " + col.getGreen() + " " + col.getBlue();
             ok = FileUtils.writeLine(writer,textLine);
             if (!ok) { FileUtils.close(writer); return false; }
         }

@@ -195,36 +195,36 @@ public final class Projector3D implements SessionIO {
         
         // Write the camera distance (in case I want to allow it to change later):
         String textLine;
-        textLine = cameraDistance + "\n";
+        textLine = Double.toString( cameraDistance );
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
         // Write the space origin:
         if (spaceOrigin==null) {
-            textLine = "null\n";
+            textLine = "null";
         } else {
-            textLine = spaceOrigin.toString() + "\n";
+            textLine = spaceOrigin.toString();
         }
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
         // Write the image origin:
         if (imageOrigin==null) {
-            textLine = "null\n";
+            textLine = "null";
         } else {
-            textLine = imageOrigin.toString() + "\n";
+            textLine = imageOrigin.toString();
         }
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
         // Write the scaling factors:
-        textLine = sceneAndZoomScaling + "\n";
+        textLine = Double.toString( sceneAndZoomScaling );
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
-        textLine = imageSizeScaling + "\n";
+        textLine = Double.toString( imageSizeScaling );
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
         // Write the rotation matrix:
         if (!rotationMatrix.writeSessionInformation(writer)) { return false; }
         
         // Write the projection:
-        textLine = perspective + "\n";
+        textLine = Boolean.toString( perspective );
         return FileUtils.writeLine(writer,textLine);
         
     }

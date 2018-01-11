@@ -92,11 +92,11 @@ public class Region extends HasSection implements SessionIO {
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write isControl information:
-        String textLine = Boolean.toString(isControl) + "\n";
+        String textLine = Boolean.toString(isControl);
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write point coordinates, attribute and volume:
-        textLine = p2.toString() + "\n";
-//        textLine = p2.toString() + " " + hasAttribute + " " + attribute + " " + hasVolume + " " + volume + "\n";
+        textLine = p2.toString();
+//        textLine = p2.toString() + " " + hasAttribute + " " + attribute + " " + hasVolume + " " + volume;
         return FileUtils.writeLine(writer,textLine);
     }
     

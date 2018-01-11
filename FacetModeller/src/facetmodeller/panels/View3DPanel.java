@@ -964,7 +964,7 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         if (!zoomer.writeSessionInformation(writer)) { return false; }
         if (!projector.writeSessionInformation(writer)) { return false; }
         // Write the viewing options on a single line:
-        String textLine = dragMode + " " + showAxes + " " + centreAxes + "\n";
+        String textLine = dragMode + " " + showAxes + " " + centreAxes;
         return FileUtils.writeLine(writer,textLine);
     }
     

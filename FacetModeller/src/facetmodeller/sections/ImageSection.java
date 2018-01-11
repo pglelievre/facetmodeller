@@ -295,13 +295,14 @@ public class ImageSection implements SessionIO {
         String textLine;
         if (isCalibrated()) {
             // Write clicked points:
-            textLine = clicked1.toString() + "\n";
+            textLine = clicked1.toString();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
-            textLine = clicked2.toString() + "\n";
+            textLine = clicked2.toString();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         } else {
             // Write "null" twice:
-            textLine = "null\nnull\n";
+            textLine = "null";
+            if (!FileUtils.writeLine(writer,textLine)) { return false; }
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         }
         

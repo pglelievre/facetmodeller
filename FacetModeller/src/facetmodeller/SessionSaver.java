@@ -24,24 +24,24 @@ public class SessionSaver {
         if (writer==null) { return false; }
 
         // Write the program name and version string:
-        String textLine = "# FacetModeller version " + con.versionString() + "\n";
+        String textLine = "# FacetModeller version " + con.versionString();
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write the floored version number:
-        textLine = con.versionInt() + "\n";
+        textLine = Integer.toString( con.versionInt() );
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write the model information:
         if (!con.getModelManager().writeSessionInformation(writer)) { FileUtils.close(writer); return false; }
 
         // Comment start of viewing options:
-        if (!FileUtils.writeLine(writer,"# VIEWING OPTIONS\n")) { FileUtils.close(writer); return false; }
+        if (!FileUtils.writeLine(writer,"# VIEWING OPTIONS")) { FileUtils.close(writer); return false; }
 
         // Write view manager options:
         if (!con.getViewManager().writeSessionInformation(writer)) { FileUtils.close(writer); return false; }
 
         // Comment start of interaction options:
-        if (!FileUtils.writeLine(writer,"# INTERACTION OPTIONS\n")) { FileUtils.close(writer); return false; }
+        if (!FileUtils.writeLine(writer,"# INTERACTION OPTIONS")) { FileUtils.close(writer); return false; }
 
         // Write interaction manager options:
         if (!con.getInteractionManager().writeSessionInformation(writer)) { FileUtils.close(writer); return false; }

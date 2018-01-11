@@ -193,14 +193,13 @@ public class Group extends HasID implements SessionIO {
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write the group name:
-        String textLine = name + "\n";
-        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        if (!FileUtils.writeLine(writer,name)) { return false; }
         // Write the group colours:
-        textLine = Integer.toString(nodeColor.getRGB()) + "\n";
+        String textLine = Integer.toString(nodeColor.getRGB());
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
-        textLine = Integer.toString(facetColor.getRGB()) + "\n";
+        textLine = Integer.toString(facetColor.getRGB());
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
-        textLine = Integer.toString(regionColor.getRGB()) + "\n";
+        textLine = Integer.toString(regionColor.getRGB());
         return FileUtils.writeLine(writer,textLine);
     }
     

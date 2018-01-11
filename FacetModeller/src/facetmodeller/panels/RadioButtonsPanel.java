@@ -202,12 +202,12 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                     showVOIButton.isSelected() + " " + 
                     showFacesButton.isSelected() + " " + 
                     showRegionsButton.isSelected() + " " + 
-                    nodeColorButton.isSelected() + "\n";
+                    nodeColorButton.isSelected();
         } else {
             textLine =
                     showImageButton.isSelected() + " " +
                     true + " " + true + " " + true + " " +
-                    true + " " + true + " " + false + "\n";
+                    true + " " + true + " " + false;
         }
         return FileUtils.writeLine(writer,textLine);
     }

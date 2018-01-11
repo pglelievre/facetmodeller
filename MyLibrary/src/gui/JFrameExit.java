@@ -40,10 +40,10 @@ public abstract class JFrameExit extends JFrame {
     protected abstract String contactString();
     
     public final String aboutString() {
-        String t = name + " version " + versionString() + "\n\n"
-                + rulesString() + "\n\n"
-                + authorString() + "\n"
-                + contactString() + "\n";
+        String t = name + " version " + versionString() + System.lineSeparator() + System.lineSeparator()
+                + rulesString() + System.lineSeparator() + System.lineSeparator()
+                + authorString() + System.lineSeparator()
+                + contactString() + System.lineSeparator();
         return t;
     }
     

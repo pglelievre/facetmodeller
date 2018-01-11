@@ -11,7 +11,7 @@ import javax.swing.JFileChooser;
 public class InteractionDialogs {
     
     public static int askNumberOfDimensions(String about) {
-        String t = about + "\n\n" + "What type of model do you want to create?";
+        String t = about + System.lineSeparator() + System.lineSeparator() + "What type of model do you want to create?";
         int response = Dialogs.question(null,t,"FacetModeller","2D","3D","Cancel");
         int ndim;
         switch (response) {

@@ -112,7 +112,7 @@ public final class InteractionOptions implements SessionIO {
                 showConfirmationDialogs + " " +
                 showToolPanel + " " +
                 showView3DPanel + " " +
-                showScroller + "\n";
+                showScroller;
         return FileUtils.writeLine(writer,textLine);
     }
     

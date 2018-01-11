@@ -139,12 +139,13 @@ public class FileUtils {
 
     /** Writes a line to a file, closing the file if an error occurs.
      * @param writer The BufferedWriter to use.
-     * @param textLine The line to write.
+     * @param textLine The line to write. DO NOT INCLUDE THE FINAL NEW LINE CHARACTER(S)!
      * @return Returns false if an error occurs.
      */
     public static boolean writeLine(BufferedWriter writer, String textLine) {
         try {
             writer.write(textLine);
+            writer.newLine();
         } catch (IOException e) {
             try { writer.close(); } catch (IOException ee) {}
             return false;
@@ -298,7 +299,7 @@ public class FileUtils {
                 if (out.s==null) {
                     out.s = textLine;
                 } else {
-                    out.s = out.s + "\n" + textLine;
+                    out.s = out.s + System.lineSeparator() + textLine;
                 }
             } else {
                 break; // I break as soon as a line doesn't contain the search string (includes an empty line).
@@ -440,7 +441,7 @@ public class FileUtils {
                     if (out.s==null) {
                         out.s = textLine;
                     } else {
-                        out.s = out.s + "\n" + textLine;
+                        out.s = out.s + System.lineSeparator() + textLine;
                     }
                 } else {
                    break; // I break as soon as a line isn't commented (includes an empty line).
@@ -456,7 +457,7 @@ public class FileUtils {
                     if (out.s==null) {
                         out.s = textLine;
                     } else {
-                        out.s = out.s + "\n" + textLine;
+                        out.s = out.s + System.lineSeparator() + textLine;
                     }
                 }
             }

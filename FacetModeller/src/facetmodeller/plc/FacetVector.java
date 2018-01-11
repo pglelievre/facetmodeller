@@ -269,7 +269,6 @@ public class FacetVector {
 //        for (int i=0 ; i<size() ; i++ ) {
 //            textLine = textLine + " " + get(i).getID();
 //        }
-//        textLine = textLine + "\n";
 //        if (!FileUtils.writeLine(writer,textLine)) { return false; }
 //        return true;
 //    }

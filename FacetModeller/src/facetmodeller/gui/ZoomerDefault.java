@@ -72,7 +72,7 @@ public final class ZoomerDefault implements SessionIO { // TODO: implement Zoome
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write the zoom integer:
-        String textLine = zoom + "\n";
+        String textLine = Integer.toString( zoom );
         return FileUtils.writeLine(writer,textLine);
     }
     

@@ -89,7 +89,7 @@ public class NodeOnSection extends Node {
     
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
-        String textLine = p2.toString() + "\n";
+        String textLine = p2.toString();
         return FileUtils.writeLine(writer,textLine);
     }
     

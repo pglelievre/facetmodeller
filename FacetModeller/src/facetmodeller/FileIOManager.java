@@ -86,7 +86,7 @@ public final class FileIOManager extends PreviousSession {
         if (out.message!=null) {
             String s = "Failed to open session.";
             if (!out.message.isEmpty()) {
-                s = s + " Error message follows:\n" + out.message;
+                s = s + " Error message follows:" + System.lineSeparator() + out.message;
             }
             Dialogs.error(controller,s,title);
             return;
@@ -132,7 +132,8 @@ public final class FileIOManager extends PreviousSession {
                 Dialogs.warning(controller,"Session loaded successfully from earlier version " + out.version + " of FacetModeller.",title);
             }
         } else {
-            String s = "Failed to open session completely from earlier\nversion 2 of FacetModeller. Error message follows:\n" + errmsg;
+            String s = "Failed to open session completely from earlier" + System.lineSeparator()
+                    + "version 2 of FacetModeller. Error message follows:" + System.lineSeparator() + errmsg;
             Dialogs.warning(controller,s,title);
         }
         
@@ -150,7 +151,7 @@ public final class FileIOManager extends PreviousSession {
         // Read the node file:
         NodeVector nodes = new NodeVector();
         NodeVector.ReadNodesReturnObject readNodesReturnObj = nodes.readNodes(nodeFile,-2);
-        if (readNodesReturnObj==null) { return "Failed to read node file\n" + nodeFile; }
+        if (readNodesReturnObj==null) { return "Failed to read node file" + System.lineSeparator() + nodeFile; }
         
         // Get number of dimensions:
         int ndim = controller.numberOfDimensions();
@@ -160,7 +161,7 @@ public final class FileIOManager extends PreviousSession {
         if (eleFile!=null) {
             FacetVector.ReadFacetsReturnObject readFacetsReturnObj = facets.readEle(controller,"",eleFile,nodes,ndim,false);
             String s = readFacetsReturnObj.getErrmsg();
-            if (s!=null) { return "Failed to read ele file\n" + eleFile + "\n" + s; }
+            if (s!=null) { return "Failed to read ele file" + System.lineSeparator() + eleFile + System.lineSeparator() + s; }
             // Delete any unrequired nodes:
             if (readFacetsReturnObj.getDoRem()) {
                 nodes.removeUnused();

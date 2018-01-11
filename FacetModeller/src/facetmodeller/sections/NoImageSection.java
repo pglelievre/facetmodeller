@@ -101,15 +101,15 @@ public class NoImageSection implements SessionIO {
     public boolean writeSessionInformation(BufferedWriter writer) {
         
         // Write the section name:
-        String textLine = name.trim() + "\n";
+        String textLine = name.trim();
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
         // Write the image height:
-        textLine = Integer.toString(height) + "\n";
+        textLine = Integer.toString(height);
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
         // I used to write an image colour here and I still need to write a line so previous session files can still be read:
-        return FileUtils.writeLine(writer,"DUMMYLINE\n");
+        return FileUtils.writeLine(writer,"DUMMYLINE");
         
     }
     

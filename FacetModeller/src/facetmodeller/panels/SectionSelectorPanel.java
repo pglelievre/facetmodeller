@@ -48,7 +48,8 @@ public final class SectionSelectorPanel extends JPanel implements SessionIO {
         currentSectionScrollerDesc.setText("Current Section");
         currentSectionScrollerDesc.setToolTipText("The section to display and add new nodes and regions to");
         otherSectionScrollerDesc.setText("Other Sections");
-        String t = "The other sections to add node and facet overlays from;\nthe sections to display in the 3D viewer";
+        String t = "The other sections to add node and facet overlays from;" + System.lineSeparator()
+                + "the sections to display in the 3D viewer";
         otherSectionScrollerDesc.setToolTipText(t);
 
         // Make panels holding the scrollers and the descriptions:

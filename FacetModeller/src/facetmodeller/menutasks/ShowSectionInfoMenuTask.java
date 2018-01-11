@@ -43,7 +43,7 @@ public final class ShowSectionInfoMenuTask extends ControlledMenuTask {
                 } else {
                     t = "There are " + n + " sections.";
                 }
-                t += "\nThe current section image is ";
+                t += System.lineSeparator() + "The current section image is ";
             } else {
                 t = "The section image is ";
             }
