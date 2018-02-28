@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+- Added radio button to 2D GUI for showing/hiding regions (was already in 3D GUI).
+- New radio button for drawing facet normal vectors (3D).
+- New menu item for adding nodes on corners of current section.
+
+### Bugs squashed
+- Bug fix for merging groups that was deleting nodes/facets/regions in the merged group.
 
 ## 2018-01-011
 ### Changed
