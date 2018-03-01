@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Changed
+- Added abilility to translate 3D nodes by some specified amount.
+- Added user control over overlay transparency.
 - Added radio button to 2D GUI for showing/hiding regions (was already in 3D GUI).
 - New radio button for drawing facet normal vectors (3D).
 - New menu item for adding nodes on corners of current section.
