@@ -3,9 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Changed
+-
 ### Bugs squashed
+-
 
-## [2018-03-19]
+## 2018-03-19
 ### Changed
 - Removed some additional dialogs when the user requests that some dialogs are hidden (adding node in facet or node on edge).
 - Changed the way that nodes are added within facets (now always added to currently selected group and section).
