@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file. Dates are i
 ### Changed
 -
 ### Bugs squashed
--
+- Bug fix when changing a node's section that was moving the selected node to the clicked point.
 
 ## 2018-03-19
 ### Changed
