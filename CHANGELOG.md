@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
--
+- Made status bars a bit taller and some text displayed inside them now contains line breaks.
 ### Bugs squashed
 - Bug fix when changing a node's section that was moving the selected node to the clicked point.
 
