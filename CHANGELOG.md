@@ -1,5 +1,5 @@
 # Changelog
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. Dates are in format YYYY-MM-DD.
 
 ## [Unreleased]
 ### Changed
