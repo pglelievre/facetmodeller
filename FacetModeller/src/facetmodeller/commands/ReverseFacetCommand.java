@@ -7,7 +7,7 @@ import facetmodeller.plc.Facet;
  */
 public final class ReverseFacetCommand extends Command {
     
-    private Facet facet;
+    private final Facet facet;
     
     public ReverseFacetCommand(Facet f) {
         super("Reverse Facet Node Order");

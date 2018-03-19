@@ -30,12 +30,12 @@ public final class ShiftOrPanPanel extends JPanel implements SessionIO { // TODO
     public static final int DEFAULT_SHIFT_STEP = 10; // image pixel units
     public static final int DEFAULT_PAN_STEP = 100; // image pixel units
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     private int buttonGridMode = BUTTON_GRID_MODE_SHIFT; // mode for how the ShiftButtonPanel is used
-    private Shifter shift2D = new Shifter(DEFAULT_SHIFT_STEP);
-    private Shifter pan2D = new Shifter(DEFAULT_PAN_STEP);
-    private JRadioButton shift2DButton, pan2DButton;
-    private ShiftButtonPanel shiftButtonPanel;
+    private final Shifter shift2D = new Shifter(DEFAULT_SHIFT_STEP);
+    private final Shifter pan2D = new Shifter(DEFAULT_PAN_STEP);
+    private final JRadioButton shift2DButton, pan2DButton;
+    private final ShiftButtonPanel shiftButtonPanel;
     
     public ShiftOrPanPanel(FacetModeller con, int ndim) {
         

@@ -19,7 +19,7 @@ public class CommonPaintingOptions implements SessionIO {
     public static final int DEFAULT_POINT_WIDTH = Paintable.DEFAULT_POINT_WIDTH;
     public static final int DEFAULT_LINE_WIDTH = Paintable.DEFAULT_LINE_WIDTH;
     
-    private JFrame controller;
+    private final JFrame controller;
     private boolean success = false;
     
     private Color calibrationColor = DEFAULT_CALIBRATION_COLOR; // The painting colour for calibration information.

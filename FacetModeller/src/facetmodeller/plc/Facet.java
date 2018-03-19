@@ -15,6 +15,8 @@ public class Facet extends HasGroup {
     // -------------------- Properties -------------------
 
     private final NodeVector nodes = new NodeVector();
+//    private MyPoint3D centroid = null; // centroid point
+//    private MyPoint3D normal = null; // normal vector
 //    private final SectionVector sections = new SectionVector();
 
     // ------------------- Constructors ------------------
@@ -42,6 +44,21 @@ public class Facet extends HasGroup {
 //    public Section getSection(int i) { return sections.get(i); }
 
     public Color getColor() { return getGroup().getFacetColor(); }
+    
+    public MyPoint3D getCentroid() {
+        // Recalculate centroid if required:
+        //if ( centroid == null ) { calculateCentroid(); }
+        //return centroid;
+        // Always recalculate the centroid in case the node coordinates or their section calibration changes:
+        return calculateCentroid();
+    }
+    
+    public MyPoint3D getNormal() {
+        // Recalculate normal if required:
+        //if ( normal == null ) { calculateNormal(); }
+        //return normal;
+        return calculateNormal();
+    }
 
     // -------------------- Public Methods -------------------
 
@@ -68,11 +85,19 @@ public class Facet extends HasGroup {
 
     public void addNode(Node n) {
         // Check the node isn't already in the list:
-        if (!nodes.contains(n)) { nodes.add(n); }
+        if (nodes.contains(n)) { return; }
+        // Add the node to the list:
+        nodes.add(n);
+        // Nullify the centroid and normal so they will be recalculated (when required):
+        //centroid = null;
+        //normal = null;
     }
 
     public void addNodes(NodeVector n) {
         nodes.addAll(n);
+        // Nullify the centroid and normal so they will be recalculated (when required):
+        //centroid = null;
+        //normal = null;
     }
 
 //    public void addSection(Section s) {
@@ -82,14 +107,22 @@ public class Facet extends HasGroup {
 
     public void clear() {
         nodes.clear();
+        //centroid = null;
+        //normal = null;
     }
 
     public void removeNode(Node n) {
         nodes.remove(n);
+        // Nullify the centroid and normal so they will be recalculated (when required):
+        //centroid = null;
+        //normal = null;
     }
 
     public void removeLastNode() {
         nodes.removeLast();
+        // Nullify the centroid and normal so they will be recalculated (when required):
+        //centroid = null;
+        //normal = null;
     }
 
 //    public void removeSection(Section s) {
@@ -136,33 +169,12 @@ public class Facet extends HasGroup {
 
     }
     
-    /** Calculates a vector normal to the facet.
-     * The vector is normalized.
-     * @return 
-     */
-    public MyPoint3D normal() {
-        // Check number of nodes:
-        int n = size();
-        if (n<3) { return null; } // not supported for 2D facets
-        MyPoint3D p0 = getNode(0).getPoint3D();
-        MyPoint3D p1 = getNode(1).getPoint3D();
-        MyPoint3D v1 = p0.vectorToPoint(p1);
-        // Loop until we find three non-collinear nodes:
-        for (int i=2 ; i<n ; i++) {
-            MyPoint3D p2 = getNode(i).getPoint3D();
-            MyPoint3D v2 = p0.vectorToPoint(p2);
-            MyPoint3D nv = v1.cross(v2);
-            if (nv.norm()!=0.0) { // not collinear
-                nv.normalize();
-                return nv;
-            }
-        }
-        return null;
-    }
-    
     /** Reverses the node order in the facet. */
     public void reverse() {
         nodes.reverse();
+        // Nullify the centroid and normal so they will be recalculated (when required):
+        //centroid = null;
+        //normal = null;
     }
 
 //    /** Determines if a supplied point is inside the facet. */
@@ -203,6 +215,9 @@ public class Facet extends HasGroup {
     public void sortNodesByIDs() {
         // Sort the nodes by their ID value:
         nodes.sortByIDs();
+        // Nullify the centroid and normal so they will be recalculated (when required):
+        //centroid = null;
+        //normal = null;
     }
 
     /* Returns true if the vector intersects the supplied facet.
@@ -221,5 +236,49 @@ public class Facet extends HasGroup {
         for (int i=0 ; i<)
     }
      */
+    
+    // -------------------- Private Methods -------------------
+    
+    /** Calculates the centroid of the facet.
+     */
+    private MyPoint3D calculateCentroid() {
+        // TODO: develop a more robust approach for general planar polygons
+        // Check number of nodes:
+        int n = size();
+        if (n<1) { return null; }
+        // The following is an approximation that just finds the average coordinate values.
+        // This will hold for a 2D edge or 3D triangle.
+        MyPoint3D centroid = MyPoint3D.zero(); // initialization to zero before summation
+        for (int i=0 ; i<n ; i++) { // loop over each node
+            MyPoint3D p = getNode(i).getPoint3D(); // 3D coordinates of current node
+            if (p==null) { return null; }
+            centroid.plus(p); // sum of node coordinates
+        }
+        centroid.divide(n); // average of node coordinates
+        return centroid;
+    }
+    
+    /** Calculates a vector normal to the facet.
+     * The vector is normalized.
+     */
+    private MyPoint3D calculateNormal() {
+        // Check number of nodes:
+        int n = size();
+        if (n<3) { return null; } // not supported for 2D facets
+        MyPoint3D p0 = getNode(0).getPoint3D();
+        MyPoint3D p1 = getNode(1).getPoint3D();
+        MyPoint3D v1 = p0.vectorToPoint(p1);
+        // Loop until we find three non-collinear nodes:
+        for (int i=2 ; i<n ; i++) {
+            MyPoint3D p2 = getNode(i).getPoint3D();
+            MyPoint3D v2 = p0.vectorToPoint(p2);
+            MyPoint3D nv = v1.cross(v2);
+            if (nv.norm()!=0.0) { // not collinear
+                nv.normalize();
+                return nv;
+            }
+        }
+        return null;
+    }
     
 }

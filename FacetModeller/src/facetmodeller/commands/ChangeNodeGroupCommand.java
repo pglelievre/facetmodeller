@@ -8,9 +8,9 @@ import facetmodeller.plc.Node;
  */
 public final class ChangeNodeGroupCommand extends Command {
     
-    private Node node; // the node changed
-    private Group oldGroup; // the old group (existing node group on construction)
-    private Group newGroup; // the new group
+    private final Node node; // the node changed
+    private final Group oldGroup; // the old group (existing node group on construction)
+    private final Group newGroup; // the new group
     
     public ChangeNodeGroupCommand(Node n, Group g) {
         super("Change Node Group");

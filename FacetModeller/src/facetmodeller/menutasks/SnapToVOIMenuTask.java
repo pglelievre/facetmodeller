@@ -9,7 +9,7 @@ import facetmodeller.commands.CommandVector;
  */
 public final class SnapToVOIMenuTask extends ControlledMenuTask {
     
-    private boolean doH, doV;
+    private final boolean doH, doV;
     
     public SnapToVOIMenuTask(FacetModeller con,boolean bH, boolean bV) {
         super(con);

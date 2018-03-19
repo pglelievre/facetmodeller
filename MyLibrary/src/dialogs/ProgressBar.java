@@ -21,8 +21,8 @@ public class ProgressBar extends JDialog {
   // -------------------- Properties -------------------
 
   private boolean cancelled = false;
-  private int limit;
-  private JLabel textArea;
+  private final int limit;
+  private final JLabel textArea;
 
   // -------------------- Constructor -------------------
 
@@ -92,7 +92,7 @@ public class ProgressBar extends JDialog {
       }
   }
   
-  private WindowListener closeWindow = new WindowAdapter() {
+  private final WindowListener closeWindow = new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
           cancelled = true;

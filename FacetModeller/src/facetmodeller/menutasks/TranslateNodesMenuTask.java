@@ -16,7 +16,7 @@ public final class TranslateNodesMenuTask extends ControlledMenuTask {
     public String text() { return "Translate nodes"; }
 
     @Override
-    public String tip() { return "Translates (moves) all the nodes spatially"; }
+    public String tip() { return "Translates (moves) nodes spatially"; }
 
     @Override
     public String title() { return "Translate Nodes"; }
@@ -30,6 +30,9 @@ public final class TranslateNodesMenuTask extends ControlledMenuTask {
     public void execute() {
         // Check for the required information:
         if (!check()) { return; }
+        // Ask which nodes to translate:
+        int which = Dialogs.question(controller,"Which groups of nodes?",title(),"All","Current","Cancel","Current");
+        if (which==Dialogs.CANCEL_OPTION) { return; }
         // Ask for the translation information:
         String response = Dialogs.input(controller,"Enter the translation (x,y,z):",title());
         // Check response:
@@ -49,7 +52,13 @@ public final class TranslateNodesMenuTask extends ControlledMenuTask {
             Dialogs.error(controller,"You must enter a three numerical values. Please try again.","Error");
             return;
         }
-        CommandVector commands = controller.translateNodes(new MyPoint3D(x,y,z));
+        MyPoint3D p = new MyPoint3D(x,y,z);
+        CommandVector commands;
+        if (which==Dialogs.YES_OPTION) { // all groups
+            commands = controller.translateNodes(p,null);
+        } else { // selected groups
+            commands = controller.translateNodes(p,controller.getSelectedCurrentGroups());
+        }
         commands.setName(title());
         controller.undoVectorAdd(commands); // (the commands have already been executed)
         // Repaint:

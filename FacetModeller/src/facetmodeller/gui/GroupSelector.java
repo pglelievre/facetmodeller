@@ -148,7 +148,7 @@ public class GroupSelector extends JListSelector {
 
     /** Listens for list selection changes. */
     private class SelectionListener implements ListSelectionListener {
-        private FacetModeller controller;
+        private final FacetModeller controller;
         private boolean doRedraw=false;
         public SelectionListener(FacetModeller con, boolean rd) {
             controller = con;

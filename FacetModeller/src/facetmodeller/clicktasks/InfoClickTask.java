@@ -12,6 +12,9 @@ public final class InfoClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_INFO; }
 
     @Override
+    public String text() { return ClickTaskUtil.INFO_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.INFO_TEXT; }
 
     @Override

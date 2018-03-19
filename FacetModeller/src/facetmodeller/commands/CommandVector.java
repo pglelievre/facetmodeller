@@ -29,6 +29,7 @@ public class CommandVector extends Command {
     }
 
     public void addAll(CommandVector v) {
+        if (v==null) { return; }
         //vector.addAll(v.vector);
         for (int i=0 ; i<v.size() ; i++ ) {
             add(v.get(i)); // passing through this method avoids a compiler warning

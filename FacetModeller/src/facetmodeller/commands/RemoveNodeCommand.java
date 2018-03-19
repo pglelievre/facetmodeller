@@ -8,7 +8,7 @@ import facetmodeller.plc.Node;
  */
 public final class RemoveNodeCommand extends ModelCommand {
     
-    private Node node; // the node removed
+    private final Node node; // the node removed
     private RemoveFacetCommandVector com; // required for undoing the removal of the facets
     
     public RemoveNodeCommand(ModelManager mod, Node n) {

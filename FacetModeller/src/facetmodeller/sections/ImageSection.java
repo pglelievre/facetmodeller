@@ -6,6 +6,7 @@ import facetmodeller.plc.Node;
 import facetmodeller.plc.NodeVector;
 import fileio.FileUtils;
 import geometry.MyPoint2D;
+import geometry.MyPoint2DVector;
 import geometry.MyPoint3D;
 import gui.HasImage;
 import java.awt.image.*;
@@ -59,6 +60,17 @@ public class ImageSection implements SessionIO {
 
     public MyPoint2D getClicked1() { return clicked1; }
     public MyPoint2D getClicked2() { return clicked2; }
+    
+    public MyPoint2DVector getCorners() {
+        MyPoint2DVector corners = new MyPoint2DVector();
+        int w = getWidth();
+        int h = getHeight();
+        corners.add( new MyPoint2D(0,0) );
+        corners.add( new MyPoint2D(w,0) );
+        corners.add( new MyPoint2D(0,h) );
+        corners.add( new MyPoint2D(w,h) );
+        return corners;
+    }
 
     public int getWidth() { return hasImage.getWidth(); }
     public int getHeight() { return hasImage.getHeight(); }

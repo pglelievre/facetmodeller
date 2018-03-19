@@ -7,7 +7,7 @@ import facetmodeller.ModelManager;
  */
 public final class ScalePixelsCommand extends ModelCommand {
     
-    private double factor;
+    private final double factor;
     
     public ScalePixelsCommand(ModelManager mod, double f) {
         super(mod,"Scale Image Pixel Coordinates");

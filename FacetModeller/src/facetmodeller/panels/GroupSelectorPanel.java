@@ -20,7 +20,7 @@ import javax.swing.JScrollPane;
 public final class GroupSelectorPanel extends JPanel implements SessionIO {
     private static final long serialVersionUID = 1L;
     
-    private GroupSelector currentGroupSelector, nodeGroupSelector, facetGroupSelector;
+    private final GroupSelector currentGroupSelector, nodeGroupSelector, facetGroupSelector;
 
     public GroupSelectorPanel(FacetModeller con) {
         

@@ -17,6 +17,9 @@ public final class MergeNodesClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_MERGE_NODES; }
 
     @Override
+    public String text() { return ClickTaskUtil.MERGE_NODE_TEXT; }
+
+    @Override
     public String tip() { return "Merge one node into another"; }
 
     @Override

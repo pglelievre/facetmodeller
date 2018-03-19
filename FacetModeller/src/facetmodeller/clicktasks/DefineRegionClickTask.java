@@ -19,6 +19,9 @@ public final class DefineRegionClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_ADD_REGIONS; }
 
     @Override
+    public String text() { return ClickTaskUtil.DEFINE_REGION_TEXT; }
+
+    @Override
     public String tip() { return "Add new region points on the current section"; }
 
     @Override

@@ -8,7 +8,7 @@ import facetmodeller.plc.Region;
  */
 public final class RemoveRegionCommand extends ModelCommand {
     
-    private Region region; // the region removed
+    private final Region region; // the region removed
     
     public RemoveRegionCommand(ModelManager mod, Region r) {
         super(mod,"Remove Region");

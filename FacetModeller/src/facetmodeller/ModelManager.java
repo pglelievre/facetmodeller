@@ -153,7 +153,9 @@ public class ModelManager implements SessionIO {
     public CommandVector snapToGrid(double m, GroupVector groups, boolean doH, boolean doV) {
         return plc.snapToGrid(m,groups,doH,doV);
     }
-    public CommandVector translate(MyPoint3D p) { return plc.translate(p); }
+    public CommandVector translate(MyPoint3D p, GroupVector groups) {
+        return plc.translate(p,groups);
+    }
     public boolean writePoly(File file, int ndim, Dir3D dir, boolean byIndex) {
         return plc.writePoly(file,ndim,dir,byIndex);
     }
@@ -293,6 +295,8 @@ public class ModelManager implements SessionIO {
         return true;
         
     }
+    
+    public void reverseGroupOrder() { groups.reverseOrder(); }
     
     public int moveGroup(Group group, int move) {
         if (move==0) { return -1; }

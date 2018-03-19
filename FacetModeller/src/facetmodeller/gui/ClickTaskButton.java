@@ -11,16 +11,18 @@ import javax.swing.JButton;
 public final class ClickTaskButton extends JButton implements CheckableEnabled {
     private static final long serialVersionUID = 1L;
     
-    private ClickTask task;
+    private final ClickTask task;
     
     public ClickTaskButton(ClickTask t, String s) {
         super(s);
         task = t;
+        setToolTipText(t.tip());
     }
     
     public ClickTaskButton(ClickTask t, Icon icon) {
         super(icon);
         task = t;
+        setToolTipText(t.tip());
     }
     
     public int getMode() { return task.mode(); }

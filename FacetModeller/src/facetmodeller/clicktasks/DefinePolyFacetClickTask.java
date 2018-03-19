@@ -11,7 +11,7 @@ import geometry.MyPoint2D;
 
 public final class DefinePolyFacetClickTask extends ControlledClickTask {
     
-    private boolean autoStop;
+    private final boolean autoStop;
     
     public DefinePolyFacetClickTask(FacetModeller con, boolean b) {
         super(con);
@@ -24,6 +24,15 @@ public final class DefinePolyFacetClickTask extends ControlledClickTask {
             return ClickModeManager.MODE_DEFINE_POLY_FACETS_TRI;
         } else {
             return ClickModeManager.MODE_DEFINE_POLY_FACETS;
+        }
+    }
+
+    @Override
+    public String text() {
+        if (autoStop) {
+            return ClickTaskUtil.DEFINE_POLY_FACET_TRI_TEXT;
+        } else {
+            return ClickTaskUtil.DEFINE_POLY_FACET_TEXT;
         }
     }
 

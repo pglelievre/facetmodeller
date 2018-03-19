@@ -37,7 +37,7 @@ import javax.swing.JPanel;
  */
 public final class ViewManager implements SessionIO {
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     private MenuBar menuBar;
     private ClickModeToolBar toolBar; // Tool bar for common tasks
     private CursorTextBar cursorBar; // Display area for cursor position
@@ -174,6 +174,7 @@ public final class ViewManager implements SessionIO {
     public boolean getShowAll() { return toolPanel.getShowAll(); }
     public boolean getShowVOI() { return toolPanel.getShowVOI(); }
     public boolean getShowFaces() { return toolPanel.getShowFaces(); }
+    public boolean getShowNormals() { return toolPanel.getShowNormals(); }
     public boolean getShowRegions() { return toolPanel.getShowRegions(); }
     public boolean getNodeColorBySection() { return toolPanel.getNodeColorBySection(); }
     public SectionVector getSelectedOtherSections() { return toolPanel.getSelectedOtherSections(); }
@@ -251,6 +252,8 @@ public final class ViewManager implements SessionIO {
     public Color getDefineFacetEdgeColor() { return paintingOptions.getDefineFacetEdgeColor(); }
     public int getPointWidth() { return paintingOptions.getPointWidth(); }
     public int getLineWidth() { return paintingOptions.getLineWidth(); }
+    public double getTransparency() { return paintingOptions.getTransparency(); }
+    public double getNormalLength() { return paintingOptions.getNormalLength(); }
     public Node getOriginNode3D() { return paintingOptions.getOriginNode3D(); }
     public void setCalibrationColor(Color c) { paintingOptions.setCalibrationColor(c); }
     public void setEdgeColor(Color c) { paintingOptions.setEdgeColor(c); }
@@ -263,6 +266,8 @@ public final class ViewManager implements SessionIO {
     public void selectDefineFacetEdgeColor() { paintingOptions.selectDefineFacetEdgeColor(); }
     public void selectPointWidth() { paintingOptions.selectPointWidth(); }
     public void selectLineWidth() { paintingOptions.selectLineWidth(); }
+    public void selectTransparency() { paintingOptions.selectTransparency(); }
+    public void selectNormalLength() { paintingOptions.selectNormalLength(); }
     public void selectVerticalExaggeration() { paintingOptions.selectVerticalExaggeration(); }
     public void selectBackgroundColor() { paintingOptions.selectBackgroundColor(); }
     public void selectSectionColor() { paintingOptions.selectSectionColor(); }

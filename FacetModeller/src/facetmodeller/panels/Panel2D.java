@@ -23,10 +23,10 @@ public final class Panel2D extends JPanel implements ZoomableSessionIO {
     // TODO: implement Zoomable and SessionIO separately once Java allows implementing multiple interfaces
     private static final long serialVersionUID = 1L;
     
-    private FacetModeller controller;
-    private JScrollPane imageScroller;
+    private final FacetModeller controller;
+    private final JScrollPane imageScroller;
     private SectionImagePanel imagePanel; // where the section and node/facet overlays are drawn
-    private ZoomBar zoomBar;
+    private final ZoomBar zoomBar;
     
     public Panel2D(FacetModeller con, boolean showScroller) {
         // Set the controller:

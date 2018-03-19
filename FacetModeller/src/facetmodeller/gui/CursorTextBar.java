@@ -16,7 +16,7 @@ import gui.TextBar;
 public final class CursorTextBar extends TextBar {
     private static final long serialVersionUID = 1L;
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     
     public CursorTextBar(FacetModeller con) { controller = con; }
     

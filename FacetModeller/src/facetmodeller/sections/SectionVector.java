@@ -279,7 +279,9 @@ public class SectionVector {
             if (!section.canNodesShift()) { continue; }
             // Process the section:
             CommandVector coms = section.snapToCalibration(pickingRadius,groups,doH,doV);
-            commands.addAll(coms);
+            if (coms!=null) {
+                commands.addAll(coms);
+            }
         }
         return commands;
     }

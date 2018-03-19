@@ -14,6 +14,9 @@ public final class DeleteFacetClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_DELETE_FACETS; }
 
     @Override
+    public String text() { return ClickTaskUtil.DELETE_FACET_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.DELETE_FACET_TEXT; }
 
     @Override

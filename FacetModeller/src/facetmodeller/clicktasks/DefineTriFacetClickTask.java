@@ -14,6 +14,9 @@ public final class DefineTriFacetClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_DEFINE_TRI_FACETS; }
 
     @Override
+    public String text() { return ClickTaskUtil.DEFINE_TRI_FACET_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.DEFINE_TRI_FACET_TEXT; }
 
     @Override

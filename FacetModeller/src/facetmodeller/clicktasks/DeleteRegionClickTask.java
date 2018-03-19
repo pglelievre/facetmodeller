@@ -14,6 +14,9 @@ public final class DeleteRegionClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_DELETE_REGIONS; }
 
     @Override
+    public String text() { return ClickTaskUtil.DELETE_REGION_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.DELETE_REGION_TEXT; }
 
     @Override

@@ -156,7 +156,8 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         FacetVector facetsToPaint = new FacetVector();
         GroupVector groups = controller.getSelectedFacetGroups();
         if (groups!=null) {
-        for (int i=0 ; i<groups.size(); i++ ) { // loop over every selected facet group
+        //for (int i=0 ; i<groups.size(); i++ ) { // loop over every selected facet group
+        for (int i=(groups.size()-1) ; i>=0; i-- ) { // loop over every selected facet group in reverse order
             FacetVector facets = groups.get(i).getFacets();
             for (int j=0 ; j<facets.size() ; j++ ) { // loop over every facet in the ith group
                 Facet facet = facets.get(j);
@@ -193,7 +194,8 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
                 facetsToPaint.add(facet);
             }
         }}
-
+        
+        /*
         // Determine the nodes to paint in the current section:
         NodeVector nodesToPaintCurrent = new NodeVector();
         NodeVector nodes = currentSection.getNodes();
@@ -231,6 +233,39 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
                 }
             }
         }
+        */
+
+        // Determine the nodes to paint in the current and other sections:
+        NodeVector nodesToPaint = new NodeVector();
+        groups = controller.getSelectedNodeGroups();
+        if (groups!=null) {
+        for (int i=(groups.size()-1) ; i>=0; i-- ) { // loop over every selected node group in reverse order
+            NodeVector nodes = groups.get(i).getNodes();
+            for (int j=0 ; j<nodes.size() ; j++ ) { // loop over every node in the ith group
+                Node node = nodes.get(j);
+                // Check if the node is in the current section:
+                if ( node.getSection() == currentSection ) {
+                    // Make sure the node is paintable:
+                    if (node.getPoint2D()==null) { continue; } // cycle to next node
+                    // Add the node to the list of nodes to paint and cycle to the next node:
+                    nodesToPaint.add(node);
+                    continue;
+                }
+                // At this point we know the node is not in the current section.
+                // Check if there are any other sections selected:
+                if (otherSections==null) { continue; }
+                if (otherSections.isEmpty()) { continue; }
+                // Check if the node is in one of the other sections selected:
+                Section s = node.getSection();
+                if (!otherSections.contains(s)) { continue; }
+                // Skip the node if it's section is not calibrated (calibration is required for projection):
+                if (!s.isCalibrated()) { continue; }
+                // Make sure the node is paintable:
+                if (node.getPoint3D()==null) { continue; } // cycle to next node
+                // Add the node to the list of nodes to paint:
+                nodesToPaint.add(node);
+            }
+        }}
 
         // Calculate the range, in image panel units, across which we'll need to plot:
         MyPoint2D p1 = MyPoint2D.zero(); // will hold minimum coordinate values
@@ -250,6 +285,7 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
                     p2.max(p);
                 }
             }
+            /*
             for (int i=0 ; i<nodesToPaintCurrent.size() ; i++ ) { // loop over nodes for current section
                 Node node = nodesToPaintCurrent.get(i);
                 MyPoint2D p = shiftNode(node,currentSection,shiftX,shiftY);
@@ -265,6 +301,17 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
                 MyPoint2D p = shiftNode(node,currentSection,shiftX,shiftY);
                 if (p==null) {  // shouldn't happen, but I'll check for it anyway
                     nodesToPaintOther.remove(node);
+                    continue;
+                }
+                p1.min(p);
+                p2.max(p);
+            }
+            */
+            for (int i=0 ; i<nodesToPaint.size() ; i++ ) { // loop over nodes for other section
+                Node node = nodesToPaint.get(i);
+                MyPoint2D p = shiftNode(node,currentSection,shiftX,shiftY);
+                if (p==null) {  // shouldn't happen, but I'll check for it anyway
+                    nodesToPaint.remove(node);
                     continue;
                 }
                 p1.min(p);
@@ -298,7 +345,8 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         final int nodeWidth = controller.getPointWidth();
         final int edgeWidth = controller.getLineWidth();
         final int centroidWidth = (int)Math.ceil(nodeWidth/2.0); // centroids drawn half the node width
-        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f); // transparency factor
+        final float transparency = (float)controller.getTransparency();
+        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,transparency); // transparency factor
 //        final boolean showPickingRadius = controller.getShowPickingRadius();
 //        final int pickingRadius = (int)( controller.getPickingRadius() * scaling ); // panel pixel width
         // The space-to-image transform may not be equidistance (may have different scalings for horizontal and vertical panel directions)
@@ -413,7 +461,8 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         
         // Get the drawing option for colouring the nodes:
         boolean colorBySection = controller.getNodeColorBySection();
-
+        
+        /*
         // Paint the nodes for the current section:
         for (int i=0 ; i<nodesToPaintCurrent.size() ; i++ ) {
             Node node = nodesToPaintCurrent.get(i);
@@ -447,6 +496,35 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
             }
             g2.setPaint(col);
             PaintingUtils.paintPoint(g2,imageToPanel,p,nodeWidth,false); // not filled
+            // Add to the list of painted nodes and node points:
+            paintedNodes.add(node);
+            paintedNodePoints.add(p);
+        }
+        */
+
+        // Paint the nodes for the current and other sections:
+        for (int i=0 ; i<nodesToPaint.size() ; i++ ) {
+            Node node = nodesToPaint.get(i);
+            // Check if the node is on the current section:
+            MyPoint2D p;
+            boolean filled;
+            if ( node.getSection() == currentSection ) { // node on current section
+                p = node.getPoint2D();
+                filled = true; // nodes on current section are painted filled
+            } else { // node is on another section so it may be shifted
+                p = shiftNode(node,currentSection,shiftX,shiftY);
+                filled = false; // nodes on other sections are painted unfilled
+            }
+            if (p==null) { continue; } // shouldn't happen, but I'll check for it anyway
+            // Paint the node:
+            Color col;
+            if (colorBySection) {
+                col = node.getSection().getColor();
+            } else {
+                col = node.getColor();
+            }
+            g2.setPaint(col);
+            PaintingUtils.paintPoint(g2,imageToPanel,p,nodeWidth,filled);
             // Add to the list of painted nodes and node points:
             paintedNodes.add(node);
             paintedNodePoints.add(p);

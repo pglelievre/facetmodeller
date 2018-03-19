@@ -20,12 +20,12 @@ import javax.swing.JPanel;
 public final class ToolPanel extends JPanel implements SessionIO {
     private static final long serialVersionUID = 1L;
     
-    private FacetModeller controller;
-    private RadioButtonsPanel radioButtonsPanel;
+    private final FacetModeller controller;
+    private final RadioButtonsPanel radioButtonsPanel;
     private SectionSelectorPanel sectionSelectorPanel;
-    private GroupSelectorPanel groupSelectorPanel;
-    private ShiftOrPanPanel shiftOrPanPanel;
-    private ClickModeManager clickModeManager;
+    private final GroupSelectorPanel groupSelectorPanel;
+    private final ShiftOrPanPanel shiftOrPanPanel;
+    private final ClickModeManager clickModeManager;
     
     public ToolPanel(FacetModeller con, int ndim) {
         
@@ -76,6 +76,7 @@ public final class ToolPanel extends JPanel implements SessionIO {
     public boolean getShowAll() { return radioButtonsPanel.getShowAll(); }
     public boolean getShowVOI() { return radioButtonsPanel.getShowVOI(); }
     public boolean getShowFaces() { return radioButtonsPanel.getShowFaces(); }
+    public boolean getShowNormals() { return radioButtonsPanel.getShowNormals(); }
     public boolean getShowRegions() { return radioButtonsPanel.getShowRegions(); }
     public boolean getNodeColorBySection() { return radioButtonsPanel.getNodeColorBySection(); }
     

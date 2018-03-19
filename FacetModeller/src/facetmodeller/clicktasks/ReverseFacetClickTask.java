@@ -14,6 +14,9 @@ public final class ReverseFacetClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_REVERSE_FACETS; }
 
     @Override
+    public String text() { return ClickTaskUtil.REVERSE_FACET_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.REVERSE_FACET_TEXT; }
 
     @Override

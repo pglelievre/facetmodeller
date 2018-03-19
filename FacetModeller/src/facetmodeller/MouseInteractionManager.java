@@ -9,11 +9,11 @@ import geometry.MyPoint2D;
  */
 public final class MouseInteractionManager {
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     
     // Objects used to perform processing for clicks:
-    private ClickTask ignore, info, defineNode, deleteNode, moveNode, mergeNodes, 
-            changeNodeGroup, changeNodeSection, changeFacetGroup,
+    private final ClickTask ignore, info, defineNode, deleteNode, moveNode, mergeNodes, duplicateNode,
+            changeNodeGroup, changeNodeSection, changeNodeCoords, changeFacetGroup,
             definePolyFacet, definePolyFacetTri, defineTriFacet, defineLineFacet,
             deleteFacet, reverseFacet, flipEdge, defineRegion, deleteRegion,
             defineNodeOnEdge, defineNodeInFacet, originPoint2D, originNode3D, calibrate;
@@ -26,8 +26,10 @@ public final class MouseInteractionManager {
         deleteNode = new DeleteNodeClickTask(con);
         moveNode = new MoveNodeClickTask(con);
         mergeNodes = new MergeNodesClickTask(con);
+        duplicateNode = new DuplicateNodeClickTask(con);
         changeNodeGroup = new ChangeNodeGroupClickTask(con);
         changeNodeSection = new ChangeNodeSectionClickTask(con);
+        changeNodeCoords = new ChangeNodeCoordsClickTask(con);
         changeFacetGroup = new ChangeFacetGroupClickTask(con);
         definePolyFacet = new DefinePolyFacetClickTask(con,false);
         definePolyFacetTri = new DefinePolyFacetClickTask(con,true);
@@ -67,10 +69,14 @@ public final class MouseInteractionManager {
                 return moveNode;
             case ClickModeManager.MODE_MERGE_NODES:
                 return mergeNodes;
+            case ClickModeManager.MODE_DUPLICATE_NODES:
+                return duplicateNode;
             case ClickModeManager.MODE_CHANGE_NODES_GROUP:
                 return changeNodeGroup;
             case ClickModeManager.MODE_CHANGE_NODES_SECTION:
                 return changeNodeSection;
+            case ClickModeManager.MODE_CHANGE_NODES_COORDS:
+                return changeNodeCoords;
             case ClickModeManager.MODE_CHANGE_FACETS_GROUP:
                 return changeFacetGroup;
             case ClickModeManager.MODE_DEFINE_POLY_FACETS:

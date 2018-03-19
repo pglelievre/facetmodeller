@@ -12,6 +12,8 @@ import javax.swing.JComboBox;
 public final class ClickModeManager {
 
     // Mouse click modes:
+    // I'm not sure about this but probably best not to change the values here.
+    // IF A NEW CLICK MODE IS ADDED THEN YOU HAVE TO ADD IT IN THE CONTROLLER AND IN METHOD mode2ind.
     public static final int MODE_NULL                   =  0;
     public static final int MODE_INFO                   =  2;
     public static final int MODE_ORIGIN_2D              =  4;
@@ -22,8 +24,10 @@ public final class ClickModeManager {
     public static final int MODE_DELETE_NODES           = 24;
     public static final int MODE_MOVE_NODES             = 26;
     public static final int MODE_MERGE_NODES            = 27;
+    public static final int MODE_DUPLICATE_NODES        = 23;
     public static final int MODE_CHANGE_NODES_GROUP     = 28;
     public static final int MODE_CHANGE_NODES_SECTION   = 29;
+    public static final int MODE_CHANGE_NODES_COORDS    = 25;
     public static final int MODE_DEFINE_POLY_FACETS     = 30;
     public static final int MODE_DEFINE_POLY_FACETS_TRI = 31;
     public static final int MODE_DEFINE_TRI_FACETS      = 32;
@@ -37,15 +41,16 @@ public final class ClickModeManager {
     public static final int MODE_DELETE_REGIONS         = 42;
     public static final int MODE_ORIGIN_NODE_3D         = 50;
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     private int mode = MODE_NULL;
-    private JComboBox<String> clickModeSelector;
+    private final JComboBox<String> clickModeSelector;
     
     public ClickModeManager(FacetModeller con) {
         controller = con;
         // Create the click mode pull-down menu:
-        // IF A NEW CLICK MODE IS ADDED THEN YOU HAVE TO ADD IT HERE AND IN METHOD mode2ind
-        String[] clickModelStrings = new String[21];
+        // IF A NEW CLICK MODE IS ADDED THEN YOU HAVE TO ADD IT HERE AND IN METHOD mode2ind.
+        // ALSO SEE ClickTaskUtil AND MouseInteractionManager.
+        String[] clickModelStrings = new String[24];
         clickModelStrings[0] = ClickTaskUtil.IGNORE_TEXT;
         clickModelStrings[1] = ClickTaskUtil.INFO_TEXT;
         clickModelStrings[2] = ClickTaskUtil.ORIGIN_POINT_2D_TEXT;
@@ -55,25 +60,28 @@ public final class ClickModeManager {
         clickModelStrings[6] = ClickTaskUtil.DELETE_NODE_TEXT;
         clickModelStrings[7] = ClickTaskUtil.MOVE_NODE_TEXT;
         clickModelStrings[8] = ClickTaskUtil.MERGE_NODE_TEXT;
-        clickModelStrings[9] = ClickTaskUtil.CHANGE_NODE_GROUP_TEXT;
-        clickModelStrings[10] = ClickTaskUtil.DEFINE_POLY_FACET_TEXT;
-        clickModelStrings[11] = ClickTaskUtil.DEFINE_TRI_FACET_TEXT;
-        clickModelStrings[12] = ClickTaskUtil.DEFINE_LINE_FACET_TEXT;
-        clickModelStrings[13] = ClickTaskUtil.DELETE_FACET_TEXT;
-        clickModelStrings[14] = ClickTaskUtil.CHANGE_FACET_GROUP_TEXT;
-        clickModelStrings[15] = ClickTaskUtil.REVERSE_FACET_TEXT;
-        clickModelStrings[16] = ClickTaskUtil.FLIP_EDGE_TEXT;
-        //clickModelStrings[17] = "Split triangular facet into 3";
-        clickModelStrings[17] = ClickTaskUtil.DEFINE_NODE_ON_EDGE_TITLE;
-        clickModelStrings[18] = ClickTaskUtil.DEFINE_NODE_IN_FACET_TITLE;
-        clickModelStrings[19] = ClickTaskUtil.DEFINE_REGION_TEXT;
-        clickModelStrings[20] = ClickTaskUtil.DELETE_REGION_TEXT;
+        clickModelStrings[9] = ClickTaskUtil.DUPLICATE_NODE_TEXT;
+        clickModelStrings[10] = ClickTaskUtil.CHANGE_NODE_GROUP_TEXT;
+        clickModelStrings[11] = ClickTaskUtil.CHANGE_NODE_SECTION_TEXT;
+        clickModelStrings[12] = ClickTaskUtil.CHANGE_NODE_COORDS_TEXT;
+        clickModelStrings[13] = ClickTaskUtil.DEFINE_POLY_FACET_TEXT;
+        clickModelStrings[14] = ClickTaskUtil.DEFINE_TRI_FACET_TEXT;
+        clickModelStrings[15] = ClickTaskUtil.DEFINE_LINE_FACET_TEXT;
+        clickModelStrings[16] = ClickTaskUtil.DELETE_FACET_TEXT;
+        clickModelStrings[17] = ClickTaskUtil.CHANGE_FACET_GROUP_TEXT;
+        clickModelStrings[18] = ClickTaskUtil.REVERSE_FACET_TEXT;
+        clickModelStrings[19] = ClickTaskUtil.FLIP_EDGE_TEXT;
+        //clickModelStrings[20] = "Split triangular facet into 3";
+        clickModelStrings[20] = ClickTaskUtil.DEFINE_NODE_ON_EDGE_TITLE;
+        clickModelStrings[21] = ClickTaskUtil.DEFINE_NODE_IN_FACET_TITLE;
+        clickModelStrings[22] = ClickTaskUtil.DEFINE_REGION_TEXT;
+        clickModelStrings[23] = ClickTaskUtil.DELETE_REGION_TEXT;
         clickModeSelector = new JComboBox<>(clickModelStrings);
         clickModeSelector.setSelectedIndex(0); // null mode
         //clickModeSelector.addActionListener(actionListener);
         clickModeSelector.setEnabled(false);
     }
-
+    
     private int mode2ind(int mode) {
         // Convert click mode integer to clickModeSelector index:
         // IF A NEW CLICK MODE IS ADDED THEN YOU HAVE TO ADD IT HERE AND IN THE CONSTRUCTOR
@@ -87,20 +95,23 @@ public final class ClickModeManager {
             case MODE_DELETE_NODES:           return 6;
             case MODE_MOVE_NODES:             return 7;
             case MODE_MERGE_NODES:            return 8;
-            case MODE_CHANGE_NODES_GROUP:     return 9;
-            case MODE_DEFINE_POLY_FACETS:     return 10; // NOTE THE SAME RETURN VALUE AS BELOW
-            case MODE_DEFINE_POLY_FACETS_TRI: return 10; // NOTE THE SAME RETURN VALUE AS ABOVE
-            case MODE_DEFINE_TRI_FACETS:      return 11;
-            case MODE_DEFINE_LINE_FACETS:     return 12;
-            case MODE_DELETE_FACETS:          return 13;
-            case MODE_CHANGE_FACETS_GROUP:    return 14;
-            case MODE_REVERSE_FACETS:         return 15;
-            case MODE_EDGE_FLIP:              return 16;
-            //case MODE_SPLIT_TRI_FACETS:    return 17;
-            case MODE_ADD_NODES_ON_EDGES:     return 17;
-            case MODE_ADD_NODES_IN_FACETS:    return 18;
-            case MODE_ADD_REGIONS:            return 19;
-            case MODE_DELETE_REGIONS:         return 20;
+            case MODE_DUPLICATE_NODES:        return 9;
+            case MODE_CHANGE_NODES_GROUP:     return 10;
+            case MODE_CHANGE_NODES_SECTION:   return 11;
+            case MODE_CHANGE_NODES_COORDS:    return 12;
+            case MODE_DEFINE_POLY_FACETS:     return 13; // NOTE THE SAME RETURN VALUE AS DIRECTLY BELOW
+            case MODE_DEFINE_POLY_FACETS_TRI: return 13; // NOTE THE SAME RETURN VALUE AS DIRECTLY ABOVE
+            case MODE_DEFINE_TRI_FACETS:      return 14;
+            case MODE_DEFINE_LINE_FACETS:     return 15;
+            case MODE_DELETE_FACETS:          return 16;
+            case MODE_CHANGE_FACETS_GROUP:    return 17;
+            case MODE_REVERSE_FACETS:         return 18;
+            case MODE_EDGE_FLIP:              return 19;
+            //case MODE_SPLIT_TRI_FACETS:    return 20;
+            case MODE_ADD_NODES_ON_EDGES:     return 20;
+            case MODE_ADD_NODES_IN_FACETS:    return 21;
+            case MODE_ADD_REGIONS:            return 22;
+            case MODE_DELETE_REGIONS:         return 23;
             default: return MODE_NULL;
                 
         }

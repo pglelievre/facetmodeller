@@ -13,6 +13,7 @@ import facetmodeller.plc.RegionVector;
 //import fileio.FileUtils;
 import geometry.Dir3D;
 import geometry.MyPoint2D;
+import geometry.MyPoint2DVector;
 import geometry.MyPoint3D;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -70,6 +71,7 @@ public abstract class Section extends HasID implements SessionIO {
     }
     public abstract MyPoint2D getClicked1();
     public abstract MyPoint2D getClicked2();
+    public abstract MyPoint2DVector getCorners();
 
     public Color getColor() {
         return defaultInfo.getColor();

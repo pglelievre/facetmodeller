@@ -23,6 +23,9 @@ public final class DefineNodeInFacetClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_ADD_NODES_IN_FACETS; }
 
     @Override
+    public String text() { return ClickTaskUtil.DEFINE_NODE_IN_FACET_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.DEFINE_NODE_IN_FACET_TEXT; }
 
     @Override
@@ -163,27 +166,28 @@ public final class DefineNodeInFacetClickTask extends ControlledClickTask {
         boolean isSnapshot = (currentSection instanceof SnapshotSection);
 
         // Check if the nodes are all on-section:
-        boolean onSection = true;
-        for (int i=0 ; i<3 ; i++ ) {
-            if (currentFacet.getNode(i).isOff()) {
-                onSection = false;
-                break;
-            }
-        }
+        //boolean onSection = true;
+        //for (int i=0 ; i<3 ; i++ ) {
+        //    if (currentFacet.getNode(i).isOff()) {
+        //        onSection = false;
+        //        break;
+        //    }
+        //}
 
         // Check if the nodes are all in the same section:
-        boolean sameSection;
-        Section section;
-        if ( currentFacet.getSections().size() == 1 ) { // all in the same section so add to that section
-            sameSection = true;
-            section = currentFacet.getSections().get(0);
-        } else { // not all in the same section so add to the currentSection
-            sameSection = false;
-            section = currentSection;
-        }
+        //boolean sameSection;
+        //Section section;
+        //if ( currentFacet.getSections().size() == 1 ) { // all in the same section so add to that section
+        //    sameSection = true;
+        //    section = currentFacet.getSections().get(0);
+        //} else { // not all in the same section so add to the currentSection
+        //    sameSection = false;
+        //    section = currentSection;
+        //}
 
         // Check that nodes can be added to the section:
-        if ( !isSnapshot && !section.canAddNodesOnSection() ) {
+        //if ( !isSnapshot && !section.canAddNodesOnSection() ) {
+        if ( !isSnapshot && !currentSection.canAddNodesOnSection() ) {
             if (verbose) {
                 controller.clearCurrentFacet();
                 Dialogs.error(controller,"Nodes can not be added to the section.",title());
@@ -192,34 +196,32 @@ public final class DefineNodeInFacetClickTask extends ControlledClickTask {
         }
 
         // Check if the nodes are all in the same group:
-        boolean sameGroup = true;
-        Group group = currentFacet.getNode(0).getGroup();
-        for (int i=1 ; i<3 ; i++ ) {
-            if ( currentFacet.getNode(i).getGroup() != group ) {
-                sameGroup = false;
-                break;
-            }
-        }
-        if (!sameGroup) { group = currentGroup; } // not all in the same group so add to the currentGroup
+        //boolean sameGroup = true;
+        //Group group = currentFacet.getNode(0).getGroup();
+        //for (int i=1 ; i<3 ; i++ ) {
+        //    if ( currentFacet.getNode(i).getGroup() != group ) {
+        //        sameGroup = false;
+        //        break;
+        //    }
+        //}
+        //if (!sameGroup) { group = currentGroup; } // not all in the same group so add to the currentGroup
 
         // Create a new node at the cursor position and in the appropriate section and group:
-        Node newNode;
-        if (!isSnapshot && onSection && sameSection) { // create an on-section node on the same section
-            // Add new 2D point to the section:
-            MyPoint2D newPoint = p.deepCopy();
-            newNode = new NodeOnSection(newPoint,section,group);
-        } else { // create an off-section node
-            // Warn user:
-            if (!isSnapshot) {
-                if (verbose) {
-                    String message = "WARNING! That node must be added as an off-section node. Do you want to continue?";
-                    int response = Dialogs.yesno(controller,message,title());
-                    if ( response != Dialogs.YES_OPTION ) {
-                        controller.clearCurrentFacet();
-                        return null;
-                    }
-                }
-            }
+        //Node newNode;
+        //if (!isSnapshot && onSection && sameSection) { // create an on-section node on the same section
+        //    // Add new 2D point to the section:
+        //    MyPoint2D newPoint = p.deepCopy();
+        //    newNode = new NodeOnSection(newPoint,section,group);
+        //} else { // create an off-section node
+        //    // Warn user:
+        //    if (!isSnapshot && verbose && controller.getShowConfirmationDialogs()) {
+        //        String message = "WARNING! That node must be added as an off-section node. Do you want to continue?";
+        //        int response = Dialogs.yesno(controller,message,title());
+        //        if ( response != Dialogs.YES_OPTION ) {
+        //            controller.clearCurrentFacet();
+        //            return null;
+        //        }
+        //    }
             // Interpolate the new 3D point using the unshifted points:
             // (the barycentric coordinates from above are used
             //  but the interpolation uses unshifted points;
@@ -229,9 +231,10 @@ public final class DefineNodeInFacetClickTask extends ControlledClickTask {
             double z = bary.interpolate(p0.getZ(),p1.getZ(),p2.getZ());
             MyPoint3D newPoint = new MyPoint3D(x,y,z);
             // Create a new off-section node:
-            newNode = new NodeOffSection(newPoint,section,group);
-        }
-        return newNode;
+            //newNode = new NodeOffSection(newPoint,section,group);
+            return new NodeOffSection(newPoint,currentSection,currentGroup);
+        //}
+        //return newNode;
 
     }
     

@@ -21,13 +21,17 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     public static final Color DEFAULT_SECTION_COLOR = Color.WHITE;
     public static final Color DEFAULT_EDGE_COLOR = Color.BLACK;
     public static final Color DEFAULT_DEFINE_EDGE_COLOR = Color.WHITE;
+    public static final double DEFAULT_TRANSPARENCY = 0.5;
+    public static final double DEFAULT_NORMAL_LENGTH = 10.0;
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     
     private Color edgeColor = DEFAULT_EDGE_COLOR; // painting colour for edge overlays
     private Color defineFacetEdgeColor = DEFAULT_DEFINE_EDGE_COLOR; // painting colour for edge overlays when defining facets
     private MyPoint3D origin3D=null; // the origin of the 3D viewer
     private Node originNode3D=null; // a node to use as the origin of the 3D viewer
+    private double transparency=DEFAULT_TRANSPARENCY; // overlay transparency for 2D viewer
+    private double normalLength=DEFAULT_NORMAL_LENGTH; // spatial units
     
     public PaintingOptions(FacetModeller con) {
         super(con);
@@ -41,6 +45,8 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     public double getVerticalExaggeration() {
         return controller.getProjector3D().getVerticalExaggeration();
     }
+    public double getTransparency() { return transparency; }
+    public double getNormalLength() { return normalLength; }
     
     public void setEdgeColor(Color col) { edgeColor = col; }
     public void setDefineFacetEdgeColor(Color col) { defineFacetEdgeColor = col; }
@@ -51,6 +57,8 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     public void setVerticalExaggeration(double d) {
         controller.getProjector3D().setVerticalExaggeration(d);
     }
+    public void setTransparency(double d) { transparency = d; }
+    public void setNormalLength(double d) { normalLength = d; }
     
     public void clearOrigin3D() {
         originNode3D = null;
@@ -115,6 +123,48 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         controller.redraw2D();
     }
 
+    public void selectTransparency() {
+        String response = Dialogs.input(controller,"Enter the transparency factor [0,1] for overlays in the 2D view:","Overlay Transparency",Double.toString(getTransparency()));
+        if (response == null) { return; }
+        response = response.trim();
+        String[] ss = response.split("[ ]+");
+        if (ss.length!=1) {
+            Dialogs.error(controller,"You must enter a single numerical value. Please try again.","Error");
+            return;
+        }
+        double d;
+        try {
+            d = Double.parseDouble(ss[0].trim());
+            if ( d<0 || d>1 ) { throw new NumberFormatException(); }
+        } catch (NumberFormatException e) {
+            Dialogs.error(controller,"You must enter a numerical value on [0,1]. Please try again.","Error");
+            return;
+        }
+        setTransparency(d);
+        controller.redraw2D();
+    }
+
+    public void selectNormalLength() {
+        String response = Dialogs.input(controller,"Enter the plotting length for facet normal vectors (spatial units):","Facet Normal Length",Double.toString(getNormalLength()));
+        if (response == null) { return; }
+        response = response.trim();
+        String[] ss = response.split("[ ]+");
+        if (ss.length!=1) {
+            Dialogs.error(controller,"You must enter a single numerical value. Please try again.","Error");
+            return;
+        }
+        double d;
+        try {
+            d = Double.parseDouble(ss[0].trim());
+            if ( d<1 ) { throw new NumberFormatException(); }
+        } catch (NumberFormatException e) {
+            Dialogs.error(controller,"You must enter a positive, non-zero, numerical value. Please try again.","Error");
+            return;
+        }
+        setNormalLength(d);
+        controller.redraw3D();
+    }
+    
     // Wrappers for the CommonPaintingOptions class:
     @Override
     public void selectCalibrationColor() {
@@ -151,11 +201,11 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
             textLine = origin3D.toString();
         }
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
-        // Write the index of the node to use as the origin of the 3D viewer:
+        // Write the index of the node to use as the origin of the 3D viewer, and the normalLength, and the transparency factor, on the same line:
         if (originNode3D==null) {
-            textLine = "null";
+            textLine = "null " + normalLength + " " + transparency;
         } else {
-            textLine = Integer.toString( originNode3D.getID() );
+            textLine = originNode3D.getID() + " " + normalLength + " " + transparency;
         }
         return FileUtils.writeLine(writer,textLine);
     }
@@ -192,18 +242,31 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
                 origin3D = new MyPoint3D(x,y,z);
             } catch (NumberFormatException e) { return "Parsing 3D origin coordinates."; }
         }
-        // Read the index of the node to use as the origin of the 3D viewer:
+        // Read the index of the node to use as the origin of the 3D viewer, and the normalLength, from the same line:
         textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading 3D origin node ID line."; }
-        if (textLine.startsWith("null")) {
+        textLine = textLine.trim();
+        String[] s = textLine.split("[ ]+");
+        if (s.length<1) { return "Not enough values on 3D node origin / normal length line."; }
+        if (s[0].startsWith("null")) {
             originNode3D = null;
         } else {
             try {
-                int id = Integer.parseInt(textLine.trim());
+                int id = Integer.parseInt(s[0].trim());
                 originNode3D = controller.getNode(id);
                 if (originNode3D==null) { return "3D origin node ID not found."; }
-                if ( originNode3D.getID() != id ) { return "3D origin node ID not matched."; }
+                // if ( originNode3D.getID() != id ) { return "3D origin node ID not matched."; }
             } catch (NumberFormatException e) { return "Parsing 3D origin node ID."; }
+        }
+        if (s.length>1) {
+            try {
+                normalLength = Double.parseDouble(s[1].trim());
+            } catch (NumberFormatException e) { return "Parsing normal length."; }
+        }
+        if (s.length>2) {
+            try {
+                transparency = Double.parseDouble(s[2].trim());
+            } catch (NumberFormatException e) { return "Parsing transparency factor."; }
         }
         // Return successfully:
         return null;

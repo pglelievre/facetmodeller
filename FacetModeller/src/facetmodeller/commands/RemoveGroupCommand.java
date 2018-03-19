@@ -9,16 +9,18 @@ import facetmodeller.groups.Group;
  */
 public final class RemoveGroupCommand extends ControlledCommandVector{
     
-    private Group group;
+    private final Group group;
     
-    public RemoveGroupCommand(FacetModeller con, Group g) {
+    public RemoveGroupCommand(FacetModeller con, Group g, boolean removeObjects) {
         super(con,"Remove Group");
         group = g;
         // Create the remove nodes/facets/regions commands:
-        ModelManager mod = con.getModelManager();
-        add( new RemoveNodeCommandVector(mod,g.getNodes(),"") );
-        add( new RemoveFacetCommandVector(mod,g.getFacets(),"") );
-        add( new RemoveRegionCommandVector(mod,g.getRegions()) );
+        if (removeObjects) {
+            ModelManager mod = con.getModelManager();
+            add( new RemoveNodeCommandVector(mod,g.getNodes(),"") );
+            add( new RemoveFacetCommandVector(mod,g.getFacets(),"") );
+            add( new RemoveRegionCommandVector(mod,g.getRegions()) );
+        }
     }
     
     @Override

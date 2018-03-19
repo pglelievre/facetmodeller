@@ -5,6 +5,7 @@ import facetmodeller.commands.CommandVector;
 import facetmodeller.groups.GroupVector;
 import facetmodeller.plc.NodeVector;
 import geometry.MyPoint2D;
+import geometry.MyPoint2DVector;
 import geometry.MyPoint3D;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -21,7 +22,7 @@ public class NoImageDepthSection extends DepthSection {
     // ------------------ Properties -------------------
     
     private File nodeFile, eleFile; // required to support version 2 session files
-    private NoImageSection noImageSection; // composition required because already extending DepthSection class
+    private final NoImageSection noImageSection; // composition required because already extending DepthSection class
     
     // ------------------ Constructors -------------------
 
@@ -85,6 +86,8 @@ public class NoImageDepthSection extends DepthSection {
     public MyPoint2D getClicked1() { return noImageSection.getClicked1(); }
     @Override
     public MyPoint2D getClicked2() { return noImageSection.getClicked2(); }
+    @Override
+    public MyPoint2DVector getCorners() { return noImageSection.getCorners(); }
 
     @Override
     public int getWidth() { return noImageSection.getWidth(); }

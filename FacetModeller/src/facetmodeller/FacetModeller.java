@@ -284,7 +284,7 @@ public final class FacetModeller extends JFrameExit {
         if (!hasSections()) { return false; }
         if (!hasGroups()) { return false; }
         if (getSelectedCurrentSection()==null) { return false; }
-        if (getSelectedCurrentGroup()==null) { return false; }
+        //if (getSelectedCurrentGroup()==null) { return false; }
         return hasNodes();
     }
     public void endOriginNode3D() {
@@ -358,7 +358,9 @@ public final class FacetModeller extends JFrameExit {
     public CommandVector snapToCalibration(double pickingRadius, GroupVector groups, boolean doH, boolean doV) {
         return modelManager.snapToCalibration(pickingRadius,groups,doH,doV);
     }
-    public CommandVector translateNodes(MyPoint3D p) { return modelManager.translate(p); }
+    public CommandVector translateNodes(MyPoint3D p, GroupVector groups) {
+        return modelManager.translate(p,groups);
+    }
     public void scalePixels(double factor) { modelManager.scalePixels(factor); }
     
     // Wrappers for the ViewManager and ModelManager classes:
@@ -404,6 +406,7 @@ public final class FacetModeller extends JFrameExit {
     public boolean getShowAll() { return viewManager.getShowAll(); }
     public boolean getShowVOI() { return viewManager.getShowVOI(); }
     public boolean getShowFaces() { return viewManager.getShowFaces(); }
+    public boolean getShowNormals() { return viewManager.getShowNormals(); }
     public boolean getShowRegions() { return viewManager.getShowRegions(); }
     public boolean getNodeColorBySection() { return viewManager.getNodeColorBySection(); }
     public SectionVector getSelectedOtherSections() { return viewManager.getSelectedOtherSections(); }
@@ -475,6 +478,8 @@ public final class FacetModeller extends JFrameExit {
     public Color getDefineFacetEdgeColor() { return viewManager.getDefineFacetEdgeColor(); }
     public int getPointWidth() { return viewManager.getPointWidth(); }
     public int getLineWidth() { return viewManager.getLineWidth(); }
+    public double getTransparency() { return viewManager.getTransparency(); }
+    public double getNormalLength() { return viewManager.getNormalLength(); }
     public Node getOriginNode3D() { return viewManager.getOriginNode3D(); }
     public void setCalibrationColor(Color c) { viewManager.setCalibrationColor(c); }
     public void setEdgeColor(Color c) { viewManager.setEdgeColor(c); }
@@ -487,6 +492,8 @@ public final class FacetModeller extends JFrameExit {
     public void selectDefineFacetEdgeColor() { viewManager.selectDefineFacetEdgeColor(); }
     public void selectPointWidth() { viewManager.selectPointWidth(); }
     public void selectLineWidth() { viewManager.selectLineWidth(); }
+    public void selectTransparency() { viewManager.selectTransparency(); }
+    public void selectNormalLength() { viewManager.selectNormalLength(); }
     public void selectVerticalExaggeration() { viewManager.selectVerticalExaggeration(); }
     public void selectBackgroundColor() { viewManager.selectBackgroundColor(); }
     public void selectSectionColor() { viewManager.selectSectionColor(); }

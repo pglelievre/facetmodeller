@@ -17,8 +17,8 @@ public final class MergeGroupsCommand extends ControlledCommandVector {
         add( new ChangeFacetGroupCommandVector( groupMerged.getFacets(), groupKept, "") );
         // Change the group membership for any regions associated with the ith group:
         add( new ChangeRegionGroupCommandVector( groupMerged.getRegions(), groupKept) );
-        // Remove the merged group:
-        add( new RemoveGroupCommand(con,groupMerged) );
+        // Remove the merged group but not the associated objects (nodes,facets,regions):
+        add( new RemoveGroupCommand(con,groupMerged,false) );
     }
     
 }

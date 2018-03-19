@@ -8,6 +8,7 @@ import geometry.MyPoint2D;
 public interface ClickTask {
     
     public int mode(); // returns a click mode associated with the task
+    public String text(); // text for menu items and in pull-down list
     public String tip(); // tool tip string for menu items or buttons
     public String title(); // title for dialogs
     public boolean check(); // return true if all the required information is available

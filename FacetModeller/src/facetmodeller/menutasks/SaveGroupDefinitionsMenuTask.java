@@ -2,9 +2,6 @@ package facetmodeller.menutasks;
 
 import dialogs.Dialogs;
 import facetmodeller.FacetModeller;
-import facetmodeller.groups.GroupVector;
-import fileio.FileUtils;
-import java.io.BufferedWriter;
 import java.io.File;
 import javax.swing.JFileChooser;
 

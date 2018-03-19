@@ -12,6 +12,9 @@ public final class OriginPoint2DClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_ORIGIN_2D; }
 
     @Override
+    public String text() { return ClickTaskUtil.ORIGIN_POINT_2D_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.ORIGIN_POINT_2D_TEXT; }
 
     @Override

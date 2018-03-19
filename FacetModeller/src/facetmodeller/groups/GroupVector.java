@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 /** A Vector of Group objects.
@@ -171,6 +172,11 @@ public class GroupVector {
      * @param g */
     public void remove(Group g) {
         vector.remove(g);
+    }
+
+    /** Reverses the order of the elements in the vector. */
+    public void reverseOrder() {
+        Collections.reverse(vector);
     }
 
     /** Resets the ID values from 0 to the size of the vector in the order listed. */

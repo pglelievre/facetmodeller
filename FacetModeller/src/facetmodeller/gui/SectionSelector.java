@@ -138,7 +138,7 @@ public class SectionSelector extends JListSelector {
 
     /** Listens for list selection changes. */
     private class SelectionListener implements ListSelectionListener {
-        private FacetModeller controller;
+        private final FacetModeller controller;
         private boolean currentFlag=false;
         public SelectionListener(FacetModeller con, boolean cf) {
             controller = con;

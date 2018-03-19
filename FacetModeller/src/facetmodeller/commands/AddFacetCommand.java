@@ -8,7 +8,7 @@ import facetmodeller.plc.Facet;
  */
 public final class AddFacetCommand extends ModelCommand {
     
-    private Facet facet; // the facet added
+    private final Facet facet; // the facet added
     
     public AddFacetCommand(ModelManager mod, Facet f) {
         super(mod,"Add Facet");

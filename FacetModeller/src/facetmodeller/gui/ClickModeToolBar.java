@@ -25,16 +25,16 @@ public final class ClickModeToolBar extends JToolBar {
     private final FacetModeller controller;
     
     // The MenuTaskButtons:
-    private MenuTaskButton buttonResetSnapshot;
+    private final MenuTaskButton buttonResetSnapshot;
     
     // The ClickTaskButtons:
-    private ClickTaskButton buttonModeInfo, buttonModeSetOrigin2D, buttonModeOriginNode3D, //buttonModeCalibrate,
+    private final ClickTaskButton buttonModeInfo, buttonModeSetOrigin2D, buttonModeOriginNode3D, //buttonModeCalibrate,
         buttonModeAddNodes, buttonModeAddNodesInTriFacets, buttonModeDeleteNodes, buttonModeMoveNodes, buttonModeMergeNodes, buttonModeChangeNodes, buttonModeAddNodesOnEdges,
         buttonModeDefinePolyFacets, buttonModeDefinePolyFacetsTri, buttonModeDefineTriFacets, buttonModeDefineLineFacets, buttonModeDeleteFacets, buttonModeChangeFacets,
         buttonModeReverseFacets, buttonModeEdgeFlip;
         
-    private ArrayList<MenuTaskButton> taskButtons = new ArrayList<>();
-    private ArrayList<ClickTaskButton> clickTaskButtons = new ArrayList<>();
+    private final ArrayList<MenuTaskButton> taskButtons = new ArrayList<>();
+    private final ArrayList<ClickTaskButton> clickTaskButtons = new ArrayList<>();
 
     /** Makes the tool bar.
      * @param con FacetModeller window (JFrame extension) to place the menu on.
@@ -95,7 +95,6 @@ public final class ClickModeToolBar extends JToolBar {
             final ImageIcon icon = new ImageIcon(imgURL);
             button = new ClickTaskButton(task,icon);
         }
-        button.setToolTipText(task.title());
         button.addActionListener(listener);
         add(button);
         clickTaskButtons.add(button);

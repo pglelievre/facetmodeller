@@ -18,6 +18,9 @@ public final class DefineNodeClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_ADD_NODES; }
 
     @Override
+    public String text() { return ClickTaskUtil.DEFINE_NODE_TEXT; }
+
+    @Override
     public String tip() { return "Add new nodes on the current section"; }
 
     @Override

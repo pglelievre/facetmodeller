@@ -426,11 +426,15 @@ public class NodeVector {
         
         // Open the file for reading:
         BufferedReader reader = FileUtils.openForReading(file);
-        if (reader==null) { return null; }
+        if (reader==null) { return new ReadNodesReturnObject("Could not open .node file for reading."); }
 
         // Read the header:
         String textLine = FileUtils.readLine(reader);
-        if (textLine==null) { FileUtils.close(reader); return null; }
+        if (textLine==null) {
+            FileUtils.close(reader);
+            return new ReadNodesReturnObject("Problem reading .node file header.");
+        }
+        if (textLine.contains("\t")) { return new ReadNodesReturnObject("Tab character encountered in .node file."); }
         textLine = textLine.trim();
         String[] ss = textLine.split("[ ]+",4);
         int nnodes, ndim, nat; // number of nodes, dimensions, attributes, boundary markers
@@ -438,13 +442,16 @@ public class NodeVector {
             nnodes = Integer.parseInt(ss[0].trim()); // converts to integer
             ndim   = Integer.parseInt(ss[1].trim()); // converts to integer
             nat   = Integer.parseInt(ss[2].trim()); // converts to integer
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) { FileUtils.close(reader); return null; }
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            FileUtils.close(reader);
+            return new ReadNodesReturnObject("Problem reading .node file header.");
+        }
         
         // Check the number of dimensions:
         if (ndimensions>0) {
             if (ndim!=ndimensions) {
                 FileUtils.close(reader);
-                return null;
+                return new ReadNodesReturnObject("Number of dimensions in .node file is inconsistent with number of dimensions in model.");
             }
         }
         
@@ -457,10 +464,14 @@ public class NodeVector {
 
             // Read the coordinates of the ith node:
             textLine = FileUtils.readLine(reader);
-            if (textLine==null) { FileUtils.close(reader); return null; }
-            double x,y,z,a=0;
+            if (textLine==null) {
+                FileUtils.close(reader);
+                return new ReadNodesReturnObject("Not enough lines in .node file.");
+            }
+            if (textLine.contains("\t")) { return new ReadNodesReturnObject("Tab character encountered in .node file."); }
             textLine = textLine.trim();
             ss = textLine.split("[ ]+",6);
+            double x,y,z,a=0;
             try {
                 x = Double.parseDouble(ss[1].trim()); // converts to Double
                 y = Double.parseDouble(ss[2].trim());
@@ -476,7 +487,10 @@ public class NodeVector {
                         a = Double.parseDouble(ss[3].trim());
                     }
                 }
-            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) { FileUtils.close(reader); return null; }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                FileUtils.close(reader);
+                return new ReadNodesReturnObject("Problem in .node file: coordinates for node "+(i+1)+".");
+            }
 
             // Check for integer attributes:
             int att=0;
@@ -511,24 +525,29 @@ public class NodeVector {
 
         // Close the file and return:
         FileUtils.close(reader);
-        ReadNodesReturnObject obj = new ReadNodesReturnObject();
-        obj.setDoAtts(doAtts);
-        obj.setN( uniqueAttributes.size() );
-        return obj;
+        return new ReadNodesReturnObject(doAtts,uniqueAttributes.size());
 
     }
     
     @SuppressWarnings("PublicInnerClass")
     public static class ReadNodesReturnObject {
-        private boolean doAtts;
-        private int n;
-        public void ReadNodesReturnObject() {}
-        private void setDoAtts(boolean doAtts) { // not sure why but netbeans won't let me set doAtts in the constructor
-            this.doAtts = doAtts;
+        
+        private boolean doAtts=false;
+        private int n=0;
+        private String errmsg=null;
+        
+        public ReadNodesReturnObject(boolean b, int i) {
+            doAtts = b;
+            n = i;
         }
-        private void setN(int n) { this.n = n; }
-        public boolean doAtts() { return doAtts; }
+        public ReadNodesReturnObject(String s) {
+            errmsg = s;
+        }
+        
+        public boolean getDoAtts() { return doAtts; }
         public int getN() { return n; }
+        public String getErrmsg() { return errmsg; }
+        
     }
 
 }

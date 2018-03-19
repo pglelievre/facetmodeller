@@ -116,14 +116,15 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
         // Read the node file:
         NodeVector nodes = new NodeVector();
         NodeVector.ReadNodesReturnObject readNodesReturnObj = nodes.readNodes(nodeFile,-2);
-        if (readNodesReturnObj==null) {
-            Dialogs.error(controller,"Failed to read .node file.",title());
+        String errmsg = readNodesReturnObj.getErrmsg();
+        if (errmsg!=null) {
+            Dialogs.error(controller,errmsg,title());
             return;
         }
         
         // Check for attributes:
         boolean doNodeAtts = false;
-        if (readNodesReturnObj.doAtts()) {
+        if (readNodesReturnObj.getDoAtts()) {
             String prompt = "Do you want to use the NODE attributes to define new NODE groups?";
             response = Dialogs.question(controller,prompt,title());
             if (response==Dialogs.CANCEL_OPTION) { return; }
@@ -142,9 +143,9 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
         if (eleFile!=null) {
             readFacetsReturnObj = facets.readEle(controller,title(),eleFile,nodes,ndim,true);
             if (readFacetsReturnObj==null) { return; } // user cancelled
-            s = readFacetsReturnObj.getErrmsg();
-            if (s!=null) {
-                Dialogs.error(controller, "Failed to read .ele file: " + s ,title());
+            errmsg = readFacetsReturnObj.getErrmsg();
+            if (errmsg!=null) {
+                Dialogs.error(controller,errmsg,title());
                 return;
             }
             // Check for attributes:

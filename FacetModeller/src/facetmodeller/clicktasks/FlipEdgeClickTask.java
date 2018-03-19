@@ -19,6 +19,9 @@ public final class FlipEdgeClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_EDGE_FLIP; }
 
     @Override
+    public String text() { return ClickTaskUtil.FLIP_EDGE_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.FLIP_EDGE_TEXT; }
 
     @Override

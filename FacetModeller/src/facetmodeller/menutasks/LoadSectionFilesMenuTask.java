@@ -11,7 +11,7 @@ import javax.swing.JFileChooser;
  */
 public final class LoadSectionFilesMenuTask extends ControlledMenuTask {
     
-    private boolean iscross;
+    private final boolean iscross;
     
     public LoadSectionFilesMenuTask(FacetModeller con, boolean b) {
         super(con);

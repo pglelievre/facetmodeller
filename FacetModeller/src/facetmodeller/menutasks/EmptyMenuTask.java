@@ -24,7 +24,7 @@ public final class EmptyMenuTask extends ControlledMenuTask {
     @Override
     public void execute() {
         // Check for the required information:
-        if (!check()) { return; }
+        //if (!check()) { return; }
     }
     
 }

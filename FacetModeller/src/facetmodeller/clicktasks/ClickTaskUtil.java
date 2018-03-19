@@ -23,10 +23,14 @@ public final class ClickTaskUtil {
     public static final String MOVE_NODE_TITLE = "Move Node";
     public static final String MERGE_NODE_TEXT  = "Merge nodes";
     public static final String MERGE_NODE_TITLE = "Merge Nodes";
+    public static final String DUPLICATE_NODE_TEXT  = "Duplicate nodes";
+    public static final String DUPLICATE_NODE_TITLE = "Duplicate Nodes";
     public static final String CHANGE_NODE_GROUP_TEXT  = "Change node group";
     public static final String CHANGE_NODE_GROUP_TITLE = "Change Node Group";
     public static final String CHANGE_NODE_SECTION_TEXT  = "Change node section";
     public static final String CHANGE_NODE_SECTION_TITLE = "Change Node Section";
+    public static final String CHANGE_NODE_COORDS_TEXT  = "Change node coordinates";
+    public static final String CHANGE_NODE_COORDS_TITLE = "Change Node Coordinates";
     public static final String CHANGE_FACET_GROUP_TEXT  = "Change facet group";
     public static final String CHANGE_FACET_GROUP_TITLE = "Change Facet Group";
     public static final String DEFINE_POLY_FACET_TEXT = "Define facets node-by-node";

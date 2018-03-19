@@ -18,10 +18,10 @@ public final class Panel3D extends JPanel implements ZoomableSessionIO {
     // TODO: implement Zoomable and SessionIO separately once Java allows implementing multiple interfaces
     private static final long serialVersionUID = 1L;
     
-    private FacetModeller controller;
-    private ViewBar viewBar;
-    private View3DPanel viewPanel; // the 3D viewer panel
-    private ZoomBar zoomBar;
+    private final FacetModeller controller;
+    private final ViewBar viewBar;
+    private final View3DPanel viewPanel; // the 3D viewer panel
+    private final ZoomBar zoomBar;
     
     public Panel3D(FacetModeller con) {
         // Set the controller:

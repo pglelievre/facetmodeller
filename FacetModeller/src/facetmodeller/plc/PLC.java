@@ -21,11 +21,11 @@ public class PLC {
 
     // -------------------- Properties -------------------
 
-    private static double TOLZERO = 1.0E-9; // if any node coordinates are closer than this to zero then they are written as zero
+    private static final double TOLZERO = 1.0E-9; // if any node coordinates are closer than this to zero then they are written as zero
     
-    private NodeVector nodes = new NodeVector(); // list of nodes
-    private FacetVector facets = new FacetVector(); // list of facets
-    private RegionVector regions = new RegionVector(); // list of regions
+    private final NodeVector nodes = new NodeVector(); // list of nodes
+    private final FacetVector facets = new FacetVector(); // list of facets
+    private final RegionVector regions = new RegionVector(); // list of regions
     //private String header = "# Poly file written by FacetModeller (Java implementation)";
 
     // ------------------- Constructor ------------------
@@ -283,13 +283,16 @@ public class PLC {
     
     /** Translates all nodes.
      * @param t The translation to apply.
+     * @param groups Only translate nodes in these groups.
      * @return Commands that were executed to change the node positions.
      */
-    public CommandVector translate(MyPoint3D t) {
+    public CommandVector translate(MyPoint3D t, GroupVector groups) {
         CommandVector commands = new CommandVector("");
         // Loop over each node in the PLC:
         for (int i=0 ; i<nodes.size() ; i++ ) {
             Node node = nodes.get(i);
+            // Skip nodes not in the supplied groups:
+            if ( groups!=null && !groups.contains(node.getGroup()) ) { continue; }
             // Get the 3D point for the node:
             MyPoint3D p = node.getPoint3D();
             if (p==null) { continue; } // section might not be calibrated

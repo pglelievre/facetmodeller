@@ -8,7 +8,7 @@ import facetmodeller.plc.Region;
  */
 public final class AddRegionCommand extends ModelCommand {
     
-    private Region region; // the region added
+    private final Region region; // the region added
     
     public AddRegionCommand(ModelManager mod, Region r) {
         super(mod,"Add Region");

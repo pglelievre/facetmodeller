@@ -9,7 +9,7 @@ import facetmodeller.sections.Section;
  */
 public final class RemoveSectionCommand extends ControlledCommandVector {
     
-    private Section section;
+    private final Section section;
     
     public RemoveSectionCommand(FacetModeller con, Section s) {
         super(con,"Remove Section");

@@ -7,7 +7,7 @@ import facetmodeller.groups.GroupVector;
 
 public abstract class MoveGroupMenuTask extends ControlledMenuTask {
     
-    private int move;
+    private final int move;
     
     public MoveGroupMenuTask(FacetModeller con, int i) {
         super(con);
@@ -37,6 +37,8 @@ public abstract class MoveGroupMenuTask extends ControlledMenuTask {
         controller.setSelectedCurrentGroupIndex(ind2);
         controller.setSelectedNodeGroups(selectedNodeGroups);
         controller.setSelectedFacetGroups(selectedFacetGroups);
+        // Redraw 2D because group ordering may affect the order that the overlays are painted:
+        controller.redraw2D();
     }
     
 }

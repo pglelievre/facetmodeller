@@ -8,9 +8,9 @@ import facetmodeller.plc.Region;
  */
 public final class ChangeRegionGroupCommand extends Command {
     
-    private Region region; // the region changed
-    private Group oldGroup; // the old group (existing region group on construction)
-    private Group newGroup; // the new group
+    private final Region region; // the region changed
+    private final Group oldGroup; // the old group (existing region group on construction)
+    private final Group newGroup; // the new group
     
     public ChangeRegionGroupCommand(Region r, Group g) {
         super("Change Region Group");

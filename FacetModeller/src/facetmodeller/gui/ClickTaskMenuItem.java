@@ -10,10 +10,11 @@ import javax.swing.JMenuItem;
 public final class ClickTaskMenuItem extends JMenuItem implements CheckableEnabled {
     private static final long serialVersionUID = 1L;
     
-    private ClickTask task;
+    private final ClickTask task;
     
     public ClickTaskMenuItem(ClickTask t) {
-        super(t.tip()); // tip=text
+        super(t.text());
+        setToolTipText(t.tip());
         task = t;
     }
     

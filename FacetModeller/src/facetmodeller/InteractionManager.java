@@ -12,8 +12,8 @@ import java.io.BufferedWriter;
  */
 public class InteractionManager implements SessionIO {
     
-    private MouseInteractionManager mouseManager; // manages mouse interactions
-    private InteractionOptions interactionOptions; // interaction options
+    private final MouseInteractionManager mouseManager; // manages mouse interactions
+    private final InteractionOptions interactionOptions; // interaction options
     
     public InteractionManager(FacetModeller con, int ndim) {
         mouseManager = new MouseInteractionManager(con);

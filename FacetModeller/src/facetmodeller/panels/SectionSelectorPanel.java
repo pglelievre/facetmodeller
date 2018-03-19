@@ -24,8 +24,8 @@ import javax.swing.JScrollPane;
 public final class SectionSelectorPanel extends JPanel implements SessionIO {
     private static final long serialVersionUID = 1L;
 
-    private SectionSelector currentSectionSelector, otherSectionSelector;
-    private JButton clearOtherButton;
+    private final SectionSelector currentSectionSelector, otherSectionSelector;
+    private final JButton clearOtherButton;
 
     public SectionSelectorPanel(FacetModeller con) {
         
@@ -81,7 +81,7 @@ public final class SectionSelectorPanel extends JPanel implements SessionIO {
     }
 
     private class ClearOtherButtonListener implements ActionListener {
-        private FacetModeller controller;
+        private final FacetModeller controller;
         public ClearOtherButtonListener(FacetModeller con) {
             controller = con;
         }

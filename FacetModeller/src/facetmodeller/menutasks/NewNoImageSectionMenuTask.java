@@ -14,7 +14,7 @@ import javax.swing.JColorChooser;
  */
 public final class NewNoImageSectionMenuTask extends ControlledMenuTask {
     
-    private boolean iscross;
+    private final boolean iscross;
     
     public NewNoImageSectionMenuTask(FacetModeller con, boolean b) {
         super(con);

@@ -14,6 +14,9 @@ public final class ChangeFacetGroupClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_CHANGE_FACETS_GROUP; }
 
     @Override
+    public String text() { return ClickTaskUtil.CHANGE_FACET_GROUP_TEXT; }
+
+    @Override
     public String tip() { return "Change a facet's group"; }
 
     @Override

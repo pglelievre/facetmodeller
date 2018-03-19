@@ -4,6 +4,7 @@ import facetmodeller.commands.CommandVector;
 import facetmodeller.groups.GroupVector;
 import facetmodeller.plc.NodeVector;
 import geometry.MyPoint2D;
+import geometry.MyPoint2DVector;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,7 +18,7 @@ public class ImageDepthSection extends DepthSection {
 
     // ------------------ Properties -------------------
     
-    private ImageSection imageSection;
+    private final ImageSection imageSection;
 
     // ------------------ Constructor -------------------
 
@@ -75,6 +76,8 @@ public class ImageDepthSection extends DepthSection {
     public MyPoint2D getClicked1() { return imageSection.getClicked1(); }
     @Override
     public MyPoint2D getClicked2() { return imageSection.getClicked2(); }
+    @Override
+    public MyPoint2DVector getCorners() { return imageSection.getCorners(); }
 
     @Override
     public int getWidth() { return imageSection.getWidth(); }

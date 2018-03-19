@@ -10,7 +10,7 @@ import facetmodeller.sections.Section;
  */
 public final class SnapToGridMenuTask extends ControlledMenuTask {
     
-    private boolean doH, doV;
+    private final boolean doH, doV;
     
     public SnapToGridMenuTask(FacetModeller con,boolean bH, boolean bV) {
         super(con);

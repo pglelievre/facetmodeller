@@ -15,6 +15,9 @@ public final class DeleteNodeClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_DELETE_NODES; }
 
     @Override
+    public String text() { return ClickTaskUtil.DELETE_NODE_TEXT; }
+
+    @Override
     public String tip() { return "Delete painted nodes"; }
 
     @Override

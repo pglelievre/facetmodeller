@@ -32,19 +32,20 @@ public final class MenuBar extends JMenuBar {
             miExportNodes, miExportFacets, miExportRegions, miExportVTU, miExportAll,
             miChangeSectionColor, miPLCInfo,miDefineVOI,
             miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miDefaultBackgroundColor,miSelectBackgroundColor,
-            miPointWidth, miLineWidth, miShiftStep2D,miPanStep2D, miVerticalExaggeration,
+            miPointWidth, miLineWidth, miTransparency, miNormalLength, miShiftStep2D,miPanStep2D, miVerticalExaggeration,
             miPickingRadius, miAutoFacetFactor, miToggleToolPanel, miToggleView3DPanel1, miToggleView3DPanel2, miToggleScroller,
             miClearOrigin3D, miShowConfirmationDialogs, miHideConfirmationDialogs;
-    private ClickTaskMenuItem miNullMode,miInfoMode,miSetOrigin2DMode,miAddNodes,miDeleteNodes,miMoveNodes,miMergeNodes,miChangeNodes,miChangeNodesSection,
+    private ClickTaskMenuItem miNullMode,miInfoMode,miSetOrigin2DMode, miSetOriginNode3DMode,
+            miAddNodes,miDeleteNodes,miMoveNodes,miMergeNodes,miDuplicateNodes,miChangeNodes,miChangeNodesSection,miChangeNodesCoords,
             miDefinePolyFacets,miDefinePolyFacetsTri,miDefineTriFacets,miDefineLineFacets,miDeleteFacets,miChangeFacets,
             miReverseFacets,miEdgeFlip,miAddNodesInTriFacets,miAddNodesOnEdges,
             miAddRegions,miDeleteRegions;
     private MenuTaskMenuItem miUndo,miSaveSession,miSaveSessionAs,miLoadNodesAndFacets,
             miLoadCrossSectionImages,miLoadDepthSectionImages,miLoadGroups,miSaveGroups,
             miSectionInfo,miNewNoImageCrossSection,miNewNoImageDepthSection,miNewSnapshotSection,miResetSnapshotSection,
-            miGroupUp1,miGroupUp2,miGroupTop,miGroupDown1,miGroupDown2,miGroupBottom,
+            miReverseGroupOrder,miGroupUp1,miGroupUp2,miGroupTop,miGroupDown1,miGroupDown2,miGroupBottom,
             miSectionName, miGroupName,miGroupColor,miGroupNodeColor,miGroupFacetColor,miGroupRegionColor,
-            miCopyCalibration, miNodesAtCalibration, miAddNodesVOI,
+            miCopyCalibration, miNodesAtCalibration, miAddNodesVOI, miAddNodesSection, miAddNodeCoordinates,
             miSnapToCalibration,miSnapToCalibrationVertical,miSnapToCalibrationHorizontal,
             miSnapToVOI,miSnapToVOIVertical,miSnapToVOIHorizontal,
             miSnapToGrid,miSnapToGridVertical,miSnapToGridHorizontal,miTranslate,miScalePixels,
@@ -53,8 +54,8 @@ public final class MenuBar extends JMenuBar {
             miFindNodesIndex,miFindFacetsIndex,miSplitGroupVOI,miSplitGroupBoundary,
             miDeleteNodeGroup,miDeleteFacetGroup,miDeleteDisplayedNodes,miDeleteDisplayedFacets,miDeleteSection,miNewGroup,miDeleteGroup,miMergeGroups,
             miCalibrate,miNodeOrigin3D,miCalibrateTyped,miSaveView3D,miLoadView3D;
-    private ArrayList<ClickTaskMenuItem> clickTaskMenuItems = new ArrayList<>();
-    private ArrayList<MenuTaskMenuItem> menuTaskMenuItems = new ArrayList<>();
+    private final ArrayList<ClickTaskMenuItem> clickTaskMenuItems = new ArrayList<>();
+    private final ArrayList<MenuTaskMenuItem> menuTaskMenuItems = new ArrayList<>();
 
     /** Makes the menu bar.
      * @param con FacetModeller window (JFrame extension) to place the menu on.
@@ -96,15 +97,19 @@ public final class MenuBar extends JMenuBar {
         miExportAll = makeMenuItem("All possible files",listener);
 
         // Build the click mode menu items:
+        // (the calibrate click mode is absent)
         miNullMode = makeClickTaskMenuItem(ClickModeManager.MODE_NULL,listener);
-        miSetOrigin2DMode = makeClickTaskMenuItem(ClickModeManager.MODE_ORIGIN_2D,listener);
         miInfoMode = makeClickTaskMenuItem(ClickModeManager.MODE_INFO,listener);
+        miSetOrigin2DMode = makeClickTaskMenuItem(ClickModeManager.MODE_ORIGIN_2D,listener);
+        miSetOriginNode3DMode = makeClickTaskMenuItem(ClickModeManager.MODE_ORIGIN_NODE_3D,listener);
         miAddNodes = makeClickTaskMenuItem(ClickModeManager.MODE_ADD_NODES,listener);
         miDeleteNodes = makeClickTaskMenuItem(ClickModeManager.MODE_DELETE_NODES,listener);
         miMoveNodes = makeClickTaskMenuItem(ClickModeManager.MODE_MOVE_NODES,listener);
         miMergeNodes = makeClickTaskMenuItem(ClickModeManager.MODE_MERGE_NODES,listener);
+        miDuplicateNodes = makeClickTaskMenuItem(ClickModeManager.MODE_DUPLICATE_NODES,listener);
         miChangeNodes = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_NODES_GROUP,listener);
         miChangeNodesSection = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_NODES_SECTION,listener);
+        miChangeNodesCoords = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_NODES_COORDS,listener);
         miAddRegions = makeClickTaskMenuItem(ClickModeManager.MODE_ADD_REGIONS,listener);
         miDeleteRegions = makeClickTaskMenuItem(ClickModeManager.MODE_DELETE_REGIONS,listener);
         miDefinePolyFacets = makeClickTaskMenuItem(ClickModeManager.MODE_DEFINE_POLY_FACETS,listener);
@@ -138,6 +143,7 @@ public final class MenuBar extends JMenuBar {
         miNewGroup = makeMenuTaskMenuItem(new NewGroupMenuTask(controller),listener);
         miDeleteGroup = makeMenuTaskMenuItem(new DeleteGroupMenuTask(controller),listener);
         miMergeGroups = makeMenuTaskMenuItem(new MergeGroupsMenuTask(controller),listener);
+        miReverseGroupOrder = makeMenuTaskMenuItem(new ReverseGroupOrderMenuTask(controller),listener);
         miGroupUp1 = makeMenuTaskMenuItem(new MoveGroupUp1MenuTask(controller),"Up 1",listener);
         miGroupUp2 = makeMenuTaskMenuItem(new MoveGroupUp2MenuTask(controller),"Up 2",listener);
         miGroupTop = makeMenuTaskMenuItem(new MoveGroupTopMenuTask(controller),"To top",listener);
@@ -168,7 +174,9 @@ public final class MenuBar extends JMenuBar {
         miClearPLC = makeMenuTaskMenuItem(new ClearPLCMenuTask(controller),"All nodes, facets and regions",listener);
         miClearFacets = makeMenuTaskMenuItem(new ClearFacetsMenuTask(controller),"All facets",listener);
         miDefineVOI = makeMenuItem("Define volume of interest (VOI)",listener);
-        miAddNodesVOI = makeMenuTaskMenuItem(new DefineNodesVOIMenuTask(controller),listener);
+        miAddNodesVOI = makeMenuTaskMenuItem(new DefineNodesVOIMenuTask(controller),"nodes on VOI corners",listener);
+        miAddNodesSection = makeMenuTaskMenuItem(new DefineNodesSectionMenuTask(controller),"nodes on section corners",listener);
+        miAddNodeCoordinates = makeMenuTaskMenuItem(new DefineNodeCoordinatesMenuTask(controller),"node at specified coordinates",listener);
         miFindNodesIndex = makeMenuTaskMenuItem(new FindNodesIndexMenuTask(controller),"Nodes by index",listener);
         miFindFacetsIndex = makeMenuTaskMenuItem(new FindFacetsIndexMenuTask(controller),"Facets by index",listener);
         miFindNodesVOI = makeMenuTaskMenuItem(new FindNodesOutsideVOIMenuTask(controller),"Nodes outside of VOI",listener);
@@ -191,6 +199,8 @@ public final class MenuBar extends JMenuBar {
         miDefineFacetEdgeColor = makeMenuItem("Change facet edge color when defining",listener);
         miPointWidth = makeMenuItem("Point size",listener);
         miLineWidth = makeMenuItem("Line width",listener);
+        miTransparency = makeMenuItem("Overlay transparency",listener);
+        miNormalLength = makeMenuItem("Facet normal length","Change the drawing length for facet normal vectors",listener);
         
         // Build the interaction menu items:
         miShiftStep2D = makeMenuItem("Shift step (2D viewer)",listener);
@@ -290,13 +300,16 @@ public final class MenuBar extends JMenuBar {
         this.add(modeMenu);
         modeMenu.add(miNullMode);
         modeMenu.add(miSetOrigin2DMode);
+        modeMenu.add(miSetOriginNode3DMode);
         modeMenu.add(miInfoMode);
         modeMenu.add(miAddNodes);
         modeMenu.add(miDeleteNodes);
         modeMenu.add(miMoveNodes);
         modeMenu.add(miMergeNodes);
+        modeMenu.add(miDuplicateNodes);
         modeMenu.add(miChangeNodes);
         modeMenu.add(miChangeNodesSection);
+        modeMenu.add(miChangeNodesCoords);
         modeMenu.add(miDefinePolyFacets);
         if (ndim==3) {
             modeMenu.add(miDefinePolyFacetsTri);
@@ -340,6 +353,7 @@ public final class MenuBar extends JMenuBar {
         groupsMenu.add(miNewGroup);
         groupsMenu.add(miDeleteGroup);
         groupsMenu.add(miMergeGroups);
+        groupsMenu.add(miReverseGroupOrder);
         // Move submenu:
         JMenu moveGroupMenu = new JMenu("Move current group");
         groupsMenu.add(moveGroupMenu);
@@ -381,14 +395,16 @@ public final class MenuBar extends JMenuBar {
         snapMenu.add(miSnapToGrid);
         snapMenu.add(miSnapToGridVertical);
         snapMenu.add(miSnapToGridHorizontal);
-        if (ndim==3) {
-            modelMenu.add(miTranslate);
-        }
+        // Some other stuff:
+        if (ndim==3) { modelMenu.add(miTranslate); }
         modelMenu.add(miScalePixels);
-        if (ndim==3) {
-            modelMenu.add(miDefineVOI);
-        }
-        modelMenu.add(miAddNodesVOI);
+        if (ndim==3) { modelMenu.add(miDefineVOI); }
+        // Add submenu:
+        JMenu addMenu = new JMenu("Add node(s)");
+        modelMenu.add(addMenu);
+        if (ndim==3) { addMenu.add(miAddNodesVOI); }
+        addMenu.add(miAddNodesSection);
+        if (ndim==3) { addMenu.add(miAddNodeCoordinates); }
         // Find submenu:
         JMenu findMenu = new JMenu("Find");
         modelMenu.add(findMenu);
@@ -421,6 +437,10 @@ public final class MenuBar extends JMenuBar {
         displayMenu.add(miDefineFacetEdgeColor);
         displayMenu.add(miPointWidth);
         displayMenu.add(miLineWidth);
+        displayMenu.add(miTransparency);
+        if (ndim==3) {
+            displayMenu.add(miNormalLength);
+        }
         
         // Build the interaction menu:
         JMenu interactionMenu = new JMenu("Interaction");
@@ -488,13 +508,16 @@ public final class MenuBar extends JMenuBar {
             else if (src == miDefineVOI) { controller.defineVOI(); }
             else if (src == miNullMode) { controller.setClickMode(ClickModeManager.MODE_NULL); }
             else if (src == miSetOrigin2DMode) { controller.setClickMode(ClickModeManager.MODE_ORIGIN_2D); }
+            else if (src == miSetOriginNode3DMode) { controller.setClickMode(ClickModeManager.MODE_ORIGIN_NODE_3D); }
             else if (src == miInfoMode) { controller.setClickMode(ClickModeManager.MODE_INFO); }
             else if (src == miAddNodes) { controller.setClickMode(ClickModeManager.MODE_ADD_NODES); }
             else if (src == miDeleteNodes) { controller.setClickMode(ClickModeManager.MODE_DELETE_NODES); }
             else if (src == miMoveNodes) { controller.setClickMode(ClickModeManager.MODE_MOVE_NODES); }
             else if (src == miMergeNodes) { controller.setClickMode(ClickModeManager.MODE_MERGE_NODES); }
+            else if (src == miDuplicateNodes) { controller.setClickMode(ClickModeManager.MODE_DUPLICATE_NODES); }
             else if (src == miChangeNodes) { controller.setClickMode(ClickModeManager.MODE_CHANGE_NODES_GROUP); }
             else if (src == miChangeNodesSection) { controller.setClickMode(ClickModeManager.MODE_CHANGE_NODES_SECTION); }
+            else if (src == miChangeNodesCoords) { controller.setClickMode(ClickModeManager.MODE_CHANGE_NODES_COORDS); }
             else if (src == miAddRegions) { controller.setClickMode(ClickModeManager.MODE_ADD_REGIONS); }
             else if (src == miDeleteRegions) { controller.setClickMode(ClickModeManager.MODE_DELETE_REGIONS); }
             else if (src == miDefinePolyFacets) { controller.setClickMode(ClickModeManager.MODE_DEFINE_POLY_FACETS); }
@@ -515,6 +538,8 @@ public final class MenuBar extends JMenuBar {
             else if (src == miDefineFacetEdgeColor) { controller.selectDefineFacetEdgeColor(); }
             else if (src == miPointWidth) { controller.selectPointWidth(); }
             else if (src == miLineWidth) { controller.selectLineWidth(); }
+            else if (src == miTransparency) { controller.selectTransparency(); }
+            else if (src == miNormalLength) { controller.selectNormalLength(); }
             else if (src == miShiftStep2D) { controller.selectShiftStep2D(); }
             else if (src == miPanStep2D) { controller.selectPanStep2D(); }
             else if (src == miPickingRadius) { controller.selectPickingRadius(); }
@@ -594,6 +619,8 @@ public final class MenuBar extends JMenuBar {
         miDefineFacetEdgeColor.setEnabled(true);
         miPointWidth.setEnabled(true);
         miLineWidth.setEnabled(true);
+        miTransparency.setEnabled(true);
+        miNormalLength.setEnabled(is3D);
         
         // Interaction menu items:
         miShiftStep2D.setEnabled(is3D);

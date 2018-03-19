@@ -6,6 +6,7 @@ import facetmodeller.groups.GroupVector;
 import facetmodeller.gui.Projector3D;
 import facetmodeller.plc.NodeVector;
 import geometry.MyPoint2D;
+import geometry.MyPoint2DVector;
 import geometry.MyPoint3D;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -21,7 +22,7 @@ public final class SnapshotSection extends Section {
 
     // ------------------ Properties -------------------
     
-    private NoImageSection noImageSection;
+    private final NoImageSection noImageSection;
     private Projector3D projector;
     
     // ------------------ Constructors -------------------
@@ -82,6 +83,8 @@ public final class SnapshotSection extends Section {
     public MyPoint2D getClicked1() { return noImageSection.getClicked1(); }
     @Override
     public MyPoint2D getClicked2() { return noImageSection.getClicked2(); }
+    @Override
+    public MyPoint2DVector getCorners() { return null; }
 
     @Override
     public int getWidth() { return noImageSection.getWidth(); }

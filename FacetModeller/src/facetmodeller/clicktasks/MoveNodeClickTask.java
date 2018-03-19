@@ -16,6 +16,9 @@ public final class MoveNodeClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_MOVE_NODES; }
 
     @Override
+    public String text() { return ClickTaskUtil.MOVE_NODE_TEXT; }
+
+    @Override
     public String tip() { return "Move nodes in the plane of the current section"; }
 
     @Override

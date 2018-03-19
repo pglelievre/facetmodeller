@@ -10,7 +10,7 @@ import facetmodeller.sections.Section;
  */
 public final class SnapToCalibrationMenuTask extends ControlledMenuTask {
     
-    private boolean doH, doV;
+    private final boolean doH, doV;
     
     public SnapToCalibrationMenuTask(FacetModeller con,boolean bH, boolean bV) {
         super(con);
@@ -51,15 +51,15 @@ public final class SnapToCalibrationMenuTask extends ControlledMenuTask {
         // Check for the required information:
         if (!check()) { return; }
         // Ask which node groups to apply the snapping to:
-        int which = Dialogs.question(controller,"Which groups of nodes?",title(),"Current","All","Cancel","Current");
+        int which = Dialogs.question(controller,"Which groups of nodes?",title(),"All","Current","Cancel","Current");
         if (which==Dialogs.CANCEL_OPTION) { return; }
         // Perform the snapping:
         CommandVector commands;
         double d = controller.getPickingDistance();
-        if (which==Dialogs.YES_OPTION) { // current group
-           commands = controller.snapToCalibration(d,controller.getSelectedCurrentGroups(),doH,doV);
-        } else { // all groups
+        if (which==Dialogs.YES_OPTION) { // all groups
            commands = controller.snapToCalibration(d,null,doH,doV);
+        } else { // selected groups
+           commands = controller.snapToCalibration(d,controller.getSelectedCurrentGroups(),doH,doV);
         }
         commands.setName(title());
         controller.undoVectorAdd(commands); // (the commands have already been executed)

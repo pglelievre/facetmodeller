@@ -3,6 +3,7 @@ package facetmodeller.sections;
 import dialogs.Dialogs;
 import facetmodeller.plc.NodeVector;
 import geometry.MyPoint2D;
+import geometry.MyPoint2DVector;
 import geometry.MyPoint3D;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -18,7 +19,7 @@ public class NoImageCrossSection extends CrossSection {
 
     // ------------------ Properties -------------------
     
-    private NoImageSection noImageSection; // composition required because already extending CrossSection class
+    private final NoImageSection noImageSection; // composition required because already extending CrossSection class
     
     // ------------------ Constructors -------------------
 
@@ -90,6 +91,8 @@ public class NoImageCrossSection extends CrossSection {
     public void setClicked1(MyPoint2D p) { noImageSection.setClicked1(p); }
     @Override
     public void setClicked2(MyPoint2D p) { noImageSection.setClicked2(p); }
+    @Override
+    public MyPoint2DVector getCorners() { return noImageSection.getCorners(); }
     
     @Override
     public void setName(String s) { noImageSection.setName(s); }

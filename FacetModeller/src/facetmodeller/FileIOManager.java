@@ -151,7 +151,10 @@ public final class FileIOManager extends PreviousSession {
         // Read the node file:
         NodeVector nodes = new NodeVector();
         NodeVector.ReadNodesReturnObject readNodesReturnObj = nodes.readNodes(nodeFile,-2);
-        if (readNodesReturnObj==null) { return "Failed to read node file" + System.lineSeparator() + nodeFile; }
+        String errmsg = readNodesReturnObj.getErrmsg();
+        if (errmsg!=null) {
+            return errmsg + System.lineSeparator() + nodeFile;
+        }
         
         // Get number of dimensions:
         int ndim = controller.numberOfDimensions();
@@ -160,8 +163,10 @@ public final class FileIOManager extends PreviousSession {
         FacetVector facets = new FacetVector();
         if (eleFile!=null) {
             FacetVector.ReadFacetsReturnObject readFacetsReturnObj = facets.readEle(controller,"",eleFile,nodes,ndim,false);
-            String s = readFacetsReturnObj.getErrmsg();
-            if (s!=null) { return "Failed to read ele file" + System.lineSeparator() + eleFile + System.lineSeparator() + s; }
+            errmsg = readFacetsReturnObj.getErrmsg();
+            if (errmsg!=null) {
+                return errmsg + System.lineSeparator() + eleFile;
+            }
             // Delete any unrequired nodes:
             if (readFacetsReturnObj.getDoRem()) {
                 nodes.removeUnused();

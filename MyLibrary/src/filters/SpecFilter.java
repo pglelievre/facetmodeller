@@ -11,8 +11,8 @@ public class SpecFilter extends FileFilter {
 
     // -------------------- Properties -------------------
 
-    private String[] options;
-    private String description;
+    private final String[] options;
+    private final String description;
     
     // -------------------- Constructor -------------------
 

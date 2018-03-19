@@ -12,8 +12,8 @@ import facetmodeller.plc.NodeVector;
  */
 public final class MergeNodesCommand extends ModelCommand {
     
-    private Node node1; // the node removed
-    private Node node2; // the node that replaced the one removed
+    private final Node node1; // the node removed
+    private final Node node2; // the node that replaced the one removed
     private FacetVector oldFacets; // a deep copy of the facets that were switched
     private AddNodeCommand com = null;
     

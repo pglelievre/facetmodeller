@@ -9,7 +9,7 @@ import javax.swing.JMenuItem;
 public final class MenuTaskMenuItem extends JMenuItem implements CheckableEnabled {
     private static final long serialVersionUID = 1L;
     
-    private MenuTask task;
+    private final MenuTask task;
     
     public MenuTaskMenuItem(MenuTask t) {
         super(t.text());

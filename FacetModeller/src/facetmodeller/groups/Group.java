@@ -26,9 +26,9 @@ public class Group extends HasID implements SessionIO {
     private Color facetColor = Color.BLACK;
     private Color regionColor = Color.BLACK;
 
-    private NodeVector nodes = new NodeVector();
-    private FacetVector facets = new FacetVector();
-    private RegionVector regions = new RegionVector();
+    private final NodeVector nodes = new NodeVector();
+    private final FacetVector facets = new FacetVector();
+    private final RegionVector regions = new RegionVector();
 
     // ------------------ Constructor -------------------
 

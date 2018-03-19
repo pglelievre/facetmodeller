@@ -8,9 +8,9 @@ import facetmodeller.plc.Facet;
  */
 public final class ChangeFacetGroupCommand extends Command {
     
-    private Facet facet; // the facet changed
-    private Group oldGroup; // the old group (existing facet group on construction)
-    private Group newGroup; // the new group
+    private final Facet facet; // the facet changed
+    private final Group oldGroup; // the old group (existing facet group on construction)
+    private final Group newGroup; // the new group
     
     public ChangeFacetGroupCommand(Facet f, Group g) {
         super("Change Facet Group");

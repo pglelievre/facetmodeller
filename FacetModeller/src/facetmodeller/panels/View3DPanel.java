@@ -73,8 +73,8 @@ public class View3DPanel extends PanningPanel implements SessionIO {
     private boolean showAxes = true;
     private boolean centreAxes = false;
     
-    // Drawing hardwires:
-    private final int axisLength = 25; // length in pixels
+    // Drawing hardwires: TODO: remove these hardwires
+    private final int AXIS_LENGTH = 25; // length in pixels
     
     // ------------------- Constructor ------------------
 
@@ -280,6 +280,8 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         // Get drawing styles for overlays:
         final int edgeWidth = controller.getLineWidth();
         final int nodeWidth = controller.getPointWidth();
+        final int centroidWidth = (int)Math.ceil(nodeWidth/2.0); // centroids drawn half the node width
+        final double normalLength = controller.getNormalLength();
         
         // Initialize the zbuffer or Graphics2D object:
         Graphics2D g2 = (Graphics2D) g;
@@ -307,6 +309,7 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         // Add facets to the scene: (this should be done first so that
         // z-buffering can't draw a facet edge over a node)
         boolean showFaces = controller.getShowFaces();
+        boolean showNormals = controller.getShowNormals();
         if (pt1==null) {
             GroupVector facetGroups = controller.getSelectedFacetGroups();
             if (facetGroups!=null) {
@@ -345,7 +348,9 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                         }
                         if (!ok) { continue; }
                         // Calculate the shading:
-                        MyPoint3D v = facet.normal(); // normalized
+                        MyPoint3D v = facet.getNormal();
+                        if (v==null) { continue; }
+                        v = v.deepCopy(); // normalized
                         if (v==null) { continue; }
                         v.rotate(projector.getRotationMatrix()); // rotated into projected coordinates
                         double d = Math.abs(v.getZ()); // dotted with the z axis (direction not important)
@@ -356,12 +361,47 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                         hsb[2] *= (float)d; // d is on [0,1]
                         col = Color.getHSBColor(hsb[0],hsb[1],hsb[2]);
                         // Process the facet through the zbuffer:
+                        Color faceCol = null;
+                        Color edgeCol;
                         if (showFaces) {
                             // Paint facet face as a coloured patch and paint edges as user requests:
-                            zbuf.putFacet(pts,col,controller.getEdgeColor());
+                            faceCol = col;
+                            edgeCol = controller.getEdgeColor();
                         } else {
                             // Paint edges of facet only, using facet colour:
-                            zbuf.putFacet(pts,null,col);
+                            //faceColor = null;
+                            edgeCol = col;
+                        }
+                        zbuf.putFacet(pts,faceCol,edgeCol);
+                        // Draw the facet normals:
+                        if (showNormals) {
+                            // Set up the points on either end of the normal vector line:
+                            MyPoint3D p0 = facet.getCentroid().deepCopy(); // facet centroid (point at start of normal vector line)
+                            if (p0==null) { continue; }
+                            MyPoint3D p1 = facet.getNormal().deepCopy(); // normalized normal vector (length of one)
+                            if (p1==null) { continue; }
+                            p1.times(normalLength); // normal vector of spatial length normalLength
+                            p1.plus(p0); // point at end of normal vector line
+                            // Transform the points to image coordinates:
+                            p0 = spaceToImage(p0);
+                            p1 = spaceToImage(p1);
+                            if (p0==null) { continue; }
+                            if (p1==null) { continue; }
+                            // Rescale the line to an image pixel length of axisLength:
+                            //MyPoint3D vn = MyPoint3D.minus(p1,p0); // first minus second
+                            //vn.normalize();
+                            //vn.times(axisLength); // scaled normal vector
+                            //p1 = p0.deepCopy();
+                            //p1.plus(vn);
+                            // Draw normal vectors as line objects:
+                            if (pt1==null) {
+                                zbuf.putNode(p0,edgeCol,centroidWidth);
+                                zbuf.putEdge(p0,p1,edgeCol);
+                            } else {
+                                g2.setPaint(edgeCol);
+                                g2.fillOval( (int)p0.getX() - centroidWidth/2 , (int)p0.getY() - centroidWidth/2 , centroidWidth , centroidWidth );
+                                g2.drawLine( (int)p0.getX() , (int)p0.getY() , (int)p1.getX() , (int)p1.getY() );
+                            }
                         }
                     } // for j
                 } // for i
@@ -503,9 +543,9 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         if (showAxes) {
             // Set up axis points:
             MyPoint3D po = spaceOrigin.deepCopy(); // origin
-            MyPoint3D px = MyPoint3D.plus( po , new MyPoint3D(axisLength,0,0) ); // x axis
-            MyPoint3D py = MyPoint3D.plus( po , new MyPoint3D(0,axisLength,0) ); // x axis
-            MyPoint3D pz = MyPoint3D.plus( po , new MyPoint3D(0,0,axisLength) ); // x axis
+            MyPoint3D px = MyPoint3D.plus( po , new MyPoint3D(AXIS_LENGTH,0,0) ); // x axis
+            MyPoint3D py = MyPoint3D.plus( po , new MyPoint3D(0,AXIS_LENGTH,0) ); // y axis
+            MyPoint3D pz = MyPoint3D.plus( po , new MyPoint3D(0,0,AXIS_LENGTH) ); // z axis
             // Project with no scaling:
             po = spaceToImage(po,1.0);
             px = spaceToImage(px,1.0);
@@ -518,7 +558,7 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                 px.minus(imageOrigin);
                 py.minus(imageOrigin);
                 pz.minus(imageOrigin);
-                MyPoint3D p = new MyPoint3D(axisLength+5,getHeight()-axisLength-5,0.0);
+                MyPoint3D p = new MyPoint3D(AXIS_LENGTH+5,getHeight()-AXIS_LENGTH-5,0.0);
                 po.plus(p);
                 px.plus(p);
                 py.plus(p);

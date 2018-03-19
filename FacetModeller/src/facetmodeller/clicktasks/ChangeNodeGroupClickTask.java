@@ -14,6 +14,9 @@ public final class ChangeNodeGroupClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_CHANGE_NODES_GROUP; }
 
     @Override
+    public String text() { return ClickTaskUtil.CHANGE_NODE_GROUP_TEXT; }
+
+    @Override
     public String tip() { return "Change a node's group"; }
 
     @Override
@@ -35,7 +38,8 @@ public final class ChangeNodeGroupClickTask extends ControlledClickTask {
         if (p==null) { return; }
         // Calculate the closest node to the clicked point:
         if (!controller.calculateClosestNode(p)) { return; }
-        Node node = controller.getClosestNode(); // just incase the closestNode object gets nullified by a mouse move (not sure if that is possible but better safe than sorry)
+        Node node = controller.getClosestNode(); // just in case the closestNode object gets nullified by a mouse move (not sure if that is possible but better safe than sorry)
+        if (node==null) { return; }
         // Perform the change:
         ChangeNodeGroupCommand com = new ChangeNodeGroupCommand(node,controller.getSelectedCurrentGroup()); com.execute();
         controller.undoVectorAdd(com);

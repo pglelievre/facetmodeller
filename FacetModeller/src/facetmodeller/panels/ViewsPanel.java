@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 public final class ViewsPanel extends JPanel implements SessionIO {
     private static final long serialVersionUID = 1L;
     
-    private Panel2D panel2D;
+    private final Panel2D panel2D;
     private Panel3D panel3D;
     
     public ViewsPanel(FacetModeller con, int ndim, boolean showScroller, boolean showView3DPanel) {

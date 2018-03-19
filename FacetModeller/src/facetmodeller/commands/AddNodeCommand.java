@@ -8,7 +8,7 @@ import facetmodeller.plc.Node;
  */
 public final class AddNodeCommand extends ModelCommand {
     
-    private Node node; // the node added
+    private final Node node; // the node added
     
     public AddNodeCommand(ModelManager mod, Node n, String t) {
         super(mod,t);

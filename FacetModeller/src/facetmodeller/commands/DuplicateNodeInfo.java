@@ -5,8 +5,8 @@ import facetmodeller.plc.NodeVector;
 
 public class DuplicateNodeInfo {
     
-    private NodeVector nodesToRemove = new NodeVector();
-    private NodeVector nodesToKeep = new NodeVector();
+    private final NodeVector nodesToRemove = new NodeVector();
+    private final NodeVector nodesToKeep = new NodeVector();
     // nodesToRemove.get(i) is a duplicate of nodesToKeep.get(i)
     // (there may be duplicated nodes in nodesToKeep)
     

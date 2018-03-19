@@ -22,7 +22,7 @@ public final class Synthesizer {
     public static final int FACET_IS_CLOSEST = 2;
     public static final int REGION_IS_CLOSEST = 3;
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     
     private boolean lockInfo = false; // used in info click mode
     private Node candidateNode = null; // The candidate node, e.g. being created on a facet.

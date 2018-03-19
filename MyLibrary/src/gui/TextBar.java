@@ -13,7 +13,7 @@ public class TextBar extends JPanel {
 
     // ------------------ Properties ------------------
 
-    private JTextArea textArea;
+    private final JTextArea textArea;
 
     // ------------------ Constructor ------------------
 

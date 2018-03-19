@@ -9,8 +9,8 @@ import facetmodeller.groups.Group;
  */
 public final class AddGroupCommand extends ControlledCommandVector {
     
-    private Group group;
-    private int index;
+    private final Group group;
+    private final int index;
     
     public AddGroupCommand(FacetModeller con, Group g, int i) {
         super(con,"Add Group");
@@ -39,7 +39,7 @@ public final class AddGroupCommand extends ControlledCommandVector {
     
     @Override
     public void undo() {
-        new RemoveGroupCommand(controller,group).execute();
+        new RemoveGroupCommand(controller,group,true).execute();
     }
     
 }

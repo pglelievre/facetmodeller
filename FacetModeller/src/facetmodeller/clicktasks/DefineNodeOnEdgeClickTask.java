@@ -23,6 +23,9 @@ public final class DefineNodeOnEdgeClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_ADD_NODES_ON_EDGES; }
 
     @Override
+    public String text() { return ClickTaskUtil.DEFINE_NODE_ON_EDGE_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.DEFINE_NODE_ON_EDGE_TEXT; }
 
     @Override
@@ -116,7 +119,7 @@ public final class DefineNodeOnEdgeClickTask extends ControlledClickTask {
                 newNode = new NodeOnSection(pc,section,group);
             } else { // create an off-section node
                 // Warn user:
-                if (!isSnapshot) {
+                if (!isSnapshot && controller.getShowConfirmationDialogs()) {
                     String message = "WARNING! That node must be added as an off-section node. Do you want to continue?";
                     int response = Dialogs.yesno(controller,message,title());
                     if ( response != Dialogs.YES_OPTION ) {

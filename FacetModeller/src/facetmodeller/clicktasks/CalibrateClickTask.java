@@ -13,6 +13,9 @@ public final class CalibrateClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_CALIBRATE; }
 
     @Override
+    public String text() { return ClickTaskUtil.CALIBRATE_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.CALIBRATE_TEXT; }
 
     @Override

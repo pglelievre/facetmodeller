@@ -7,8 +7,8 @@ import facetmodeller.groups.Group;
  */
 public final class ChangeGroupNameCommand extends Command {
     
-    private Group group;
-    private String oldName, newName;
+    private final Group group;
+    private final String oldName, newName;
     
     public ChangeGroupNameCommand(Group g, String n) {
         super("Change Group Name");

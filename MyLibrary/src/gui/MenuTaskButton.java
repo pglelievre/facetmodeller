@@ -10,7 +10,7 @@ import javax.swing.JButton;
 public final class MenuTaskButton extends JButton implements CheckableEnabled {
     private static final long serialVersionUID = 1L;
     
-    private MenuTask task;
+    private final MenuTask task;
     
     public MenuTaskButton(MenuTask t, String s) {
         super(s);

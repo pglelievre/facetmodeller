@@ -139,10 +139,10 @@ public class DefaultSectionInfo {
         if (facets.size()<=1) { return; }
         // Get the first facet:
         Facet f0 = facets.get(0);
-        // Calculate the normal vectors for the facets:
-        MyPoint3D v0 = f0.normal();
+        // Get the normal vectors for the facets:
+        MyPoint3D v0 = f0.getNormal();
         if (v0==null) { return; }
-        MyPoint3D v = f.normal();
+        MyPoint3D v = f.getNormal();
         if (v==null) { return; }
         // Check if those two normal vectors are in the same direction:
         double d = v.dot(v0);

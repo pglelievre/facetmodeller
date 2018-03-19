@@ -309,16 +309,20 @@ public class FacetVector {
      * @param nodes
      * @param ndim
      * @param verbose
-     * @return  */
+     * @return null if user cancels; errmsg!=null if error occurs */
     public ReadFacetsReturnObject readEle(FacetModeller con, String title, File file, NodeVector nodes, int ndim, boolean verbose) {
 
         // Open the file for reading:
         BufferedReader reader = FileUtils.openForReading(file);
-        if (reader==null) { return new ReadFacetsReturnObject("could not open file for reading."); }
+        if (reader==null) { return new ReadFacetsReturnObject("Could not open .ele file for reading."); }
 
         // Read the header:
         String textLine = FileUtils.readLine(reader);
-        if (textLine==null) { FileUtils.close(reader); return new ReadFacetsReturnObject("problem reading header."); }
+        if (textLine==null) {
+            FileUtils.close(reader);
+            return new ReadFacetsReturnObject("Problem reading .ele file header.");
+        }
+        if (textLine.contains("\t")) { return new ReadFacetsReturnObject("Tab character encountered in .ele file."); }
         textLine = textLine.trim();
         String[] ss = textLine.split("[ ]+",4);
         int nfacets, npf, nat; // number of facets, nodes per facet, attributes
@@ -328,7 +332,7 @@ public class FacetVector {
             nat  = Integer.parseInt(ss[2].trim()); // converts to integer
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             FileUtils.close(reader);
-            return new ReadFacetsReturnObject("problem reading header.");
+            return new ReadFacetsReturnObject("Problem reading .ele file header.");
         }
 
         // Check for variable cells:
@@ -348,7 +352,7 @@ public class FacetVector {
             // Check the number of nodes per facet:
             if (npf!=ndim) {
                 FileUtils.close(reader);
-                return new ReadFacetsReturnObject("incorrect number of nodes per facet.");
+                return new ReadFacetsReturnObject("Number of nodes per facet in .ele file is inconsistent with number of dimensions in model.");
             }
         }
         
@@ -366,12 +370,13 @@ public class FacetVector {
             textLine = FileUtils.readLine(reader);
             if (textLine==null) {
                 FileUtils.close(reader);
-                return new ReadFacetsReturnObject("problem reading node indices for facet"+(i+1)+".");
+                return new ReadFacetsReturnObject("Not enough lines in .ele file.");
             }
-            int i1,i2,i3=1; // dummy i3 value lets the node index check pass for ndim=2
-            double a=0;
+            if (textLine.contains("\t")) { return new ReadFacetsReturnObject("Tab character encountered in .ele file."); }
             textLine = textLine.trim();
             ss = textLine.split("[ ]+",7);
+            int i1,i2,i3=1; // dummy i3 value lets the node index check pass for ndim=2
+            double a=0;
             try {
                 int n=0;
                 if (isvar) {
@@ -395,7 +400,7 @@ public class FacetVector {
                 }
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 FileUtils.close(reader);
-                return new ReadFacetsReturnObject("problem reading node indices for facet"+(i+1)+".");
+                return new ReadFacetsReturnObject("Problem in .ele file: node indices for facet "+(i+1)+".");
             }
 
             // Check for integer attributes:
@@ -424,7 +429,7 @@ public class FacetVector {
             // Check node indices are consistent with the number of nodes in the supplied node vector:
             if ( i1<1 || i2<1 || i3<1 || i1>nnodes || i2>nnodes || i3>nnodes ) {
                 FileUtils.close(reader);
-                return new ReadFacetsReturnObject("inconsistent node indices encountered.");
+                return new ReadFacetsReturnObject("Inconsistent node indices encountered in .ele file.");
             }
 
             // Need to subtract 1 from those indices for referencing into the nodes vector:
@@ -458,39 +463,27 @@ public class FacetVector {
 
         // Close the file and return:
         FileUtils.close(reader);
-        ReadFacetsReturnObject obj = new ReadFacetsReturnObject(doAtts,isvar,uniqueAttributes.size());
-        //obj.setDoAtts(doAtts);
-        //obj.setN( uniqueAttributes.size() );
-        return obj;
+        return new ReadFacetsReturnObject(doAtts,isvar,uniqueAttributes.size());
 
     }
     
     @SuppressWarnings("PublicInnerClass")
     public static class ReadFacetsReturnObject {
         
-        private boolean doAtts;
-        private boolean doRem;
-        private int n;
-        private String errmsg;
+        private boolean doAtts=false;
+        private boolean doRem=false;
+        private int n=0;
+        private String errmsg=null;
         
         //public ReadFacetsReturnObject() {}
         public ReadFacetsReturnObject(boolean ba, boolean br, int i) {
             doAtts = ba;
             doRem = br;
             n = i;
-            errmsg = null;
         }
         public ReadFacetsReturnObject(String s) {
-            doAtts = false;
-            doRem = false;
-            n = 0;
             errmsg = s;
         }
-        
-        //private void setDoAtts(boolean doAtts) { // not sure why but netbeans won't let me set doAtts in the constructor
-        //    this.doAtts = doAtts;
-        //}
-        //private void setN(int n) { this.n = n; }
         
         public boolean getDoAtts() { return doAtts; }
         public boolean getDoRem() { return doRem; }

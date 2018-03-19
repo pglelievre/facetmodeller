@@ -9,7 +9,7 @@ import geometry.MyPoint3D;
  */
 public final class MoveNodeCommand extends Command {
     
-    private Node node; // the node moved
+    private final Node node; // the node moved
     private MyPoint2D oldP2; // old node location for on-section nodes
     private MyPoint3D oldP3; // old node location for off-section nodes
     private MyPoint2D newP2; // new node location for on-section nodes

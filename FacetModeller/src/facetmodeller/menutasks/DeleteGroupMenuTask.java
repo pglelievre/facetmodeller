@@ -43,8 +43,8 @@ public final class DeleteGroupMenuTask extends ControlledMenuTask {
         Group currentGroup = controller.getSelectedCurrentGroup();
         selectedNodeGroups.remove(currentGroup);
         selectedFacetGroups.remove(currentGroup);
-        // Remove the group:
-        RemoveGroupCommand com = new RemoveGroupCommand(controller,currentGroup); com.execute();
+        // Remove the group and all associated objects (nodes,facets,regions):
+        RemoveGroupCommand com = new RemoveGroupCommand(controller,currentGroup,true); com.execute();
         controller.undoVectorAdd(com);
         // Reset the selections:
         if (controller.numberOfGroups()==0) { // there are no longer any sections loaded

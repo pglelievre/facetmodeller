@@ -12,6 +12,9 @@ public final class IgnoreClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_NULL; }
 
     @Override
+    public String text() { return ClickTaskUtil.IGNORE_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.IGNORE_TEXT; }
 
     @Override

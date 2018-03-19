@@ -8,7 +8,7 @@ import facetmodeller.plc.Facet;
  */
 public final class RemoveFacetCommand extends ModelCommand {
     
-    private Facet facet; // the facet removed
+    private final Facet facet; // the facet removed
     
     public RemoveFacetCommand(ModelManager mod, Facet f) {
         super(mod,"Remove Facet");

@@ -9,7 +9,7 @@ import java.io.File;
 
 public final class SaveSessionMenuTask extends ControlledMenuTask {
     
-    private boolean saveAs;
+    private final boolean saveAs;
     private boolean saved=false; // set to true once a session has been saved successfully
     
     public SaveSessionMenuTask(FacetModeller con, boolean b) {

@@ -14,8 +14,8 @@ public final class ShiftButtonPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     // TODO: use the ShiftablePanel interface to define the controller once Java allows implementing multiple interfaces
-    private ShiftOrPanPanel controller; // should contain methods changeShift and clearShift
-    private JButton[][] buttons;
+    private final ShiftOrPanPanel controller; // should contain methods changeShift and clearShift
+    private final JButton[][] buttons;
 
     public ShiftButtonPanel(ShiftOrPanPanel con) {
         

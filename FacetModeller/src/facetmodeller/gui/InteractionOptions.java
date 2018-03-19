@@ -15,7 +15,7 @@ public final class InteractionOptions implements SessionIO {
     public static final double DEFAULT_PICKING_RADIUS = 10.0;
     public static final double DEFAULT_AUTO_FACET_FACTOR = 1.5;
     
-    private FacetModeller controller;
+    private final FacetModeller controller;
     
     private double pickingDistance = DEFAULT_PICKING_RADIUS; /** Picking/snapping distance in spatial units,
     e.g. for deciding whether a clicked point is close enough to a node or facet centroid. */

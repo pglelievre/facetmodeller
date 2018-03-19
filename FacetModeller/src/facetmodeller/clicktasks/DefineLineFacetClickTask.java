@@ -14,6 +14,9 @@ public final class DefineLineFacetClickTask extends ControlledClickTask {
     public int mode() { return ClickModeManager.MODE_DEFINE_LINE_FACETS; }
 
     @Override
+    public String text() { return ClickTaskUtil.DEFINE_LINE_FACET_TEXT; }
+
+    @Override
     public String tip() { return ClickTaskUtil.DEFINE_LINE_FACET_TEXT; }
 
     @Override
