@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
-- Made status bars a bit taller and some text displayed inside them now contains line breaks.
+- Removed section status bar, which is fairly useless, to make more room for the cursor status bar, which is very useful.
 ### Bugs squashed
 - Bug fix when changing a node's section that was moving the selected node to the clicked point.
 
