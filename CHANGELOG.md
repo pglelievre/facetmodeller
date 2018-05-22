@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. Dates are i
 ### Changed
 - Decoupled the section-facet linkages which are not useful and only complicate the GUI.
 - Removed section status bar, which is fairly useless, to make more room for the cursor status bar, which is very useful.
+- Allowed reading of non-triangular facets into a 3D model from a .node/.ele pair.
 ### Bugs squashed
 - Bug fix when changing a node's section that was moving the selected node to the clicked point.
 
