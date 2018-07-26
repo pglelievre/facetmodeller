@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. Dates are i
 - Allowed reading of non-triangular facets into a 3D model from a .node/.ele pair.
 ### Bugs squashed
 - Bug fix when changing a node's section that was moving the selected node to the clicked point.
+- Minor bug fix that was not correctly managing whether some menu items were enabled or disabled.
 
 ## 2018-03-19
 ### Changed
