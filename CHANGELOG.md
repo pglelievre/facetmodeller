@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+- Added functionality to reduce the size of section images and adjust calibration and node coordinates acoordingly.
+- Some changes to dialogs to tell the user when to wait patiently (before large image file read/write operations).
+- Allowed reading of non-triangular facets into a 3D model from a .node/.ele pair.
 - Decoupled the section-facet linkages which are not useful and only complicate the GUI.
 - Removed section status bar, which is fairly useless, to make more room for the cursor status bar, which is very useful.
 - Allowed reading of non-triangular facets into a 3D model from a .node/.ele pair.
