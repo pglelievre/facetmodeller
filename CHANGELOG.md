@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+### Bugs squashed
+
+## 2019-01-21
+### Changed
 - Nodes can now be read from a .node file and split into the existing defined groups or new groups.
 - Added functionality to reduce the size of section images and adjust calibration and node coordinates acoordingly.
 - Some changes to dialogs to tell the user when to wait patiently (before large image file read/write operations).
