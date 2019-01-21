@@ -183,6 +183,7 @@ public class FacetVector {
      */
     public FacetVector findBoundaryFacets() {
         BoundaryInfo info = findBoundaryInfo(false);
+        if (info==null) { return null; }
         return info.facets;
     }
     
@@ -190,6 +191,17 @@ public class FacetVector {
         
         NodeVector boundaryNodes = new NodeVector(); // will store nodes on the boundary
         FacetVector boundaryFacets = new FacetVector(); // will store facets on the boundary
+        
+        // Loop over each facet and check for triangular facets:
+        for (int i=0 ; i<size() ; i++ ) {
+            // Get the ith facet:
+            Facet facet = get(i);
+            // Get the nodes for the ith facet:
+            NodeVector facetNodes = facet.getNodes();
+            // Check for a triangular facet:
+            int nn = facetNodes.size();
+            if ( nn!=3 ) { return null; }
+        }
         
         // Loop over each facet:
         for (int i=0 ; i<size() ; i++ ) {
@@ -337,16 +349,20 @@ public class FacetVector {
 
         // Check for variable cells:
         boolean isvar = (npf==0);
+        boolean loadNonTri = false;
         String prompt;
         if (isvar) {
             if (verbose) {
                 if (ndim==3) {
-                    prompt = "Only triangular facets will be read from the file (all others ignored).";
+                    prompt = "Do you want to load any non-triangular facets?";
+                    int response = Dialogs.question(con,prompt,title);
+                    if (response==Dialogs.CANCEL_OPTION) { FileUtils.close(reader); return null; }
+                    loadNonTri = ( response == Dialogs.YES_OPTION );
                 } else {
-                    prompt = "Only line-element facets will be read from the file (all others ignored).";
+                    prompt = "Only line-element facets will be read from the file (any others ignored).";
+                    int response = Dialogs.confirm(con,prompt,title);
+                    if (response!=Dialogs.OK_OPTION) { FileUtils.close(reader); return null; }
                 }
-                int response = Dialogs.confirm(con,prompt,title);
-                if (response!=Dialogs.OK_OPTION) { FileUtils.close(reader); return null; }
             }
         } else {
             // Check the number of nodes per facet:
@@ -359,14 +375,19 @@ public class FacetVector {
         // Keep track of unique integer attributes (if they exist):
         ArrayList<Integer> uniqueAttributes = new ArrayList<>();
         boolean doAtts = (nat==1);
+        if (doAtts) {
+            nat = 1;
+        } else {
+            nat = 0;
+        }
 
         // Get the number of nodes in the supplied node vector:
         int nnodes = nodes.size();
 
         // Loop over each facet:
         for (int i=0 ; i<nfacets ; i++ ) {
-
-            // Read the node indices for the ith facet:
+            
+            // Read next line from the file:
             textLine = FileUtils.readLine(reader);
             if (textLine==null) {
                 FileUtils.close(reader);
@@ -374,29 +395,53 @@ public class FacetVector {
             }
             if (textLine.contains("\t")) { return new ReadFacetsReturnObject("Tab character encountered in .ele file."); }
             textLine = textLine.trim();
-            ss = textLine.split("[ ]+",7);
-            int i1,i2,i3=1; // dummy i3 value lets the node index check pass for ndim=2
+            
+            // Determine the number of nodes for the ith facet:
+            if (isvar) {
+                try {
+                    ss = textLine.split("[ ]+",3);
+                    npf = Integer.parseInt(ss[1].trim()); // converts to integer
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    FileUtils.close(reader);
+                    return new ReadFacetsReturnObject("Problem in .ele file: number of nodes for variable facet "+(i+1)+".");
+                }
+                // Check for number of nodes not equal to number of dimensions:
+                if ( npf!=ndim && !loadNonTri ) {
+                    continue;
+                }
+            }// else {
+            //    npf = ndim;
+            //}
+            
+            // Split line from file:
+            ss = textLine.split("[ ]+",npf+nat+2);
+            
+            // Read the node indices for the ith facet:
+            int[] indices = new int[npf];
             double a=0;
             try {
-                int n=0;
+                int n; // number of values to skip at the left of the current line of the file
                 if (isvar) {
-                    npf = Integer.parseInt(ss[1].trim()); // converts to integer
-                    if (npf!=ndim) {
-                        continue;
-                    }
-                    n=1;
-                }
-                i1 = Integer.parseInt(ss[n+1].trim()); // converts to integer
-                i2 = Integer.parseInt(ss[n+2].trim());
-                if (ndim==3) {
-                    i3 = Integer.parseInt(ss[n+3].trim());
-                    if (doAtts) {
-                        a = Double.parseDouble(ss[n+4].trim());
-                    }
+                    n=2; // because we want to skip over the facet index and npf value
                 } else {
-                    if (doAtts) {
-                        a = Double.parseDouble(ss[n+3].trim());
+                    n=1; // because we want to skip over the facet index
+                }
+                // Loop over each expected node index and read them:
+                for ( int j=0 ; j<npf ; j++ ) {
+                    // Convert split string element to integer:
+                    indices[j] = Integer.parseInt(ss[n+j].trim());
+                    // Check node indices are consistent with the number of nodes in the supplied node vector:
+                    // (at this point the indices are 1-indexed as for a .node file)
+                    if ( indices[j]<1 || indices[j]>nnodes ) {
+                        FileUtils.close(reader);
+                        return new ReadFacetsReturnObject("Inconsistent node index encountered in .ele file.");
                     }
+                    // Need to subtract 1 from those indices for referencing into the 0-indexed Java "newNodes" object:
+                    indices[j] -= 1;
+                }
+                // Read the attribute:
+                if (doAtts) {
+                    a = Double.parseDouble(ss[n+npf].trim());
                 }
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 FileUtils.close(reader);
@@ -425,25 +470,12 @@ public class FacetVector {
                     uniqueAttributes.clear();
                 }
             }
-
-            // Check node indices are consistent with the number of nodes in the supplied node vector:
-            if ( i1<1 || i2<1 || i3<1 || i1>nnodes || i2>nnodes || i3>nnodes ) {
-                FileUtils.close(reader);
-                return new ReadFacetsReturnObject("Inconsistent node indices encountered in .ele file.");
-            }
-
-            // Need to subtract 1 from those indices for referencing into the nodes vector:
-            i1 -= 1;
-            i2 -= 1;
-            i3 -= 1;
             
             // Create a new facet object containing the appropriate nodes and add it to the facet vector:
             Facet facet = new Facet(); // section and group membership will be added later
             NodeVector newNodes = new NodeVector();
-            newNodes.add(nodes.get(i1));
-            newNodes.add(nodes.get(i2));
-            if (ndim==3) {
-                newNodes.add(nodes.get(i3));
+            for ( int j=0 ; j<npf ; j++ ) {
+                newNodes.add(nodes.get(indices[j]));
             }
             facet.addNodes(newNodes);
             vector.add(facet);

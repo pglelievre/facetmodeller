@@ -21,7 +21,7 @@ public final class AddFacetCommand extends ModelCommand {
         // Add the facet to the PLC:
         model.addFacet(facet);
         // Add the facet to the sections that the facet is in:
-        facet.getSections().addFacet(facet);
+        //facet.getSections().addFacet(facet);
         // Add the facet to the group that the facet is in:
         facet.getGroup().addFacet(facet);
         // Add the facet to each node in the facet:

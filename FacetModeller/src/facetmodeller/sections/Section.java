@@ -3,8 +3,8 @@ package facetmodeller.sections;
 import fileio.SessionIO;
 import facetmodeller.commands.CommandVector;
 import facetmodeller.groups.GroupVector;
-import facetmodeller.plc.Facet;
-import facetmodeller.plc.FacetVector;
+//import facetmodeller.plc.Facet;
+//import facetmodeller.plc.FacetVector;
 import facetmodeller.plc.HasID;
 import facetmodeller.plc.Node;
 import facetmodeller.plc.NodeVector;
@@ -85,9 +85,9 @@ public abstract class Section extends HasID implements SessionIO {
     public NodeVector getNodes() {
         return defaultInfo.getNodes();
     }
-    public FacetVector getFacets() {
-        return defaultInfo.getFacets();
-    }
+    //public FacetVector getFacets() {
+    //    return defaultInfo.getFacets();
+    //}
     public RegionVector getRegions() {
         return defaultInfo.getRegions();
     }
@@ -134,7 +134,7 @@ public abstract class Section extends HasID implements SessionIO {
     public abstract MyPoint2D projectOnto(MyPoint3D p3);
     
     public int numberOfNodes() { return defaultInfo.numberOfNodes(); }
-    public int numberOfFacets() { return defaultInfo.numberOfFacets(); }
+    //public int numberOfFacets() { return defaultInfo.numberOfFacets(); }
     public int numberOfRegions() { return defaultInfo.numberOfRegions(); }
     
     public void addNode(Node n) {
@@ -144,16 +144,16 @@ public abstract class Section extends HasID implements SessionIO {
         defaultInfo.removeNode(n);
     }
     
-    public void addFacet(Facet f) {
-        defaultInfo.addFacet(f);
-    }
+    //public void addFacet(Facet f) {
+    //    defaultInfo.addFacet(f);
+    //}
     
     public void addRegion(Region r) {
         defaultInfo.addRegion(r);
     }
-    public void removeFacet(Facet f) {
-        defaultInfo.removeFacet(f);
-    }
+    //public void removeFacet(Facet f) {
+    //    defaultInfo.removeFacet(f);
+    //}
     public void removeRegion(Region r) {
         defaultInfo.removeRegion(r);
     }

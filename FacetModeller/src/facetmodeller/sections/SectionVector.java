@@ -2,7 +2,7 @@ package facetmodeller.sections;
 
 import facetmodeller.commands.CommandVector;
 import facetmodeller.groups.GroupVector;
-import facetmodeller.plc.Facet;
+//import facetmodeller.plc.Facet;
 import facetmodeller.plc.NodeVector;
 import geometry.Dir3D;
 import geometry.MyPoint2D;
@@ -118,14 +118,15 @@ public class SectionVector {
         vector.add(0,s);
     }
 
-    /** Adds a facet to all the sections.
-     * @param f */
+    /* Adds a facet to all the sections.
+     * @param f
     public void addFacet(Facet f) {
         for (int i=0 ; i<size() ; i++ ) {
             get(i).addFacet(f);
         }
     }
-
+    */
+    
     public boolean contains(Section s) {
         return vector.contains(s);
     }
@@ -144,14 +145,15 @@ public class SectionVector {
         vector.remove(s);
     }
 
-    /** Removes a facet from any sections that contain it.
-     * @param f */
+    /* Removes a facet from any sections that contain it.
+     * @param f
     public void removeFacet(Facet f) {
         for (int i=0 ; i<size() ; i++ ) {
             get(i).removeFacet(f);
         }
     }
-
+    */
+    
     /** Resets the ID values from 0 to the size of the vector in the order listed. */
     public void resetIDs() {
         for (int i=0 ; i<size() ; i++ ) {

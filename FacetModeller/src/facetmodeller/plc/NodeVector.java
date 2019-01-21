@@ -457,7 +457,7 @@ public class NodeVector {
         
         // Keep track of unique integer attributes (if they exist):
         ArrayList<Integer> uniqueAttributes = new ArrayList<>();
-        boolean doAtts = (nat==1);
+        boolean doAtts = (nat>=1);
         
         // Loop over each node:
         for (int i=0 ; i<nnodes ; i++ ) {

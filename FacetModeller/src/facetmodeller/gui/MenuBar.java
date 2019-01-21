@@ -42,7 +42,7 @@ public final class MenuBar extends JMenuBar {
             miAddRegions,miDeleteRegions;
     private MenuTaskMenuItem miUndo,miSaveSession,miSaveSessionAs,miLoadNodesAndFacets,
             miLoadCrossSectionImages,miLoadDepthSectionImages,miLoadGroups,miSaveGroups,
-            miSectionInfo,miNewNoImageCrossSection,miNewNoImageDepthSection,miNewSnapshotSection,miResetSnapshotSection,
+            miSectionInfo,miNewNoImageCrossSection,miNewNoImageDepthSection,miNewSnapshotSection,miResetSnapshotSection,miReduceSectionImage,
             miReverseGroupOrder,miGroupUp1,miGroupUp2,miGroupTop,miGroupDown1,miGroupDown2,miGroupBottom,
             miSectionName, miGroupName,miGroupColor,miGroupNodeColor,miGroupFacetColor,miGroupRegionColor,
             miCopyCalibration, miNodesAtCalibration, miAddNodesVOI, miAddNodesSection, miAddNodeCoordinates,
@@ -129,6 +129,7 @@ public final class MenuBar extends JMenuBar {
         miNewNoImageDepthSection = makeMenuTaskMenuItem(new NewNoImageSectionMenuTask(controller,false),listener);
         miNewSnapshotSection = makeMenuTaskMenuItem(new NewSnapshotSectionMenuTask(controller),listener);
         miResetSnapshotSection = makeMenuTaskMenuItem(new ResetSnapshotSectionMenuTask(controller),listener);
+        miReduceSectionImage = makeMenuTaskMenuItem(new ReduceSectionImageMenuTask(controller),listener);
         miSectionName = makeMenuTaskMenuItem(new ChangeSectionNameMenuTask(controller),listener);
         miCalibrate = makeMenuTaskMenuItem(new StartCalibrationMenuTask(controller),listener);
         miCalibrateTyped = makeMenuTaskMenuItem(new ChangeCalibrationCoordinatesMenuTask(controller),listener);
@@ -337,6 +338,7 @@ public final class MenuBar extends JMenuBar {
             sectionsMenu.add(miNewSnapshotSection);
             sectionsMenu.add(miResetSnapshotSection);
         }
+        sectionsMenu.add(miReduceSectionImage);
         sectionsMenu.add(miSectionName);
         sectionsMenu.add(miCalibrate);
         sectionsMenu.add(miCalibrateTyped);

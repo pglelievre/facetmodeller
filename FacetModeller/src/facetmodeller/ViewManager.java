@@ -41,7 +41,7 @@ public final class ViewManager implements SessionIO {
     private MenuBar menuBar;
     private ClickModeToolBar toolBar; // Tool bar for common tasks
     private CursorTextBar cursorBar; // Display area for cursor position
-    private SectionTextBar sectionBar; // section information
+    //private SectionTextBar sectionBar; // section information
     private ToolPanel toolPanel; // left-most panel with all the radio buttons and selectors
     private ViewsPanel viewsPanel; // the 2D and 3D viewer panels and associated buttons
     private PaintingOptions paintingOptions; // painting options
@@ -65,8 +65,8 @@ public final class ViewManager implements SessionIO {
         cursorBar = new CursorTextBar(controller);
         cursorBar.setBorder(BorderFactory.createEtchedBorder());
         // Create the current section bar:
-        sectionBar = new SectionTextBar();
-        sectionBar.setBorder(BorderFactory.createEtchedBorder());
+        //sectionBar = new SectionTextBar();
+        //sectionBar.setBorder(BorderFactory.createEtchedBorder());
         // Make the tool panel:
         int ndim = controller.numberOfDimensions();
         toolPanel = new ToolPanel(controller,ndim);
@@ -82,15 +82,19 @@ public final class ViewManager implements SessionIO {
         Container contentPane = controller.getContentPane();
         contentPane.removeAll();
         // Add the current section and cursor location bars to a single panel:
-        JPanel statusPanel = new JPanel();
-        statusPanel.setLayout(new GridLayout(1,2));
-        statusPanel.add(cursorBar);
-        statusPanel.add(sectionBar);
+        //JPanel statusPanel = new JPanel();
+        //statusPanel.setLayout(new GridLayout(1,2));
+        //statusPanel.add(cursorBar);
+        //statusPanel.add(sectionBar);
         // Add the toolBar and statusPanel to a single panel:
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridLayout(2,1));
         topPanel.add(toolBar);
-        topPanel.add(statusPanel);
+        topPanel.add(cursorBar);
+        //topPanel.add(statusPanel);
+        //topPanel.setLayout(new BorderLayout());
+        //topPanel.add(toolBar,BorderLayout.NORTH);
+        //topPanel.add(statusPanel,BorderLayout.CENTER);
         // Add the top panel and view panel to the main panel:
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -151,9 +155,9 @@ public final class ViewManager implements SessionIO {
     }
     
     // Wrappers for the ExtendedCursorTextBar and SectionBar classes:
-    public void updateSectionBar(int ndim, int numberOfSections, int currentSectionIndex, Section currentSection) {
-        sectionBar.updateText(ndim,numberOfSections,currentSectionIndex,currentSection);
-    }
+    //public void updateSectionBar(int ndim, int numberOfSections, int currentSectionIndex, Section currentSection) {
+    //    sectionBar.updateText(ndim,numberOfSections,currentSectionIndex,currentSection);
+    //}
     public void updateCursorBar(MyPoint2D p2) { cursorBar.updateCursor(p2); }
     public void updateMinAngleBar() { cursorBar.updateMinAngle(); }
     public void updateClosestBar(MyPoint2D p) { cursorBar.updateClosest(p); }

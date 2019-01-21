@@ -2,7 +2,6 @@ package facetmodeller.clicktasks;
 
 import facetmodeller.FacetModeller;
 import facetmodeller.commands.AddNodeCommand;
-import facetmodeller.commands.ChangeNodeGroupCommand;
 import facetmodeller.groups.Group;
 import facetmodeller.gui.ClickModeManager;
 import facetmodeller.plc.Node;

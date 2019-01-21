@@ -79,6 +79,9 @@ public final class FileIOManager extends PreviousSession {
             }
         }
 
+        // Tell user to be patient:
+        Dialogs.inform(controller,"This may take a while if there are large section images. Please patiently wait for the confirmation dialog.",title);
+        
         // Load the session file:
         SessionLoader.LoadSessionReturnObject out = SessionLoader.loadSessionAscii(controller, getSessionFile(),merge);
 

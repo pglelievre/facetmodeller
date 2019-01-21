@@ -17,7 +17,7 @@ public final class RemoveSectionCommand extends ControlledCommandVector {
         // Create the remove nodes/facets/regions commands:
         ModelManager mod = con.getModelManager();
         add( new RemoveNodeCommandVector(mod,s.getNodes(),"") );
-        add( new RemoveFacetCommandVector(mod,s.getFacets(),"") );
+        //add( new RemoveFacetCommandVector(mod,s.getFacets(),"") );
         add( new RemoveRegionCommandVector(mod,s.getRegions()) );
     }
     

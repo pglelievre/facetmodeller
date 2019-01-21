@@ -200,7 +200,8 @@ public class ModelManager implements SessionIO {
         }
         for (int i=0 ; i<numberOfSections() ; i++ ) {
             Section s = getSection(i);
-            t = t + System.lineSeparator() + "Section " + s.shortName() + " has " + s.numberOfNodes() + " nodes, " + s.numberOfFacets() + " facets, " + s.numberOfRegions() + " regions.";
+            //t = t + System.lineSeparator() + "Section " + s.shortName() + " has " + s.numberOfNodes() + " nodes, " + s.numberOfFacets() + " facets, " + s.numberOfRegions() + " regions.";
+            t = t + System.lineSeparator() + "Section " + s.shortName() + " has " + s.numberOfNodes() + " nodes, " + s.numberOfRegions() + " regions.";
         }
         Dialogs.inform(con,t,"PLC Information");
     }
@@ -654,6 +655,7 @@ public class ModelManager implements SessionIO {
             // Read the section id's:
             textLine = FileUtils.readLine(reader);
             if (textLine==null) { return "Reading facet section ID line."; }
+            /*
             textLine = textLine.trim();
             ss = textLine.split("[ ]+");
             if (ss.length<1) { return "No values on facet section ID line."; }
@@ -670,6 +672,7 @@ public class ModelManager implements SessionIO {
 //                    facet.addSection( sections.get(id) ); // no longer necessary because facet sections defined by the facet nodes
                 sections2.get(id).addFacet(facet);
             }
+            */
             // Read the group id:
             textLine = FileUtils.readLine(reader);
             if (textLine==null) { return "Reading facet group ID line."; }

@@ -1,7 +1,7 @@
 package facetmodeller.sections;
 
-import facetmodeller.plc.Facet;
-import facetmodeller.plc.FacetVector;
+//import facetmodeller.plc.Facet;
+//import facetmodeller.plc.FacetVector;
 import facetmodeller.plc.Node;
 import facetmodeller.plc.NodeVector;
 import facetmodeller.plc.Region;
@@ -26,7 +26,7 @@ public class DefaultSectionInfo {
     private Color color = Color.WHITE;
     
     private final NodeVector nodes = new NodeVector(); // list of nodes associated with the section
-    private final FacetVector facets = new FacetVector(); // list of facets associated with the section
+    //private final FacetVector facets = new FacetVector(); // list of facets associated with the section
     private final RegionVector regions = new RegionVector(); // list of region points associated with the section
 
     // ------------------ Constructors -------------------
@@ -80,7 +80,7 @@ public class DefaultSectionInfo {
     protected MyPoint3D getTyped2() { return typed2; }
     public Color getColor() { return color; }
     public NodeVector getNodes() { return nodes; }
-    public FacetVector getFacets() { return facets; }
+    //public FacetVector getFacets() { return facets; }
     public RegionVector getRegions() { return regions; }
     
     public Dir3D getDir3D() {
@@ -121,7 +121,7 @@ public class DefaultSectionInfo {
     // -------------------- Public Methods --------------------
 
     public int numberOfNodes() { return nodes.size(); }
-    public int numberOfFacets() { return facets.size(); }
+    //public int numberOfFacets() { return facets.size(); }
     public int numberOfRegions() { return regions.size(); }
 
     public void addNode(Node n) {
@@ -130,6 +130,7 @@ public class DefaultSectionInfo {
 
     public void removeNode(Node n) { nodes.remove(n); }
 
+    /*
     public void addFacet(Facet f) {
         // Check if the section already contains the facet:
         if (facets.contains(f)) { return; }
@@ -150,11 +151,12 @@ public class DefaultSectionInfo {
         // Change the ordering of the facet:
         f.reverse();
     }
+    */
     
     public void addRegion(Region r) {
         if (!regions.contains(r)) { regions.add(r); }
     }
-    public void removeFacet(Facet f) { facets.remove(f); }
+    //public void removeFacet(Facet f) { facets.remove(f); }
     public void removeRegion(Region r) { regions.remove(r); }
 //    public void clearFacets() { facets.clear(); }
 //    public void clearPLC() {

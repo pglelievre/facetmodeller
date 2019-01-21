@@ -30,7 +30,7 @@ public final class ChangeNodeCoordsClickTask extends ControlledClickTask {
         if (!controller.hasSections()) { return false; }
         if (!controller.hasGroups()) { return false; }
         if (controller.getSelectedCurrentSection()==null) { return false; }
-        if (controller.getSelectedCurrentGroup()==null) { return false; }
+        //if (controller.getSelectedCurrentGroup()==null) { return false; }
         return controller.hasNodes();
     }
 

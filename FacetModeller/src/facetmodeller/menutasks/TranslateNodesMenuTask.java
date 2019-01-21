@@ -30,6 +30,12 @@ public final class TranslateNodesMenuTask extends ControlledMenuTask {
     public void execute() {
         // Check for the required information:
         if (!check()) { return; }
+        // Ask for confirmation:
+//        if (controller.getShowConfirmationDialogs()) {
+//            String message = "Any on-section nodes will be changed to off-section nodes. Do you want to continue?";
+//            int response = Dialogs.yesno(controller,message,title());
+//            if ( response != Dialogs.YES_OPTION ) { return; }
+//        }
         // Ask which nodes to translate:
         int which = Dialogs.question(controller,"Which groups of nodes?",title(),"All","Current","Cancel","Current");
         if (which==Dialogs.CANCEL_OPTION) { return; }

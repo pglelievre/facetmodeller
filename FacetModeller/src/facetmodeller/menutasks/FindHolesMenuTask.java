@@ -35,7 +35,10 @@ public final class FindHolesMenuTask extends ControlledMenuTask {
         if (!check()) { return; }
         // Find them:
         FacetVector facets = controller.findHoles();
-        if (facets==null) { return; }
+        if (facets==null) {
+            Dialogs.inform(controller,"You can't currently search for holes when non-triangular facets exist.",title());
+            return;
+        }
         // Check facets were found:
         if (facets.size()==0) {
             Dialogs.inform(controller,"No holes found.",title());

@@ -314,6 +314,15 @@ public class MyPoint2D {
         y *= sc;
     }
     
+    /** Scales Cartesian coordinates (scalar multiplication).
+     * @param sx
+     * @param sy
+     */
+    public void times(double sx, double sy) {
+        x *= sx;
+        y *= sy;
+    }
+    
     /** Scales Cartesian coordinates (multiplication).
      * @param sc
      */

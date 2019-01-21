@@ -2,12 +2,18 @@ package facetmodeller.gui;
 
 import facetmodeller.sections.Section;
 import gui.TextBar;
+//import java.awt.Dimension;
 
 /** The TextBar object that provides information about the current section.
  * @author Peter
  */
 public final class SectionTextBar extends TextBar {
     private static final long serialVersionUID = 1L;
+    
+    public SectionTextBar() {
+        super();
+        //this.setPreferredSize(new Dimension(100,50));
+    }
     
     public void updateText(int numberOfDimensions, int numberOfSections, int index, Section section) {
 

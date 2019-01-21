@@ -209,7 +209,7 @@ public final class FacetModeller extends JFrameExit {
                 }
             }
             // Update the name of the current section in the bar:
-            updateSectionBar();
+            //updateSectionBar();
         }
         // Check if we need to enable or disable any menu items:
         checkItemsEnabled();
@@ -390,10 +390,10 @@ public final class FacetModeller extends JFrameExit {
     public void redraw() { viewManager.redraw(); }
     public void redraw2D() { viewManager.redraw2D(); }
     public void redraw3D() { viewManager.redraw3D(); }
-    private void updateSectionBar() {
-        viewManager.updateSectionBar(numberOfDimensions(),numberOfSections(),
-                getSelectedCurrentSectionIndex(),getSelectedCurrentSection());
-    }
+    //private void updateSectionBar() {
+    //    viewManager.updateSectionBar(numberOfDimensions(),numberOfSections(),
+    //            getSelectedCurrentSectionIndex(),getSelectedCurrentSection());
+    //}
     public void updateCursorBar(MyPoint2D p) { viewManager.updateCursorBar(p); }
     public void updateMinAngleBar() { viewManager.updateMinAngleBar(); }
     public void updateClosestBar(MyPoint2D p) { viewManager.updateClosestBar(p); }

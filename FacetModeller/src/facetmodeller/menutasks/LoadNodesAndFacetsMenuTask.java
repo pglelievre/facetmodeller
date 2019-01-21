@@ -19,7 +19,7 @@ import java.awt.Color;
 import java.io.File;
 import javax.swing.JFileChooser;
 
-/** Loads nodes from a .node file, and optional facets from a .ele file, into the current section and group.
+/** Loads nodes from a .node file, and optional facets from a .ele file, into the current section and group(s).
  * @author Peter
  */
 public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
@@ -124,11 +124,18 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
         
         // Check for attributes:
         boolean doNodeAtts = false;
+        boolean newNodeAtts = false;
         if (readNodesReturnObj.getDoAtts()) {
-            String prompt = "Do you want to use the NODE attributes to define new NODE groups?";
+            String prompt = "Do you want to use the NODE attributes to split the NODES into groups?";
             response = Dialogs.question(controller,prompt,title());
             if (response==Dialogs.CANCEL_OPTION) { return; }
             doNodeAtts = ( response == Dialogs.YES_OPTION );
+            if (doNodeAtts) {
+                prompt = "Do you want split the nodes into the existing defined groups or new groups?";
+                response = Dialogs.question(controller,prompt,title(), "Existing","New","Cancel");
+                if (response==Dialogs.CANCEL_OPTION) { return; }
+                newNodeAtts = ( response == Dialogs.NO_OPTION );
+            }
         }
         
         // Get number of dimensions:
@@ -177,27 +184,42 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
         
         // Define new node groups:
         GroupVector newNodeGroups = null;
+        int nUniqueIDs = readNodesReturnObj.getN();
         if (doNodeAtts) {
-            newNodeGroups = new GroupVector();
-            // Loop over the new groups:
-            int n = readNodesReturnObj.getN();
-            for (int i=0 ; i<n ; i++ ) {
-                // Create a new group object with default name:
-                String name = currentGroup.getName() + "_NodeAtts" + (i+1);
-                Group g = new Group(name);
-                // Set colours to equal those for current group:
-                g.setNodeColor(currentGroup.getNodeColor());
-                g.setFacetColor(currentGroup.getFacetColor());
-                g.setRegionColor(currentGroup.getRegionColor());
-                // Add the group object to the list of new groups:
-                newNodeGroups.add(g);
-            }
-            // Set the node group memberships:
-            for (int i=0 ; i<nodes.size() ; i++ ) {
-                Node node = nodes.get(i);
-                int id = node.getID(); // the ID links to the new group objects
-                Group g = newNodeGroups.get(id);
-                node.setGroup(g);
+            if (newNodeAtts) { // splitting nodes into new groups named similarly to the current group name but with numbered suffixes
+                newNodeGroups = new GroupVector();
+                // Loop over the new groups:
+                for (int i=0 ; i<nUniqueIDs ; i++ ) {
+                    // Create a new group object with default name:
+                    String name = currentGroup.getName() + "_NodeAtts" + (i+1);
+                    Group g = new Group(name);
+                    // Set colours to equal those for current group:
+                    g.setNodeColor(currentGroup.getNodeColor());
+                    g.setFacetColor(currentGroup.getFacetColor());
+                    g.setRegionColor(currentGroup.getRegionColor());
+                    // Add the group object to the list of new groups:
+                    newNodeGroups.add(g);
+                }
+                // Set the node group memberships:
+                for (int i=0 ; i<nodes.size() ; i++ ) {
+                    Node node = nodes.get(i);
+                    int id = node.getID(); // the ID links to the new group objects
+                    Group g = newNodeGroups.get(id);
+                    node.setGroup(g);
+                }
+            } else { // splitting nodes into existing defined groups
+                // Check the number of groups is greater or equal to the number of unique node ID's:
+                if ( nUniqueIDs > controller.numberOfGroups() ) {
+                    Dialogs.error(controller,"There are fewer groups defined in the GUI than unique node groups in the file.",title());
+                    return;
+                }
+                // Set the node group memberships:
+                for (int i=0 ; i<nodes.size() ; i++ ) {
+                    Node node = nodes.get(i);
+                    int id = node.getID(); // the ID links to the existing group objects
+                    Group g = controller.getGroup(id);
+                    node.setGroup(g);
+                }
             }
         }
         
@@ -301,7 +323,12 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
             facets.setGroup(currentGroup);
         }
         
-        if (doNodeAtts) {
+        // Save the node and facet group selections:
+        GroupVector selectedNodeGroups = controller.getSelectedNodeGroups();
+        GroupVector selectedFacetGroups = controller.getSelectedFacetGroups();
+        
+        // Add any new groups to the group vectors:
+        if ( doNodeAtts && newNodeAtts ) {
             // Add all the new groups to the main list of groups:
             controller.addGroups(newNodeGroups);
         }
@@ -327,16 +354,18 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
         // Update the graphical selector objects:
         if ( doNodeAtts || doFacetAtts || doNodeAttsFromFacetAtts || doNodeAttsFromFacetDefs ) {
             controller.updateGroupSelectors();
-            int n = controller.numberOfGroups() - 1;
-            controller.setSelectedCurrentGroupIndex(n); // sets the selection to the last group
-            controller.setSelectedNodeGroupIndex(n); // sets the selection to the last group
-            controller.clearFacetGroupSelection(); // nothing selected
+            controller.setSelectedCurrentGroup(currentGroup); // maintains the current selected group
+            controller.setSelectedNodeGroups(selectedNodeGroups); // maintains the current selected groups
+            controller.setSelectedFacetGroups(selectedFacetGroups); // maintains the current selected groups
         }
 
         // Enable or disable menu items:
         controller.checkItemsEnabled();
         // Repaint:
         controller.redraw();
+        
+        // Inform user of success:
+        Dialogs.inform(controller,"File(s) loaded successfully.",title());
         
     }
     

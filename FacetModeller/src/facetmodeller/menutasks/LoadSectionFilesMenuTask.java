@@ -136,7 +136,7 @@ public final class LoadSectionFilesMenuTask extends ControlledMenuTask {
         // Check if any files are large:
         for (File file : files) {
             if (file.length() >= 1000000) { // 1Mb
-                response = Dialogs.continueCancel(controller,"Large files detected: this may slow the GUI.",title());
+                response = Dialogs.continueCancel(controller,"Large files detected. This may slow the GUI. Please wait patiently for the confirmation dialog.",title());
                 if (response != Dialogs.OK_OPTION ) { return; }
             }
         }

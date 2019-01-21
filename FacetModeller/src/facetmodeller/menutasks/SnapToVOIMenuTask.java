@@ -39,6 +39,7 @@ public final class SnapToVOIMenuTask extends ControlledMenuTask {
     @Override
     public boolean check() {
         if (!controller.is3D()) { return false; }
+        if (!controller.hasVOI()) { return false; }
         if (!controller.hasSections()) { return false; }
         if (!controller.hasGroups()) { return false; }
         if (controller.getSelectedCurrentSection()==null) { return false; }

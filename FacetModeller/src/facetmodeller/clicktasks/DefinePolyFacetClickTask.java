@@ -100,27 +100,24 @@ public final class DefinePolyFacetClickTask extends ControlledClickTask {
                 if ( inode == currentFacet.size()-1 ) { return; } // clicked the previous node
                 if (inode>0) { // (the case of returning to the first node is dealt with after this if statement)
                     // Ask the user for confirmation:
-                    if (controller.getShowConfirmationDialogs()) {
-                        int response = Dialogs.question(controller,"That node is already in the facet. How do you want to continue?",
-                                                          title(),"Ignore click","Remove nodes","Stop defining","Ignore click");
-                        if (response==Dialogs.YES_OPTION) { return; } // ignore the click
-                        if (response==Dialogs.CANCEL_OPTION) { // stop defining the current facet
-                            controller.clearCurrentFacet();
-                            controller.checkItemsEnabled();
-                            controller.redraw();
-                            return;
-                        }
-                        // Remove all nodes from the facet back to and including the selected node:
-                        while(currentFacet.containsNode(node)) {
-                            currentFacet.removeLastNode();
-                        }
-                        // Check if the current facet is now empty:
-                        if (currentFacet.size()==0) {
-                            controller.clearCurrentFacet(); // process will restart
-                        }
+                    int response = Dialogs.question(controller,"That node is already in the facet. How do you want to continue?",
+                                                      title(),"Ignore click","Remove nodes","Stop defining","Ignore click");
+                    if (response==Dialogs.YES_OPTION) { return; } // ignore the click
+                    if (response==Dialogs.CANCEL_OPTION) { // stop defining the current facet
+                        controller.clearCurrentFacet();
+                        controller.checkItemsEnabled();
                         controller.redraw();
-                    //} else { // Assume this was a user mistake.
+                        return;
                     }
+                    // Remove all nodes from the facet back to and including the selected node:
+                    while(currentFacet.containsNode(node)) {
+                        currentFacet.removeLastNode();
+                    }
+                    // Check if the current facet is now empty:
+                    if (currentFacet.size()==0) {
+                        controller.clearCurrentFacet(); // process will restart
+                    }
+                    controller.redraw();
                     return;
                 }
                 

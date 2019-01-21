@@ -9,6 +9,7 @@ import facetmodeller.sections.Section;
 import geometry.MyPoint2D;
 import geometry.MyPoint3D;
 import gui.TextBar;
+//import java.awt.Dimension;
 
 /** The TextBar object that provides information about the cursor location and other information.
  * @author Peter
@@ -18,7 +19,10 @@ public final class CursorTextBar extends TextBar {
     
     private final FacetModeller controller;
     
-    public CursorTextBar(FacetModeller con) { controller = con; }
+    public CursorTextBar(FacetModeller con) {
+        controller = con;
+        //this.setPreferredSize(new Dimension(100,50));
+    }
     
     /** Updates the cursor bar by writing the current cursor position.
      * @param p2 */
@@ -95,7 +99,8 @@ public final class CursorTextBar extends TextBar {
                         soff = "on ";
                     }
                     s = "node #" + ind + "; " + groupName + "; " + soff + sectionName + "; " + closestNode.getFacets().size() + " facets; "
-                            + "(" + closestNode.getPoint3D().toStringCSV() + ")";
+                            + " (" + closestNode.getPoint3D().toStringCSV() + ")";
+                            //+ System.lineSeparator() + "coordinates = (" + closestNode.getPoint3D().toStringCSV() + ")";
                     controller.clearClosestFacet();
                     controller.clearClosestRegion();
                     break;
@@ -109,8 +114,10 @@ public final class CursorTextBar extends TextBar {
                     int n = closestFacet.size();
                     if (n>3) {
                         s = "facet #" + ind + "; " + name + "; " + n + " nodes";
+                        //s = "facet #" + ind + "; " + name + "; " + System.lineSeparator() + n + " nodes";
                     } else {
-                        s = "facet #" + ind + "; " + name + "; nodes =";
+                        s = "facet #" + ind + "; " + name + "; " + "nodes =";
+                        //s = "facet #" + ind + "; " + name + ";" + System.lineSeparator() + "nodes =";
                         for (int i=0 ; i<n ; i++ ) {
                             Node node = closestFacet.getNode(i);
                             ind = controller.indexOfNode(node) + 1;

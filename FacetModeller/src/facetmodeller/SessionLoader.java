@@ -33,7 +33,7 @@ import geometry.Matrix3D;
 @SuppressWarnings("PublicInnerClass")
 public class SessionLoader {
 
-    private static final int LARGE_MODEL=1000;
+    private static final int LARGE_MODEL=3000; // HARDWIRE
     
     /** Loads a previously saved ascii session file.
      * @param controller
@@ -656,6 +656,7 @@ public class SessionLoader {
                 // Read the section id's:
                 textLine = FileUtils.readLine(reader);
                 if (textLine==null) { ok=false; break; }
+                /*
                 textLine = textLine.trim();
                 ss = textLine.split("[ ]+");
                 try {
@@ -671,6 +672,7 @@ public class SessionLoader {
 //                    facet.addSection( sections.get(id) ); // no longer necessary because facet sections defined by the facet nodes
                     sections.get(id).addFacet(facet);
                 }
+                */
                 // Read the group id:
                 textLine = FileUtils.readLine(reader);
                 if (textLine==null) { ok=false; break; }
@@ -1056,6 +1058,7 @@ public class SessionLoader {
                 // Read the section id's:
                 textLine = FileUtils.readLine(reader);
                 if (textLine==null) { ok=false; break; }
+                /*
                 textLine = textLine.trim();
                 ss = textLine.split("[ ]+");
                 try {
@@ -1071,6 +1074,7 @@ public class SessionLoader {
 //                    facet.addSection( sections.get(id) ); // no longer necessary because facet sections defined by the facet nodes
                     sections.get(id).addFacet(facet);
                 }
+                */
                 // Read the group id:
                 textLine = FileUtils.readLine(reader);
                 if (textLine==null) { ok=false; break; }

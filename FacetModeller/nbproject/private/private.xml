@@ -9,10 +9,11 @@
             <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/clicktasks/ClickTask.java</file>
         </group>
         <group name="NetBeansProjects">
-            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/clicktasks/DefineNodeInFacetClickTask.java</file>
             <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/FacetModeller.java</file>
             <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/gui/MenuBar.java</file>
-            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/FileIOManager.java</file>
+            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/menutasks/ReduceSectionImageMenuTask.java</file>
+            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/menutasks/LoadNodesAndFacetsMenuTask.java</file>
+            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/plc/NodeVector.java</file>
         </group>
     </open-files>
 </project-private>

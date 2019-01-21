@@ -20,7 +20,7 @@ public final class RemoveFacetCommand extends ModelCommand {
         // Remove the facet from the PLC:
         model.removeFacet(facet);
         // Remove the facet from the sections that hold it:
-        facet.getSections().removeFacet(facet);
+        //facet.getSections().removeFacet(facet);
         // Remove the facet from the group that holds it:
         facet.getGroup().removeFacet(facet);
         // Remove the facet from its nodes:
