@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+- Added cancel buttons to dialogs during section calibration.
+- When moving a node, the location of the cursor is now shown properly after the first click.
 - Added a dialog to indicate when a session has been saved successfully.
 - Added radio buttons to plot heads/tails on facet normal vectors.
 - Normal vectors can now have their colour changed through the display menu.
