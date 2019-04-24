@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. Dates are i
 - Normal vectors and facet edges can be drawn thick in 3D (with aliasing) through the display menu.
 - Added new click mode to propagate the facet node ordering, and therefore normal vector direction, within a facet group.
 ### Bugs squashed
+- Bug in change node coordinates click mode (the one where you manually enter the coordinates in a text field).
 - The display option to change the edge colour was not being included in the 2D version.
 
 ## 2019-01-21
