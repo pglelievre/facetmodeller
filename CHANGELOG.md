@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+### Bugs squashed
+
+## 2019-05-02
+### Changed
 - Added cancel buttons to dialogs during section calibration.
 - When moving a node, the location of the cursor is now shown properly after the first click.
 - Added a dialog to indicate when a session has been saved successfully.
