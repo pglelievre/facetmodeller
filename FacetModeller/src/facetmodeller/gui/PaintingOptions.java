@@ -21,17 +21,23 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     public static final Color DEFAULT_SECTION_COLOR = Color.WHITE;
     public static final Color DEFAULT_EDGE_COLOR = Color.BLACK;
     public static final Color DEFAULT_DEFINE_EDGE_COLOR = Color.WHITE;
+    public static final Color DEFAULT_NORMAL_COLOR = Color.BLACK;
     public static final double DEFAULT_TRANSPARENCY = 0.5;
     public static final double DEFAULT_NORMAL_LENGTH = 10.0;
+    public static final boolean DEFAULT_NORMAL_THICK = true;
+    public static final boolean DEFAULT_EDGE_THICK = false;
     
     private final FacetModeller controller;
     
     private Color edgeColor = DEFAULT_EDGE_COLOR; // painting colour for edge overlays
     private Color defineFacetEdgeColor = DEFAULT_DEFINE_EDGE_COLOR; // painting colour for edge overlays when defining facets
+    private Color normalColor = DEFAULT_NORMAL_COLOR; // painting colour for facet normals (in 3D panel)
     private MyPoint3D origin3D=null; // the origin of the 3D viewer
     private Node originNode3D=null; // a node to use as the origin of the 3D viewer
     private double transparency=DEFAULT_TRANSPARENCY; // overlay transparency for 2D viewer
     private double normalLength=DEFAULT_NORMAL_LENGTH; // spatial units
+    private boolean normalThick=DEFAULT_NORMAL_THICK; // draw normal vectors thick with aliasing (in 3D panel)?
+    private boolean edgeThick=DEFAULT_EDGE_THICK; // draw edges thick with aliasing (in 3D panel)?
     
     public PaintingOptions(FacetModeller con) {
         super(con);
@@ -40,6 +46,7 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     
     public Color getEdgeColor() { return edgeColor; }
     public Color getDefineFacetEdgeColor() { return defineFacetEdgeColor; }
+    public Color getNormalColor() { return normalColor; }
     public MyPoint3D getOrigin3D() { return origin3D; }
     public Node getOriginNode3D() { return originNode3D; }
     public double getVerticalExaggeration() {
@@ -47,9 +54,12 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     }
     public double getTransparency() { return transparency; }
     public double getNormalLength() { return normalLength; }
+    public boolean getNormalThick() { return normalThick; }
+    public boolean getEdgeThick() { return edgeThick; }
     
     public void setEdgeColor(Color col) { edgeColor = col; }
     public void setDefineFacetEdgeColor(Color col) { defineFacetEdgeColor = col; }
+    private void setNormalColor(Color col) { normalColor = col; }
     public void setOrigin3D(Node node) {
         originNode3D = node;
         origin3D = node.getPoint3D();
@@ -59,6 +69,8 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     }
     public void setTransparency(double d) { transparency = d; }
     public void setNormalLength(double d) { normalLength = d; }
+    public void setNormalThick(boolean b) { normalThick = b; }
+    public void setEdgeThick(boolean b) { edgeThick = b; }
     
     public void clearOrigin3D() {
         originNode3D = null;
@@ -78,6 +90,14 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         Color col = JColorChooser.showDialog(controller,"Change Facet Edge Color When Defining",getDefineFacetEdgeColor());
         if (col == null) { return; }
         setDefineFacetEdgeColor(col);
+        controller.redraw();
+    }
+
+    /** Allows the user to select a paint colour for painting facet normal vectors. */
+    public void selectNormalColor() {
+        Color col = JColorChooser.showDialog(controller,"Change Facet Normal Vector Color",getNormalColor());
+        if (col == null) { return; }
+        setNormalColor(col);
         controller.redraw();
     }
 
@@ -164,6 +184,36 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         setNormalLength(d);
         controller.redraw3D();
     }
+
+    public void selectNormalThickness() {
+        int response = Dialogs.question(controller,"Do you want to draw the normal vectors thickly in the 3D panel?","Facet Normal Thickness");
+        switch (response) {
+            case Dialogs.YES_OPTION:
+                setNormalThick(true);
+                break;
+            case Dialogs.NO_OPTION:
+                setNormalThick(false);
+                break;
+            default: // Dialogs.CANCEL_OPTION
+                return;
+        }
+        controller.redraw3D();
+    }
+
+    public void selectEdgeThickness() {
+        int response = Dialogs.question(controller,"Do you want to draw the facet edges thickly in the 3D panel?","Facet Edge Thickness");
+        switch (response) {
+            case Dialogs.YES_OPTION:
+                setEdgeThick(true);
+                break;
+            case Dialogs.NO_OPTION:
+                setEdgeThick(false);
+                break;
+            default: // Dialogs.CANCEL_OPTION
+                return;
+        }
+        controller.redraw3D();
+    }
     
     // Wrappers for the CommonPaintingOptions class:
     @Override
@@ -203,10 +253,13 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write the index of the node to use as the origin of the 3D viewer, and the normalLength, and the transparency factor, on the same line:
         if (originNode3D==null) {
-            textLine = "null " + normalLength + " " + transparency;
+            textLine = "null " + normalLength + " " + transparency + " " + normalThick + " " + edgeThick;
         } else {
-            textLine = originNode3D.getID() + " " + normalLength + " " + transparency;
+            textLine = originNode3D.getID() + " " + normalLength + " " + transparency + " " + normalThick + " " + edgeThick;
         }
+        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        // Write normal colour:
+        textLine = Integer.toString(normalColor.getRGB());
         return FileUtils.writeLine(writer,textLine);
     }
     
@@ -267,6 +320,24 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
             try {
                 transparency = Double.parseDouble(s[2].trim());
             } catch (NumberFormatException e) { return "Parsing transparency factor."; }
+        }
+        if (s.length>3) {
+            try {
+                normalThick = Boolean.parseBoolean(s[3].trim());
+            } catch (NumberFormatException e) { return "Parsing normal thick."; }
+        }
+        if (s.length>4) {
+            try {
+                edgeThick = Boolean.parseBoolean(s[4].trim());
+            } catch (NumberFormatException e) { return "Parsing edge thick."; }
+        }
+        // Read normal colour:
+        if (s.length>4) { // this additional line was added to the session file format in the same commit as the two items above 
+            textLine = FileUtils.readLine(reader);
+            if (textLine==null) { return "Reading normal colour line."; }
+            try {
+                normalColor = new Color(Integer.parseInt(textLine.trim())); // parse from RGB string
+            } catch (NumberFormatException e) { return "Parsing normal colour."; }
         }
         // Return successfully:
         return null;

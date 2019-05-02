@@ -42,15 +42,16 @@ public class ZBuffer {
     
     // -------------------- Setters -------------------
     
-    public void setPixel(int i, int j, double z, Color col) {
+    public boolean setPixel(int i, int j, double z, Color col) {
         // Check i and j:
-        if ( i<0 || i>=getWidth() || j<0 || j>=getHeight() ) { return; }
+        if ( i<0 || i>=getWidth() || j<0 || j>=getHeight() ) { return false; }
         // Check z is better (larger):
-        if ( z <= zbuf[i][j] ) { return; }
+        if ( z <= zbuf[i][j] ) { return false; }
         // Reset the pixel z value:
         zbuf[i][j] = z;
         // Change the colour for the pixel:
         image.setRGB(i,j,col.getRGB());
+        return true;
     }
     
 }

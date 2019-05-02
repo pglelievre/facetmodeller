@@ -49,8 +49,9 @@ public class ZBuffer3D extends ZBuffer {
     /** Processes a facet.
      * @param facet
      * @param faceColor Set to null to only draw edges.
-     * @param edgeColor */
-    public void putFacet(MyPoint3D[] facet, Color faceColor, Color edgeColor) {
+     * @param edgeColor
+     * @param thick */
+    public void putFacet(MyPoint3D[] facet, Color faceColor, Color edgeColor, boolean thick) {
         // Get the number of nodes in the facet:
         int n = facet.length;
         // Check if the face needs to be painted:
@@ -65,15 +66,24 @@ public class ZBuffer3D extends ZBuffer {
         for (int i=0 ; i<n ; i++) {
             int i2 = i + 1;
             if (i2>=n) { i2 = 0; }
-            putEdge(facet[i],facet[i2],edgeColor);
+            putEdge(facet[i],facet[i2],edgeColor,thick);
         }
     }
     
-    /** Processes an edge.
+    /** Processes an edge, drawn thin.
      * @param p1
      * @param p2
      * @param col */
     public void putEdge(MyPoint3D p1, MyPoint3D p2, Color col) {
+        putEdge(p1,p2,col,false);
+    }
+    
+    /** Processes an edge, optionally drawn thick with aliasing.
+     * @param p1
+     * @param p2
+     * @param col
+     * @param thick */
+    public void putEdge(MyPoint3D p1, MyPoint3D p2, Color col, boolean thick) {
         // Modified Bresenham algorithm for drawing a pixellated line:
         // http://tech-algorithm.com/articles/drawing-line-using-bresenham-algorithm/
         final int x1 = (int)p1.getX();
@@ -109,9 +119,21 @@ public class ZBuffer3D extends ZBuffer {
         for (int i=0 ; i<=longest ; i++ ) {
             // Interpolate the z value:
             d = Math.sqrt( Math.pow(x-x1,2) + Math.pow(y-y1,2) ); // distance along the line
-            double z = z1 + d*zslope;
-            // Set the pixel and continue:
-            setPixel(x,y,z+1,col); // the setPixel method checks that the pixel coordinates are inside the image
+            double z = z1 + d*zslope + 1;
+            // Set the pixel:
+            boolean ok = setPixel(x,y,z,col); // the setPixel method checks that the pixel coordinates are inside the image
+            // If drawing a thick line then apply a simple mask:
+            if (thick && ok) {
+                setPixel(x-1,y-1,z,col);
+                setPixel(x-1,y  ,z,col);
+                setPixel(x-1,y+1,z,col);
+                setPixel(x  ,y-1,z,col);
+                setPixel(x  ,y+1,z,col);
+                setPixel(x+1,y-1,z,col);
+                setPixel(x+1,y  ,z,col);
+                setPixel(x+1,y+1,z,col);
+            }
+            // Update variables before continuing to next iteration:
             numerator += shortest;
             //if (!(numerator<longest)) {
             if ( numerator >= longest ) {
@@ -124,6 +146,43 @@ public class ZBuffer3D extends ZBuffer {
             }
         }
     }
+    
+    /* Processes an edge with thickness and anti-aliasing.
+     * @param p1
+     * @param p2
+     * @param col
+     * @param width */
+    /*
+    void putEdge(MyPoint3D p1, MyPoint3D p2, Color col, int width) {
+        // http://members.chello.at/~easyfilter/bresenham.html
+        // http://members.chello.at/%7Eeasyfilter/Bresenham.pdf
+        int x0 = (int)p1.getX();
+        int y0 = (int)p1.getY();
+        final int x1 = (int)p2.getX();
+        final int y1 = (int)p2.getY();
+        float wd = width;
+        int dx = Math.abs(x1-x0), sx = x0 < x1 ? 1 : -1;
+        int dy = Math.abs(y1-y0), sy = y0 < y1 ? 1 : -1;
+        int err = dx-dy, e2, x2, y2; // error value e_xy
+        float ed = dx+dy == 0 ? 1 : Math.sqrt((float)dx*dx+(float)dy*dy);
+        for (wd = (wd+1)/2; ; ) { // pixel loop
+            setPixelColor(x0,y0,Math.max(0,255*(Math.abs(err-dx+dy)/ed-wd+1)));
+            e2 = err; x2 = x0;
+            if (2*e2 >= -dx) { // x step
+                for (e2 += dy, y2 = y0; e2 < ed*wd && (y1 != y2 || dx > dy); e2 += dx)
+                    setPixelColor(x0, y2 += sy, Math.max(0,255*(Math.abs(e2)/ed-wd+1)));
+                if (x0 == x1) { break; }
+                e2 = err; err -= dy; x0 += sx; 
+            } 
+            if (2*e2 <= dy) { // y step
+                for (e2 = dx-e2; e2 < ed*wd && (x1 != x2 || dx < dy); e2 += dy)
+                    setPixelColor(x2 += sx, y0, Math.max(0,255*(Math.abs(e2)/ed-wd+1)));
+                if (y0 == y1) { break; }
+                err += dx; y0 += sy; 
+            }
+        }
+    }
+    */
     
     // -------------------- Private methods -------------------
     

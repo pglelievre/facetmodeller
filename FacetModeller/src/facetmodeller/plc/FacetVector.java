@@ -97,6 +97,18 @@ public class FacetVector {
             add(v.get(i)); // passing through this method makes sure there are no duplicates
         }
     }
+    
+    /** Combines facet vectors only if the groups match.
+     * @param v
+     * @param g */
+    public void addAll(FacetVector v, Group g) {
+        for (int i=0 ; i<v.size() ; i++ ) {
+            Facet f = v.get(i);
+            if ( f.getGroup() == g ) {
+                add(f); // passing through this method makes sure there are no duplicates
+            }
+        }
+    }
 
     /* Returns true if the vector contains the supplied facet.
      * @param p The supplied facet.
@@ -272,6 +284,25 @@ public class FacetVector {
     private class BoundaryInfo {
         public NodeVector nodes;
         public FacetVector facets;
+    }
+
+    // -------------------- Static Public Methods -------------------
+    
+    public static FacetVector intersection(FacetVector v1,FacetVector v2) {
+        // Initialize return object:
+        FacetVector fint = new FacetVector();
+        // Loop over each facet in v1:
+        for ( int i=0 ; i<v1.size() ; i++ ) {
+            // Get the ith facet in v1:
+            Facet f = v1.get(i);
+            // Check if that facet is also in v2:
+            if (v2.contains(f)) {
+                // Add that facet to the list:
+                fint.add(f);
+            }
+        }
+        // Return the result:
+        return fint;
     }
 
     // -------------------- File I/O -------------------

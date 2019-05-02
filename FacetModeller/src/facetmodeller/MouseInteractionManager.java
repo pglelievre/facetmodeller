@@ -15,7 +15,7 @@ public final class MouseInteractionManager {
     private final ClickTask ignore, info, defineNode, deleteNode, moveNode, mergeNodes, duplicateNode,
             changeNodeGroup, changeNodeSection, changeNodeCoords, changeFacetGroup,
             definePolyFacet, definePolyFacetTri, defineTriFacet, defineLineFacet,
-            deleteFacet, reverseFacet, flipEdge, defineRegion, deleteRegion,
+            deleteFacet, reverseFacet, flipEdge, defineRegion, deleteRegion, propagateNormals,
             defineNodeOnEdge, defineNodeInFacet, originPoint2D, originNode3D, calibrate;
     
     public MouseInteractionManager(FacetModeller con) {
@@ -45,6 +45,7 @@ public final class MouseInteractionManager {
         originPoint2D = new OriginPoint2DClickTask(con);
         originNode3D = new OriginNode3DClickTask(con);
         calibrate = new CalibrateClickTask(con);
+        propagateNormals = new PropagateNormalClickTask(con);
     }
     
     // Returns the ClickTask object corresponding to the supplied mode.
@@ -102,6 +103,8 @@ public final class MouseInteractionManager {
                 return defineRegion;
             case ClickModeManager.MODE_DELETE_REGIONS:
                 return deleteRegion;
+            case ClickModeManager.MODE_PROPAGATE_NORMALS:
+                return propagateNormals;
             default:
                 return null;
         }

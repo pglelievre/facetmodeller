@@ -103,16 +103,18 @@ public class ImageSection implements SessionIO {
 
     public boolean startCalibration(JFrame con) {
         // Provide initial instructions:
-        Dialogs.inform(con,"Click on the first calibration point.","Calibrate");
-        // Indicate that we now need to wait for user input:
-        return true;
+        int result = Dialogs.continueCancel(con,"Click on the first calibration point.","Calibrate");
+        // Indicate that we now need to wait for user input (unless user cancelled):
+        boolean ok = result == Dialogs.OK_OPTION;
+        return ok;
     }
 
     public boolean continueCalibration(JFrame con) {
         // Provide second instructions:
-        Dialogs.inform(con,"Click on the second calibration point.","Calibrate");
-        // Indicate that we now need to wait for user input:
-        return true;
+        int result = Dialogs.continueCancel(con,"Click on the second calibration point.","Calibrate");
+        // Indicate that we now need to wait for user input (unless user cancelled):
+        boolean ok = result == Dialogs.OK_OPTION;
+        return ok;
     }
     
     public CalibrateReturn calibrate(JFrame con, MyPoint2D clickPoint, MyPoint3D typed1, MyPoint3D typed2) {

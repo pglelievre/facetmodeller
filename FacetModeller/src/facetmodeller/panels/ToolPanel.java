@@ -77,6 +77,8 @@ public final class ToolPanel extends JPanel implements SessionIO {
     public boolean getShowVOI() { return radioButtonsPanel.getShowVOI(); }
     public boolean getShowFaces() { return radioButtonsPanel.getShowFaces(); }
     public boolean getShowNormals() { return radioButtonsPanel.getShowNormals(); }
+    public boolean getShowNormalTails() { return radioButtonsPanel.getShowNormalTails(); }
+    public boolean getShowNormalHeads() { return radioButtonsPanel.getShowNormalHeads(); }
     public boolean getShowRegions() { return radioButtonsPanel.getShowRegions(); }
     public boolean getNodeColorBySection() { return radioButtonsPanel.getNodeColorBySection(); }
     

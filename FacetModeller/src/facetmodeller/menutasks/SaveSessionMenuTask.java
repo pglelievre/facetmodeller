@@ -72,8 +72,10 @@ public final class SaveSessionMenuTask extends ControlledMenuTask {
         controller.resetIDs();
         // Save ascii file:
         ok = SessionSaver.saveSessionAscii(controller,sessionFile);
-        // Display message if error occurred:
-        if (!ok) {
+        // Display message indicating success for failure:
+        if (ok) {
+            Dialogs.inform(controller,"Session saved successfully.",title());
+        } else {
             Dialogs.error(controller,"Failed to save session.",title());
             return;
         }

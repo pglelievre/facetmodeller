@@ -236,6 +236,25 @@ public class Facet extends HasGroup {
         for (int i=0 ; i<)
     }
      */
+
+    // -------------------- Static Public Methods -------------------
+    
+    public static NodeVector sharedNodes(Facet f1,Facet f2) {
+        // Initialize return object:
+        NodeVector nint = new NodeVector();
+        // Loop over each node in f1:
+        for ( int i=0 ; i<f1.size() ; i++ ) {
+            // Get the ith node in f1:
+            Node n = f1.getNode(i);
+            // Check if that node is also in f2:
+            if (f2.containsNode(n)) {
+                // Add that node to the list:
+                nint.add(n);
+            }
+        }
+        // Return the result:
+        return nint;
+    }
     
     // -------------------- Private Methods -------------------
     

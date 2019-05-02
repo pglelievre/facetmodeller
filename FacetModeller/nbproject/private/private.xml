@@ -11,9 +11,8 @@
         <group name="NetBeansProjects">
             <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/FacetModeller.java</file>
             <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/gui/MenuBar.java</file>
-            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/menutasks/ReduceSectionImageMenuTask.java</file>
-            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/menutasks/LoadNodesAndFacetsMenuTask.java</file>
-            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/plc/NodeVector.java</file>
+            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/menutasks/DeleteSectionMenuTask.java</file>
+            <file>file:/Users/Peter/PostDoc/Code/SVN/peter/NetBeansProjects/FacetModeller/src/facetmodeller/menutasks/ClearPLCMenuTask.java</file>
         </group>
     </open-files>
 </project-private>

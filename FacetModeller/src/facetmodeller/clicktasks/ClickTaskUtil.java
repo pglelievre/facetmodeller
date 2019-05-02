@@ -55,6 +55,8 @@ public final class ClickTaskUtil {
     public static final String ORIGIN_NODE_3D_TITLE = "Set 3D Origin Node";
     public static final String CALIBRATE_TEXT  = "Calibrate current section";
     public static final String CALIBRATE_TITLE = "Calibrate Current Section";
+    public static final String PROPAGATE_NORMALS_TEXT = "Propagate facet ordering";
+    public static final String PROPAGATE_NORMALS_TITLE = "Propagate Facet Ordering";
     
     private ClickTaskUtil() {} // private so can't instantiate
     

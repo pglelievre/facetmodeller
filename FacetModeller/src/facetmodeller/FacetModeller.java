@@ -189,23 +189,24 @@ public final class FacetModeller extends JFrameExit {
         if (current) {
             // Check if the section has an image:
             Section currentSection = this.getSelectedCurrentSection();
-            if (currentSection==null) { return; }
-            if (currentSection.hasImage()) {
-                BufferedImage image = currentSection.getImage();
-                while (image==null) { // I'll also jump out of this if the user cancels a dialog
-                    // Check if the file exists:
-                    File file = currentSection.getImageFile();
-                    if (file.exists()) {
-                        InteractionDialogs.imageFileError(this);
-                        return;
+            if (currentSection!=null) {
+                if (currentSection.hasImage()) {
+                    BufferedImage image = currentSection.getImage();
+                    while (image==null) { // I'll also jump out of this if the user cancels a dialog
+                        // Check if the file exists:
+                        File file = currentSection.getImageFile();
+                        if (file.exists()) {
+                            InteractionDialogs.imageFileError(this);
+                            return;
+                        }
+                        // Ask the user to locate the image file:
+                        file = InteractionDialogs.imageFileRequest(this,file);
+                        if (file==null) { return; }
+                        // Set the file (this also reads the image from the file):
+                        currentSection.setImageFile(file);
+                        // Get the section image:
+                        image = currentSection.getImage();
                     }
-                    // Ask the user to locate the image file:
-                    file = InteractionDialogs.imageFileRequest(this,file);
-                    if (file==null) { return; }
-                    // Set the file (this also reads the image from the file):
-                    currentSection.setImageFile(file);
-                    // Get the section image:
-                    image = currentSection.getImage();
                 }
             }
             // Update the name of the current section in the bar:
@@ -407,6 +408,8 @@ public final class FacetModeller extends JFrameExit {
     public boolean getShowVOI() { return viewManager.getShowVOI(); }
     public boolean getShowFaces() { return viewManager.getShowFaces(); }
     public boolean getShowNormals() { return viewManager.getShowNormals(); }
+    public boolean getShowNormalTails() { return viewManager.getShowNormalTails(); }
+    public boolean getShowNormalHeads() { return viewManager.getShowNormalHeads(); }
     public boolean getShowRegions() { return viewManager.getShowRegions(); }
     public boolean getNodeColorBySection() { return viewManager.getNodeColorBySection(); }
     public SectionVector getSelectedOtherSections() { return viewManager.getSelectedOtherSections(); }
@@ -476,10 +479,13 @@ public final class FacetModeller extends JFrameExit {
     public Color getCalibrationColor() { return viewManager.getCalibrationColor(); }
     public Color getEdgeColor() { return viewManager.getEdgeColor(); }
     public Color getDefineFacetEdgeColor() { return viewManager.getDefineFacetEdgeColor(); }
+    public Color getNormalColor() { return viewManager.getNormalColor(); }
     public int getPointWidth() { return viewManager.getPointWidth(); }
     public int getLineWidth() { return viewManager.getLineWidth(); }
     public double getTransparency() { return viewManager.getTransparency(); }
     public double getNormalLength() { return viewManager.getNormalLength(); }
+    public boolean getNormalThick() { return viewManager.getNormalThick(); }
+    public boolean getEdgeThick() { return viewManager.getEdgeThick(); }
     public Node getOriginNode3D() { return viewManager.getOriginNode3D(); }
     public void setCalibrationColor(Color c) { viewManager.setCalibrationColor(c); }
     public void setEdgeColor(Color c) { viewManager.setEdgeColor(c); }
@@ -490,10 +496,13 @@ public final class FacetModeller extends JFrameExit {
     public void selectCalibrationColor() { viewManager.selectCalibrationColor(); }
     public void selectEdgeColor() { viewManager.selectEdgeColor(); }
     public void selectDefineFacetEdgeColor() { viewManager.selectDefineFacetEdgeColor(); }
+    public void selectNormalColor() { viewManager.selectNormalColor(); }
     public void selectPointWidth() { viewManager.selectPointWidth(); }
     public void selectLineWidth() { viewManager.selectLineWidth(); }
     public void selectTransparency() { viewManager.selectTransparency(); }
     public void selectNormalLength() { viewManager.selectNormalLength(); }
+    public void selectNormalThickness() { viewManager.selectNormalThickness(); }
+    public void selectEdgeThickness() { viewManager.selectEdgeThickness(); }
     public void selectVerticalExaggeration() { viewManager.selectVerticalExaggeration(); }
     public void selectBackgroundColor() { viewManager.selectBackgroundColor(); }
     public void selectSectionColor() { viewManager.selectSectionColor(); }

@@ -265,7 +265,13 @@ public class View3DPanel extends PanningPanel implements SessionIO {
             // Set the node ID equal to i so I can use the ID's as indices into the projectedPoints array:
             node.setID(i);
             // Transform the point to image coordinates:
-            MyPoint3D p = spaceToImage(node.getPoint3D()); // p is a deep copy of node.getPoint3D()
+            MyPoint3D p3 = node.getPoint3D();
+            MyPoint3D p;
+            if (p3==null) { // section not calibrated
+                p = null;
+            } else {
+                p = spaceToImage(p3); // p is a deep copy of node.getPoint3D()
+            }
             // Save the transformed point in the list:
             projectedPoints[i] = p;
         }
@@ -280,8 +286,17 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         // Get drawing styles for overlays:
         final int edgeWidth = controller.getLineWidth();
         final int nodeWidth = controller.getPointWidth();
-        final int centroidWidth = (int)Math.ceil(nodeWidth/2.0); // centroids drawn half the node width
+        //final int centroidWidth = (int)Math.ceil(nodeWidth/2.0); // centroids drawn half the node width
         final double normalLength = controller.getNormalLength();
+        final Color normalCol = controller.getNormalColor();
+        boolean normalThick = controller.getNormalThick();
+        boolean edgeThick = controller.getEdgeThick();
+        final int normalWidth;
+        if (normalThick) {
+            normalWidth = 8;
+        } else {
+            normalWidth = 4;
+        }
         
         // Initialize the zbuffer or Graphics2D object:
         Graphics2D g2 = (Graphics2D) g;
@@ -310,6 +325,8 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         // z-buffering can't draw a facet edge over a node)
         boolean showFaces = controller.getShowFaces();
         boolean showNormals = controller.getShowNormals();
+        boolean showNormalTails = controller.getShowNormalTails();
+        boolean showNormalHeads = controller.getShowNormalHeads();
         if (pt1==null) {
             GroupVector facetGroups = controller.getSelectedFacetGroups();
             if (facetGroups!=null) {
@@ -341,7 +358,7 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                         for (int k=0 ; k<n ; k++ ) { // loop over each node in the facet
                             int id = facet.getNode(k).getID(); // index into projectedPoints
                             pts[k] = projectedPoints[id];
-                            if (pts[k]==null) { // node is behind camera so don't paint the facet
+                            if (pts[k]==null) { // node is behind camera, or its section is not calibrated, so don't paint the facet
                                 ok = false;
                                 break;
                             }
@@ -372,7 +389,7 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                             //faceColor = null;
                             edgeCol = col;
                         }
-                        zbuf.putFacet(pts,faceCol,edgeCol);
+                        zbuf.putFacet(pts,faceCol,edgeCol,edgeThick);
                         // Draw the facet normals:
                         if (showNormals) {
                             // Set up the points on either end of the normal vector line:
@@ -395,12 +412,14 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                             //p1.plus(vn);
                             // Draw normal vectors as line objects:
                             if (pt1==null) {
-                                zbuf.putNode(p0,edgeCol,centroidWidth);
-                                zbuf.putEdge(p0,p1,edgeCol);
+                                zbuf.putEdge(p0,p1,normalCol,normalThick);
+                                if (showNormalTails) { zbuf.putNode(p0,normalCol,normalWidth); } // point at normal tail
+                                if (showNormalHeads) { zbuf.putNode(p1,normalCol,normalWidth); } // point at normal head
                             } else {
-                                g2.setPaint(edgeCol);
-                                g2.fillOval( (int)p0.getX() - centroidWidth/2 , (int)p0.getY() - centroidWidth/2 , centroidWidth , centroidWidth );
+                                g2.setPaint(normalCol);
                                 g2.drawLine( (int)p0.getX() , (int)p0.getY() , (int)p1.getX() , (int)p1.getY() );
+                                if (showNormalTails) { g2.fillOval( (int)p0.getX() - normalWidth/2 , (int)p0.getY() - normalWidth/2 , normalWidth , normalWidth ); } // circle at normal tail
+                                if (showNormalHeads) { g2.fillOval( (int)p1.getX() - normalWidth/2 , (int)p1.getY() - normalWidth/2 , normalWidth , normalWidth ); } // circle at normal head
                             }
                         }
                     } // for j
@@ -438,7 +457,7 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                     col = node.getColor();
                 }
                 if (pt1==null) {
-                    if ( projectedPoints[id] != null ) { // only paint if node is in front of the camera
+                    if ( projectedPoints[id] != null ) { // only paint if node is in front of the camera, and if its section is calibrated
                         zbuf.putNode(projectedPoints[id],col,controller.getPointWidth());
                     }
                 } else {

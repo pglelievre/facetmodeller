@@ -12,9 +12,9 @@ import facetmodeller.plc.NodeVector;
  */
 public final class MergeNodesCommand extends ModelCommand {
     
-    private final Node node1; // the node removed
-    private final Node node2; // the node that replaced the one removed
-    private FacetVector oldFacets; // a deep copy of the facets that were switched
+    private Node node1; // the node removed
+    private Node node2; // the node that replaces the one removed
+    private FacetVector oldFacets1; // a deep copy of the facets belonging to node1 before merging
     private AddNodeCommand com = null;
     
     public MergeNodesCommand(ModelManager mod, Node n1, Node n2, String t) {
@@ -31,13 +31,17 @@ public final class MergeNodesCommand extends ModelCommand {
         }
         // Make a deep copy of the facets that contain the first node:
         FacetVector facets1 = node1.getFacets();
-        oldFacets = facets1.deepCopy(); // new Facet objects that link to existing nodes
-        // Link all the facets in the first node to the second node:
+        oldFacets1 = facets1.deepCopy(); // contains new Facet objects that link to existing nodes
+        // Replace node1 with node2 in any facet definitions for the node being removed:
         for (int i=0 ; i<facets1.size() ; i++ ) { // loop over every facet that contains the first node
-            NodeVector nodes = facets1.get(i).getNodes(); // the nodes in the current facet
+            Facet f = facets1.get(i);
+            NodeVector nodes = f.getNodes(); // the nodes in the current facet
             while ( nodes.replace(node1,node2) >= 0 ) {} // tries to replace the FIRST instance of node1 in the list until node1 is no longer found
             // If the facet connects a pair of nodes along an edge then delete one of the node references (zero-length edge):
             nodes.removeZeroEdges();
+            // Make sure that node2 is linked to the facet:
+            //f.addNode(node2); // unnecessary
+            node2.addFacet(f);
         }
         // Remove the first node from the PLC:
         model.removeNode(node1);
@@ -56,12 +60,20 @@ public final class MergeNodesCommand extends ModelCommand {
         for (int i=0 ; i<facets1.size() ; i++ ) {
             Facet f = facets1.get(i);
             f.clear(); // clears all nodes
-            f.addNodes( oldFacets.get(i).getNodes() ); // adds old node references back into the facet
+            f.addNodes( oldFacets1.get(i).getNodes() ); // adds old node references back into the facet
         }
         // Check if we have to remove the new node from the PLC:
         if (com!=null) {
+            // First remove the node from all of it's facets so they aren't deleted in the undo below:
+            node2.clearFacets();
+            // Now undo addition of the new node:
             com.undo();
         }
+        // Nullify any working objects:
+        node1 = null;
+        node2 = null;
+        oldFacets1 = null;
+        com = null;
     }
     
 }

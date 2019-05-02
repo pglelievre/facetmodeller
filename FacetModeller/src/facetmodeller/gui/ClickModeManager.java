@@ -13,7 +13,7 @@ public final class ClickModeManager {
 
     // Mouse click modes:
     // I'm not sure about this but probably best not to change the values here.
-    // IF A NEW CLICK MODE IS ADDED THEN YOU HAVE TO ADD IT IN THE CONTROLLER AND IN METHOD mode2ind.
+    // IF A NEW CLICK MODE IS ADDED THEN YOU HAVE TO ADD IT IN THE CONSTRUCTOR AND IN METHOD mode2ind.
     public static final int MODE_NULL                   =  0;
     public static final int MODE_INFO                   =  2;
     public static final int MODE_ORIGIN_2D              =  4;
@@ -40,6 +40,7 @@ public final class ClickModeManager {
     public static final int MODE_ADD_REGIONS            = 40;
     public static final int MODE_DELETE_REGIONS         = 42;
     public static final int MODE_ORIGIN_NODE_3D         = 50;
+    public static final int MODE_PROPAGATE_NORMALS      = 60;
     
     private final FacetModeller controller;
     private int mode = MODE_NULL;
@@ -49,8 +50,8 @@ public final class ClickModeManager {
         controller = con;
         // Create the click mode pull-down menu:
         // IF A NEW CLICK MODE IS ADDED THEN YOU HAVE TO ADD IT HERE AND IN METHOD mode2ind.
-        // ALSO SEE ClickTaskUtil AND MouseInteractionManager.
-        String[] clickModelStrings = new String[24];
+        // ALSO SEE ClickTaskUtil AND MouseInteractionManager AND MenuBar.
+        String[] clickModelStrings = new String[25];
         clickModelStrings[0] = ClickTaskUtil.IGNORE_TEXT;
         clickModelStrings[1] = ClickTaskUtil.INFO_TEXT;
         clickModelStrings[2] = ClickTaskUtil.ORIGIN_POINT_2D_TEXT;
@@ -76,6 +77,7 @@ public final class ClickModeManager {
         clickModelStrings[21] = ClickTaskUtil.DEFINE_NODE_IN_FACET_TITLE;
         clickModelStrings[22] = ClickTaskUtil.DEFINE_REGION_TEXT;
         clickModelStrings[23] = ClickTaskUtil.DELETE_REGION_TEXT;
+        clickModelStrings[24] = ClickTaskUtil.PROPAGATE_NORMALS_TEXT;
         clickModeSelector = new JComboBox<>(clickModelStrings);
         clickModeSelector.setSelectedIndex(0); // null mode
         //clickModeSelector.addActionListener(actionListener);
@@ -112,6 +114,7 @@ public final class ClickModeManager {
             case MODE_ADD_NODES_IN_FACETS:    return 21;
             case MODE_ADD_REGIONS:            return 22;
             case MODE_DELETE_REGIONS:         return 23;
+            case MODE_PROPAGATE_NORMALS:      return 24;
             default: return MODE_NULL;
                 
         }

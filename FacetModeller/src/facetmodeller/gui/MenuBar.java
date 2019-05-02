@@ -31,15 +31,16 @@ public final class MenuBar extends JMenuBar {
             miExportPair, miExportPairGroup, miExportPairDisplayed,
             miExportNodes, miExportFacets, miExportRegions, miExportVTU, miExportAll,
             miChangeSectionColor, miPLCInfo,miDefineVOI,
-            miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miDefaultBackgroundColor,miSelectBackgroundColor,
-            miPointWidth, miLineWidth, miTransparency, miNormalLength, miShiftStep2D,miPanStep2D, miVerticalExaggeration,
+            miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miNormalColor,miDefaultBackgroundColor,miSelectBackgroundColor,
+            miPointWidth, miLineWidth, miTransparency, miNormalLength, miNormalThickness, miEdgeThickness,
+            miShiftStep2D,miPanStep2D, miVerticalExaggeration,
             miPickingRadius, miAutoFacetFactor, miToggleToolPanel, miToggleView3DPanel1, miToggleView3DPanel2, miToggleScroller,
             miClearOrigin3D, miShowConfirmationDialogs, miHideConfirmationDialogs;
     private ClickTaskMenuItem miNullMode,miInfoMode,miSetOrigin2DMode, miSetOriginNode3DMode,
             miAddNodes,miDeleteNodes,miMoveNodes,miMergeNodes,miDuplicateNodes,miChangeNodes,miChangeNodesSection,miChangeNodesCoords,
             miDefinePolyFacets,miDefinePolyFacetsTri,miDefineTriFacets,miDefineLineFacets,miDeleteFacets,miChangeFacets,
             miReverseFacets,miEdgeFlip,miAddNodesInTriFacets,miAddNodesOnEdges,
-            miAddRegions,miDeleteRegions;
+            miAddRegions,miDeleteRegions,miPropagateNormals;
     private MenuTaskMenuItem miUndo,miSaveSession,miSaveSessionAs,miLoadNodesAndFacets,
             miLoadCrossSectionImages,miLoadDepthSectionImages,miLoadGroups,miSaveGroups,
             miSectionInfo,miNewNoImageCrossSection,miNewNoImageDepthSection,miNewSnapshotSection,miResetSnapshotSection,miReduceSectionImage,
@@ -112,6 +113,7 @@ public final class MenuBar extends JMenuBar {
         miChangeNodesCoords = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_NODES_COORDS,listener);
         miAddRegions = makeClickTaskMenuItem(ClickModeManager.MODE_ADD_REGIONS,listener);
         miDeleteRegions = makeClickTaskMenuItem(ClickModeManager.MODE_DELETE_REGIONS,listener);
+        miPropagateNormals = makeClickTaskMenuItem(ClickModeManager.MODE_PROPAGATE_NORMALS,listener);
         miDefinePolyFacets = makeClickTaskMenuItem(ClickModeManager.MODE_DEFINE_POLY_FACETS,listener);
         miDefinePolyFacetsTri = makeClickTaskMenuItem(ClickModeManager.MODE_DEFINE_POLY_FACETS_TRI,listener);
         miDefineTriFacets = makeClickTaskMenuItem(ClickModeManager.MODE_DEFINE_TRI_FACETS,listener);
@@ -198,10 +200,13 @@ public final class MenuBar extends JMenuBar {
         miCalibrationColor = makeMenuItem("Change calibration color",listener);
         miEdgeColor = makeMenuItem("Change facet edge color",listener);
         miDefineFacetEdgeColor = makeMenuItem("Change facet edge color when defining",listener);
+        miNormalColor = makeMenuItem("Change facet normal vector color",listener);
         miPointWidth = makeMenuItem("Point size",listener);
         miLineWidth = makeMenuItem("Line width",listener);
         miTransparency = makeMenuItem("Overlay transparency",listener);
-        miNormalLength = makeMenuItem("Facet normal length","Change the drawing length for facet normal vectors",listener);
+        miNormalLength = makeMenuItem("Facet normal length","Change the 3D drawing length for facet normal vectors",listener);
+        miNormalThickness = makeMenuItem("Facet normal thickness","Change the 3D drawing thickness for facet normal vectors",listener);
+        miEdgeThickness = makeMenuItem("Facet edge thickness","Change the 3D drawing thickness for facet edges",listener);
         
         // Build the interaction menu items:
         miShiftStep2D = makeMenuItem("Shift step (2D viewer)",listener);
@@ -327,6 +332,7 @@ public final class MenuBar extends JMenuBar {
         }
         modeMenu.add(miAddRegions);
         modeMenu.add(miDeleteRegions);
+        modeMenu.add(miPropagateNormals);
 
         // Build the sections menu:
         JMenu sectionsMenu = new JMenu("Sections");
@@ -435,13 +441,16 @@ public final class MenuBar extends JMenuBar {
         displayMenu.add(miDefaultBackgroundColor);
         displayMenu.add(miSelectBackgroundColor);
         displayMenu.add(miCalibrationColor);
-        if (ndim==3) { displayMenu.add(miEdgeColor); }
+        displayMenu.add(miEdgeColor);
         displayMenu.add(miDefineFacetEdgeColor);
+        if (ndim==3) { displayMenu.add(miNormalColor); }
         displayMenu.add(miPointWidth);
         displayMenu.add(miLineWidth);
         displayMenu.add(miTransparency);
         if (ndim==3) {
             displayMenu.add(miNormalLength);
+            displayMenu.add(miNormalThickness);
+            displayMenu.add(miEdgeThickness);
         }
         
         // Build the interaction menu:
@@ -522,6 +531,7 @@ public final class MenuBar extends JMenuBar {
             else if (src == miChangeNodesCoords) { controller.setClickMode(ClickModeManager.MODE_CHANGE_NODES_COORDS); }
             else if (src == miAddRegions) { controller.setClickMode(ClickModeManager.MODE_ADD_REGIONS); }
             else if (src == miDeleteRegions) { controller.setClickMode(ClickModeManager.MODE_DELETE_REGIONS); }
+            else if (src == miPropagateNormals) { controller.setClickMode(ClickModeManager.MODE_PROPAGATE_NORMALS); }
             else if (src == miDefinePolyFacets) { controller.setClickMode(ClickModeManager.MODE_DEFINE_POLY_FACETS); }
             else if (src == miDefinePolyFacetsTri) { controller.setClickMode(ClickModeManager.MODE_DEFINE_POLY_FACETS_TRI); }
             else if (src == miDefineTriFacets) { controller.setClickMode(ClickModeManager.MODE_DEFINE_TRI_FACETS); }
@@ -538,10 +548,13 @@ public final class MenuBar extends JMenuBar {
             else if (src == miCalibrationColor) { controller.selectCalibrationColor(); }
             else if (src == miEdgeColor) { controller.selectEdgeColor(); }
             else if (src == miDefineFacetEdgeColor) { controller.selectDefineFacetEdgeColor(); }
+            else if (src == miNormalColor) { controller.selectNormalColor(); }
             else if (src == miPointWidth) { controller.selectPointWidth(); }
             else if (src == miLineWidth) { controller.selectLineWidth(); }
             else if (src == miTransparency) { controller.selectTransparency(); }
             else if (src == miNormalLength) { controller.selectNormalLength(); }
+            else if (src == miNormalThickness) { controller.selectNormalThickness(); }
+            else if (src == miEdgeThickness) { controller.selectEdgeThickness(); }
             else if (src == miShiftStep2D) { controller.selectShiftStep2D(); }
             else if (src == miPanStep2D) { controller.selectPanStep2D(); }
             else if (src == miPickingRadius) { controller.selectPickingRadius(); }
@@ -619,10 +632,13 @@ public final class MenuBar extends JMenuBar {
         miCalibrationColor.setEnabled(true);
         miEdgeColor.setEnabled(true);
         miDefineFacetEdgeColor.setEnabled(true);
+        miNormalColor.setEnabled(is3D);
         miPointWidth.setEnabled(true);
         miLineWidth.setEnabled(true);
         miTransparency.setEnabled(true);
         miNormalLength.setEnabled(is3D);
+        miNormalThickness.setEnabled(is3D);
+        miEdgeThickness.setEnabled(is3D);
         
         // Interaction menu items:
         miShiftStep2D.setEnabled(is3D);

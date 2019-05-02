@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import javax.swing.AbstractButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -20,7 +21,8 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
     
     private final FacetModeller controller;
     private final JRadioButton showImageButton ,showRegionsButton;
-    private JRadioButton showOutlinesButton, showAllButton, showVOIButton, showFacesButton, showNormalsButton, nodeColorButton;
+    private JRadioButton showOutlinesButton, showAllButton, showVOIButton, showFacesButton, 
+            showNormalsButton, showNormalTailsButton, showNormalHeadsButton, nodeColorButton;
     
     public RadioButtonsPanel(FacetModeller con, int ndim) {
         
@@ -83,6 +85,22 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             showNormalsButton.setToolTipText("Draw lines representing facet normals in the 3D viewer?");
             showNormalsButton.addActionListener(actionListener);
             showNormalsButton.setSelected(false);
+            showNormalTailsButton = new JRadioButton("");
+            showNormalTailsButton.setVerticalTextPosition(AbstractButton.CENTER);
+            showNormalTailsButton.setHorizontalTextPosition(AbstractButton.LEFT);
+            showNormalTailsButton.setText("Tails");
+            showNormalTailsButton.setToolTipText("Draw circles representing facet normal tails in the 3D viewer?");
+            showNormalTailsButton.addActionListener(actionListener);
+            showNormalTailsButton.setSelected(false);
+            showNormalTailsButton.setEnabled(false);
+            showNormalHeadsButton = new JRadioButton("");
+            showNormalHeadsButton.setVerticalTextPosition(AbstractButton.CENTER);
+            showNormalHeadsButton.setHorizontalTextPosition(AbstractButton.LEFT);
+            showNormalHeadsButton.setText("Heads");
+            showNormalHeadsButton.setToolTipText("Draw circles representing facet normal heads in the 3D viewer?");
+            showNormalHeadsButton.addActionListener(actionListener);
+            showNormalHeadsButton.setSelected(false);
+            showNormalHeadsButton.setEnabled(false);
             showFacesButton = new JRadioButton("");
             showFacesButton.setVerticalTextPosition(AbstractButton.CENTER);
             showFacesButton.setHorizontalTextPosition(AbstractButton.LEFT);
@@ -101,7 +119,7 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
         
         // Add the radio buttons to this panel:
         if (ndim==3) {
-            setLayout(new GridLayout(8,1));
+            setLayout(new GridLayout(9,1));
             add(showImageButton);
     //        add(showOtherButton);
             add(showOutlinesButton);
@@ -109,6 +127,12 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             add(showVOIButton);
             add(showFacesButton);
             add(showNormalsButton);
+            JPanel showNormalArrows = new JPanel();
+            showNormalArrows.setLayout(new GridLayout(1,3));
+            showNormalArrows.add(new JLabel());
+            showNormalArrows.add(showNormalTailsButton);
+            showNormalArrows.add(showNormalHeadsButton);
+            add(showNormalArrows);
             add(showRegionsButton);
             add(nodeColorButton);
         } else {
@@ -138,6 +162,19 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             } else if (src == showFacesButton) {
                 controller.redraw3D();
             } else if (src == showNormalsButton) {
+                boolean ok = showNormalsButton.isSelected();
+                showNormalTailsButton.setEnabled(ok);
+                showNormalHeadsButton.setEnabled(ok);
+                controller.redraw3D();
+            } else if (src == showNormalTailsButton) {
+                if (showNormalTailsButton.isSelected()) {
+                    showNormalHeadsButton.setSelected(false);
+                }
+                controller.redraw3D();
+            } else if (src == showNormalHeadsButton) {
+                if (showNormalHeadsButton.isSelected()) {
+                    showNormalTailsButton.setSelected(false);
+                }
                 controller.redraw3D();
             } else if (src == nodeColorButton) {
                 controller.redraw();
@@ -195,6 +232,22 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             return showNormalsButton.isSelected();
         }
     }
+    public boolean getShowNormalTails() {
+        if (getShowNormals()==false) { return false; }
+        if (showNormalTailsButton==null) {
+            return false;
+        } else {
+            return showNormalTailsButton.isSelected();
+        }
+    }
+    public boolean getShowNormalHeads() {
+        if (getShowNormals()==false) { return false; }
+        if (showNormalHeadsButton==null) {
+            return false;
+        } else {
+            return showNormalHeadsButton.isSelected();
+        }
+    }
     public boolean getShowRegions() {
         if (showRegionsButton==null) {
             return false;
@@ -225,7 +278,9 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                     showFacesButton.isSelected() + " " + 
                     showRegionsButton.isSelected() + " " + 
                     nodeColorButton.isSelected() + " " + 
-                    showNormalsButton.isSelected(); // 8th boolean is a later addition, hence the if statement below in readSessionInformat
+                    showNormalsButton.isSelected() + " " + //  8th boolean is a later addition, hence the if statement below in readSessionInformat
+                    showNormalTailsButton.isSelected() + " " + //  9th boolean is a later addition, hence the if statement below in readSessionInformat
+                    showNormalHeadsButton.isSelected() + " " ; // 10th boolean is a later addition, hence the if statement below in readSessionInformat
         } else {
             textLine =
                     showImageButton.isSelected() + " " +
@@ -235,7 +290,7 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                     true + " " + 
                     showRegionsButton.isSelected() + " " +
                     true + " " +
-                    false;
+                    false + false + false;
         }
         return FileUtils.writeLine(writer,textLine);
     }
@@ -270,12 +325,30 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             if (nodeColorButton!=null) {
                 is = Boolean.parseBoolean(s[6]); nodeColorButton.setSelected(is);
             }
+            boolean ok = false;
             if (showNormalsButton!=null) {
                 if (s.length>7) {
                     is = Boolean.parseBoolean(s[7]); showNormalsButton.setSelected(is);
                 } else {
                     showNormalsButton.setSelected(false);
                 }
+                ok = showNormalsButton.isSelected();
+            }
+            if (showNormalTailsButton!=null) {
+                if (s.length>8) {
+                    is = Boolean.parseBoolean(s[8]); showNormalTailsButton.setSelected(is);
+                } else {
+                    showNormalTailsButton.setSelected(false);
+                }
+                showNormalTailsButton.setEnabled(ok);
+            }
+            if (showNormalHeadsButton!=null) {
+                if (s.length>9) {
+                    is = Boolean.parseBoolean(s[9]); showNormalHeadsButton.setSelected(is);
+                } else {
+                    showNormalHeadsButton.setSelected(false);
+                }
+                showNormalHeadsButton.setEnabled(ok);
             }
         } catch (NumberFormatException e) { return "Parsing radio button booleans."; }
         // Return successfully:

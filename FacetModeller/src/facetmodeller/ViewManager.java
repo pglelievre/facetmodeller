@@ -7,7 +7,6 @@ import facetmodeller.gui.CursorTextBar;
 import facetmodeller.gui.MenuBar;
 import facetmodeller.gui.PaintingOptions;
 import facetmodeller.gui.Projector3D;
-import facetmodeller.gui.SectionTextBar;
 import facetmodeller.panels.ToolPanel;
 import facetmodeller.panels.ViewsPanel;
 import facetmodeller.plc.FacetVector;
@@ -179,6 +178,8 @@ public final class ViewManager implements SessionIO {
     public boolean getShowVOI() { return toolPanel.getShowVOI(); }
     public boolean getShowFaces() { return toolPanel.getShowFaces(); }
     public boolean getShowNormals() { return toolPanel.getShowNormals(); }
+    public boolean getShowNormalTails() { return toolPanel.getShowNormalTails(); }
+    public boolean getShowNormalHeads() { return toolPanel.getShowNormalHeads(); }
     public boolean getShowRegions() { return toolPanel.getShowRegions(); }
     public boolean getNodeColorBySection() { return toolPanel.getNodeColorBySection(); }
     public SectionVector getSelectedOtherSections() { return toolPanel.getSelectedOtherSections(); }
@@ -254,10 +255,13 @@ public final class ViewManager implements SessionIO {
     public Color getCalibrationColor() { return paintingOptions.getCalibrationColor(); }
     public Color getEdgeColor() { return paintingOptions.getEdgeColor(); }
     public Color getDefineFacetEdgeColor() { return paintingOptions.getDefineFacetEdgeColor(); }
+    public Color getNormalColor() { return paintingOptions.getNormalColor(); }
     public int getPointWidth() { return paintingOptions.getPointWidth(); }
     public int getLineWidth() { return paintingOptions.getLineWidth(); }
     public double getTransparency() { return paintingOptions.getTransparency(); }
     public double getNormalLength() { return paintingOptions.getNormalLength(); }
+    public boolean getNormalThick() { return paintingOptions.getNormalThick(); }
+    public boolean getEdgeThick() { return paintingOptions.getEdgeThick(); }
     public Node getOriginNode3D() { return paintingOptions.getOriginNode3D(); }
     public void setCalibrationColor(Color c) { paintingOptions.setCalibrationColor(c); }
     public void setEdgeColor(Color c) { paintingOptions.setEdgeColor(c); }
@@ -268,10 +272,13 @@ public final class ViewManager implements SessionIO {
     public void selectCalibrationColor() { paintingOptions.selectCalibrationColor(); }
     public void selectEdgeColor() { paintingOptions.selectEdgeColor(); }
     public void selectDefineFacetEdgeColor() { paintingOptions.selectDefineFacetEdgeColor(); }
+    public void selectNormalColor() { paintingOptions.selectNormalColor(); }
     public void selectPointWidth() { paintingOptions.selectPointWidth(); }
     public void selectLineWidth() { paintingOptions.selectLineWidth(); }
     public void selectTransparency() { paintingOptions.selectTransparency(); }
     public void selectNormalLength() { paintingOptions.selectNormalLength(); }
+    public void selectNormalThickness() { paintingOptions.selectNormalThickness(); }
+    public void selectEdgeThickness() { paintingOptions.selectEdgeThickness(); }
     public void selectVerticalExaggeration() { paintingOptions.selectVerticalExaggeration(); }
     public void selectBackgroundColor() { paintingOptions.selectBackgroundColor(); }
     public void selectSectionColor() { paintingOptions.selectSectionColor(); }

@@ -114,8 +114,12 @@ public final class MoveNodeClickTask extends ControlledClickTask {
         controller.calculateClosestNode(p);
         // Redraw:
         controller.redraw();
-        // Use the cursor bar to show information for the closest node:
-        controller.updateClosestBar(p);
+        // Use the cursor bar to show information for the closest node before first click, location after first click:
+        if (!controller.checkCurrentNode()) { // the node to move has not yet been chosen
+            controller.updateClosestBar(p);
+        } else {
+            controller.updateCursorBar(p);
+        }
     }
     
 }
