@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. Dates are i
 ## [Unreleased]
 ### Changed
 ### Bugs squashed
+- Variable-facet .ele files were not being read correctly.
+- Length of normal vectors was not allowed to be < 1 (now <= 0).
 
 ## 2019-05-02
 ### Changed
