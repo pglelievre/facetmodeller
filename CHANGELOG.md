@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. Dates are i
 ### Bugs squashed
 - Variable-facet .ele files were not being read correctly.
 - Length of normal vectors was not allowed to be < 1 (now <= 0).
+- Facet vectors were sometimes plotted in opposite direction for non-triangular facets.
 
 ## 2019-05-02
 ### Changed
