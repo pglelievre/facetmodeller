@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+- Added support for boundary markers on nodes and facets.
+- Added support for reading .node/.ele/etc files with indexing starting from 0.
+- Similarly, indexing in output .node/.ele/.poly/.vtu files can now start from 0 or 1.
+- The precision used for coordinates when writing files can now be reduced.
+
 ### Bugs squashed
 - Variable-facet .ele files were not being read correctly.
 - Length of normal vectors was not allowed to be < 1 (now <= 0).
