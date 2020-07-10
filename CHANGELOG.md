@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. Dates are i
 ## [Unreleased]
 ### Changed
 - Added support for boundary markers on nodes and facets:
-  - New clickmodes provided for toggling node or facet boundary markers, or setting them to either true or false on mouseclick.
+  - New clickmodes provided for toggling node or facet boundary markers on mouse click, or setting them to either true or false on mouse click/drag.
   - The boundary marker state (0/1) is indicated in the information text bar along with the other node/facet information.
   - There is a new radio button option for colouring the nodes and facets based on their boundary marker value.
   - Those colours can be altered in the display menu.
