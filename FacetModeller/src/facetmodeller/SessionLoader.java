@@ -225,7 +225,7 @@ public class SessionLoader {
             } else { // new display options format
                 
                 // Read view manager options:
-                message = controller.getViewManager().readSessionInformation(reader,merge);
+                message = controller.getViewManager().readSessionInformation(reader,merge); // merge used in at least one place
                 if (message!=null) { ok=false; break; }
 
                 // Skip the commented start of the interaction options:
@@ -233,7 +233,15 @@ public class SessionLoader {
                 if (textLine==null) { ok=false; message="Skipping start of interaction options."; break; }
 
                 // Read interaction manager options:
-                message = controller.getInteractionManager().readSessionInformation(reader,merge);
+                message = controller.getInteractionManager().readSessionInformation(reader,merge); // merge not used
+                if (message!=null) { ok=false; break; }
+
+                // Skip the commented start of the file i/o options:
+                textLine = FileUtils.readLine(reader);
+                if (textLine==null) { break; } // accept this because the file i/o options were not previously written to the session file
+                
+                // Read file i/o manager options:
+                message = controller.getFileIOManager().readSessionInformation(reader,merge); // merge not used
                 if (message!=null) { ok=false; break; }
                 
             }

@@ -80,7 +80,8 @@ public final class ToolPanel extends JPanel implements SessionIO {
     public boolean getShowNormalTails() { return radioButtonsPanel.getShowNormalTails(); }
     public boolean getShowNormalHeads() { return radioButtonsPanel.getShowNormalHeads(); }
     public boolean getShowRegions() { return radioButtonsPanel.getShowRegions(); }
-    public boolean getNodeColorBySection() { return radioButtonsPanel.getNodeColorBySection(); }
+    public int getNodeColorBy() { return radioButtonsPanel.getNodeColorBy(); }
+    public int getFacetColorBy() { return radioButtonsPanel.getFacetColorBy(); }
     
     // Wrappers for the SectionSelectorPanel class:
     public Section getSelectedCurrentSection() {

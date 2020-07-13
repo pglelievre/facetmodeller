@@ -35,6 +35,8 @@ public abstract class Section extends HasID implements SessionIO {
     public static final int SECTION_NOIMAGE_CROSS=2;
     public static final int SECTION_NOIMAGE_DEPTH=5;
     public static final int SECTION_SNAPSHOT=4;
+    // Old options whos values should never be used again but are still around for backwards compatibility:
+    public static final int SECTION_TOPO=3; // replaced with NoImageDepthSection
     
     private DefaultSectionInfo defaultInfo = new DefaultSectionInfo(); // favour composition over inheritence, and in this case it's the only way to do it
 

@@ -4,6 +4,11 @@ import facetmodeller.FacetModeller;
 import facetmodeller.groups.GroupVector;
 import facetmodeller.gui.ClickModeManager;
 import facetmodeller.gui.ZoomerDefault;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_FACETS_BY_GROUP;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_FACETS_BY_MARKER;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_GROUP;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_MARKER;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_SECTION;
 import facetmodeller.plc.Facet;
 import facetmodeller.plc.FacetVector;
 import facetmodeller.plc.Node;
@@ -336,9 +341,10 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
             // Get the current section image:
             BufferedImage image = currentSection.getImage();
             // Check the image exists:
-            if (image==null) { return; }
-            // Calculate the tight fit transform:
-            tightFitImage(g,image);
+            if (image!=null) { // this may happen if the image file specified in a session file is not found
+                // Calculate the tight fit transform:
+                tightFitImage(g,image);
+            }
         }
         
         // Get drawing styles for overlays:
@@ -377,7 +383,11 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         
         // Get number of dimensions:
         int ndim = controller.numberOfDimensions();
-                    
+        
+        // Get the drawing options for colouring the nodes and facets:
+        int nodeColorBy = controller.getNodeColorBy();
+        int facetColorBy = controller.getFacetColorBy();
+        
         // Paint the patches, edges and centroids of the facets:
         for (int i=0 ; i<facetsToPaint.size(); i++ ) { // loop over every facet that needs to be painted
             Facet facet = facetsToPaint.get(i);
@@ -388,25 +398,26 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
             tmp.path.closePath();
             // Transform the path from section to panel coordinates:
             tmp.path.transform(imageToPanel);
+            // Determine the painting colour for the facet:
+            Color col = getFacetPaintingColor(facetColorBy,facet);
             // Greate a filled, semi-transparent polygonal patch:
-            Color color = facet.getColor();
             if (facet.size()>2) { // (no patch exists for edge-element facets)
-                g2.setPaint(color);
+                g2.setPaint(col);
                 g2.fill(tmp.path);
             }
             // Draw the path (i.e. the facet edges):
             if (ndim==3) {
-                color = controller.getEdgeColor();
+                col = controller.getEdgeColor();
             }// else {
             //    color = facet.getColor();
             //}
-            g2.setPaint(color);
+            g2.setPaint(col);
             g2.draw(tmp.path);
             // Draw a small point at the facet centroid:
             if (ndim==2) {
-                color = controller.getEdgeColor();
+                col = controller.getEdgeColor();
             }
-            g2.setPaint(color);
+            g2.setPaint(col);
             PaintingUtils.paintPoint(g2,imageToPanel,tmp.centroid,centroidWidth,true); // filled
             // Add to the list of painted facets and centroids:
             paintedFacets.add(facet);
@@ -458,9 +469,6 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
                 }
             }
         }
-        
-        // Get the drawing option for colouring the nodes:
-        boolean colorBySection = controller.getNodeColorBySection();
         
         /*
         // Paint the nodes for the current section:
@@ -516,13 +524,9 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
                 filled = false; // nodes on other sections are painted unfilled
             }
             if (p==null) { continue; } // shouldn't happen, but I'll check for it anyway
+            // Determine the painting colour for the node:
+            Color col = getNodePaintingColor(nodeColorBy,node);
             // Paint the node:
-            Color col;
-            if (colorBySection) {
-                col = node.getSection().getColor();
-            } else {
-                col = node.getColor();
-            }
             g2.setPaint(col);
             PaintingUtils.paintPoint(g2,imageToPanel,p,nodeWidth,filled);
             // Add to the list of painted nodes and node points:
@@ -635,12 +639,9 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
             if (i>=0) {
                 MyPoint2D p = shiftNode(originNode,currentSection,shiftX,shiftY);
                 if (p!=null) { // shouldn't happen, but I'll check for it anyway
-                    Color col;
-                    if (colorBySection) {
-                        col = originNode.getSection().getColor();
-                    } else {
-                        col = originNode.getColor();
-                    }
+                    // Determine the painting colour for the origin node:
+                    Color col = getNodePaintingColor(nodeColorBy,originNode);
+                    // Paint the origin node:
                     g2.setPaint(col);
                     //g2.setStroke(new BasicStroke(2*edgeWidth));
                     PaintingUtils.paintPoint(g2,imageToPanel,p,2*nodeWidth,false);
@@ -850,6 +851,34 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
             controller.resetScroller();
         }
         
+    }
+    
+    private Color getNodePaintingColor(int nodeColorBy, Node node) {
+        switch (nodeColorBy) {
+            case COLOR_NODES_BY_GROUP:
+                return node.getColor();
+            case COLOR_NODES_BY_SECTION:
+                return node.getSection().getColor();
+            case COLOR_NODES_BY_MARKER:
+                boolean bm = node.getBoundaryMarker();
+                return controller.getBoundaryMarkerNodeColor(bm);
+            default:
+                // should never happen but better safe than sorry
+                return node.getColor();
+        }
+    }
+    
+    private Color getFacetPaintingColor(int facetColorBy, Facet facet) {
+        switch (facetColorBy) {
+            case COLOR_FACETS_BY_GROUP:
+                return facet.getColor();
+            case COLOR_FACETS_BY_MARKER:
+                boolean bm = facet.getBoundaryMarker();
+                return controller.getBoundaryMarkerFacetColor(bm);
+            default:
+                // should never happen but better safe than sorry
+                return facet.getColor();
+        }
     }
 
     // -------------------- Monitors --------------------

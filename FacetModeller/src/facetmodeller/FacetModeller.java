@@ -300,6 +300,7 @@ public final class FacetModeller extends JFrameExit {
     public ModelManager getModelManager() { return modelManager; } // TODO: check this is used sparingly
     public ViewManager getViewManager() { return viewManager; }
     public InteractionManager getInteractionManager() { return interactionManager; }
+    public FileIOManager getFileIOManager() { return fileIOManager; }
     
     // Wrappers for the ModelManager class that should be used sparingly: TODO: make sure they are
     public VOI getVOI() { return modelManager.getVOI(); }
@@ -411,7 +412,8 @@ public final class FacetModeller extends JFrameExit {
     public boolean getShowNormalTails() { return viewManager.getShowNormalTails(); }
     public boolean getShowNormalHeads() { return viewManager.getShowNormalHeads(); }
     public boolean getShowRegions() { return viewManager.getShowRegions(); }
-    public boolean getNodeColorBySection() { return viewManager.getNodeColorBySection(); }
+    public int getNodeColorBy() { return viewManager.getNodeColorBy(); }
+    public int getFacetColorBy() { return viewManager.getFacetColorBy(); }
     public SectionVector getSelectedOtherSections() { return viewManager.getSelectedOtherSections(); }
     public int[] getSelectedOtherSectionIndices() { return viewManager.getSelectedOtherSectionIndices(); }
     public void setSectionVector(SectionVector v) { viewManager.setSectionVector(v); }
@@ -480,6 +482,8 @@ public final class FacetModeller extends JFrameExit {
     public Color getEdgeColor() { return viewManager.getEdgeColor(); }
     public Color getDefineFacetEdgeColor() { return viewManager.getDefineFacetEdgeColor(); }
     public Color getNormalColor() { return viewManager.getNormalColor(); }
+    public Color getBoundaryMarkerNodeColor(boolean bm) { return viewManager.getBoundaryMarkerNodeColor(bm); }
+    public Color getBoundaryMarkerFacetColor(boolean bm) { return viewManager.getBoundaryMarkerFacetColor(bm); }
     public int getPointWidth() { return viewManager.getPointWidth(); }
     public int getLineWidth() { return viewManager.getLineWidth(); }
     public double getTransparency() { return viewManager.getTransparency(); }
@@ -497,6 +501,10 @@ public final class FacetModeller extends JFrameExit {
     public void selectEdgeColor() { viewManager.selectEdgeColor(); }
     public void selectDefineFacetEdgeColor() { viewManager.selectDefineFacetEdgeColor(); }
     public void selectNormalColor() { viewManager.selectNormalColor(); }
+    public void selectBoundaryNodeColor() { viewManager.selectBoundaryNodeColor(); }
+    public void selectNonBoundaryNodeColor() { viewManager.selectNonBoundaryNodeColor(); }
+    public void selectBoundaryFacetColor() { viewManager.selectBoundaryFacetColor(); }
+    public void selectNonBoundaryFacetColor() { viewManager.selectNonBoundaryFacetColor(); }
     public void selectPointWidth() { viewManager.selectPointWidth(); }
     public void selectLineWidth() { viewManager.selectLineWidth(); }
     public void selectTransparency() { viewManager.selectTransparency(); }
@@ -563,6 +571,10 @@ public final class FacetModeller extends JFrameExit {
     public File getSaveDirectory() { return fileIOManager.getSaveDirectory(); }
     public void setOpenDirectory(File f) { fileIOManager.setOpenDirectory(f); }
     public void setSaveDirectory(File f) { fileIOManager.setSaveDirectory(f); }
+    public int getStartingIndex() { return fileIOManager.getStartingIndex(); }
+    public int getPrecision() { return fileIOManager.getPrecision(); }
+    public void exportOptionsStartingIndex() { fileIOManager.exportOptionsStartingIndex(); }
+    public void exportOptionsPrecision() { fileIOManager.exportOptionsPrecision(); }
     public void exportPoly(int whatToExport) { fileIOManager.exportPoly(whatToExport); }
     public void exportPair(int whatToExport) { fileIOManager.exportPair(whatToExport); }
     public void exportVTU() { fileIOManager.exportVTU(); }

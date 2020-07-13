@@ -198,6 +198,15 @@ public class NodeVector {
         Node node2 = vector.get(n);
         if ( node1 == node2 ) { vector.remove(n); }
     }
+    
+    /** Returns true if any of the nodes are marked as being on the boundary.
+     * @return */
+    public boolean anyMarked() {
+        for (int i=0 ; i<size() ; i++ ) {
+            if ( get(i).getBoundaryMarker() ) { return true; }
+        }
+        return false;
+    }
 
     /** Resets the ID values from 0 to the size of the vector in the order listed. */
     public void resetIDs() {
@@ -447,6 +456,12 @@ public class NodeVector {
             return new ReadNodesReturnObject("Problem reading .node file header.");
         }
         
+        // Check the number of nodes:
+        if (nnodes<=0) {
+            FileUtils.close(reader);
+            return new ReadNodesReturnObject("Number of nodes in .node file is non-positive.");
+        }
+        
         // Check the number of dimensions:
         if (ndimensions>0) {
             if (ndim!=ndimensions) {
@@ -460,6 +475,7 @@ public class NodeVector {
         boolean doAtts = (nat>=1);
         
         // Loop over each node:
+        int startingIndex = -1;
         for (int i=0 ; i<nnodes ; i++ ) {
 
             // Read the coordinates of the ith node:
@@ -468,10 +484,25 @@ public class NodeVector {
                 FileUtils.close(reader);
                 return new ReadNodesReturnObject("Not enough lines in .node file.");
             }
-            if (textLine.contains("\t")) { return new ReadNodesReturnObject("Tab character encountered in .node file."); }
+            if (textLine.contains("\t")) {
+                FileUtils.close(reader);
+                return new ReadNodesReturnObject("Tab character encountered in .node file.");
+            }
             textLine = textLine.trim();
             ss = textLine.split("[ ]+",6);
             double x,y,z,a=0;
+            if (i==0) {
+                try {
+                    startingIndex = Integer.parseInt(ss[0].trim()); // converts to integer
+                    if ( startingIndex!=0 && startingIndex!=1 ) {
+                        FileUtils.close(reader);
+                        return new ReadNodesReturnObject("Unexpected starting index in node file (not 0 or 1).");
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    FileUtils.close(reader);
+                    return new ReadNodesReturnObject("Problem in .node file: starting index.");
+                }
+            }
             try {
                 x = Double.parseDouble(ss[1].trim()); // converts to Double
                 y = Double.parseDouble(ss[2].trim());
@@ -525,25 +556,29 @@ public class NodeVector {
 
         // Close the file and return:
         FileUtils.close(reader);
-        return new ReadNodesReturnObject(doAtts,uniqueAttributes.size());
+        if (startingIndex<0) { return new ReadNodesReturnObject("Unexpected: starting index not set."); }
+        return new ReadNodesReturnObject(startingIndex,doAtts,uniqueAttributes.size());
 
     }
     
     @SuppressWarnings("PublicInnerClass")
     public static class ReadNodesReturnObject {
         
+        private int startingIndex=1; // starting index (0 or 1)
         private boolean doAtts=false;
-        private int n=0;
+        private int n=0; // number of unique attributes
         private String errmsg=null;
         
-        public ReadNodesReturnObject(boolean b, int i) {
+        public ReadNodesReturnObject(int i, boolean b, int na) {
+            startingIndex = i;
             doAtts = b;
-            n = i;
+            n = na;
         }
         public ReadNodesReturnObject(String s) {
             errmsg = s;
         }
         
+        public int getStartingIndex() { return startingIndex; }
         public boolean getDoAtts() { return doAtts; }
         public int getN() { return n; }
         public String getErrmsg() { return errmsg; }

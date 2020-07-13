@@ -31,6 +31,12 @@ public final class ClickTaskUtil {
     public static final String CHANGE_NODE_SECTION_TITLE = "Change Node Section";
     public static final String CHANGE_NODE_COORDS_TEXT  = "Change node coordinates";
     public static final String CHANGE_NODE_COORDS_TITLE = "Change Node Coordinates";
+    public static final String MARK_NODE_TOGGLE_TEXT  = "Toggle node boundary marker";
+    public static final String MARK_NODE_TOGGLE_TITLE = "Toggle Node Boundary Marker";
+    public static final String MARK_NODE_TRUE_TEXT  = "Set node boundary marker true";
+    public static final String MARK_NODE_TRUE_TITLE = "Set Node Boundary Marker True";
+    public static final String MARK_NODE_FALSE_TEXT  = "Set node boundary marker false";
+    public static final String MARK_NODE_FALSE_TITLE = "Set Node Boundary Marker False";
     public static final String CHANGE_FACET_GROUP_TEXT  = "Change facet group";
     public static final String CHANGE_FACET_GROUP_TITLE = "Change Facet Group";
     public static final String DEFINE_POLY_FACET_TEXT = "Define facets node-by-node";
@@ -45,6 +51,12 @@ public final class ClickTaskUtil {
     public static final String REVERSE_FACET_TITLE = "Reverse Facet";
     public static final String FLIP_EDGE_TEXT  = "Perform edge flip";
     public static final String FLIP_EDGE_TITLE = "Perform Edge Flip";
+    public static final String MARK_FACET_TOGGLE_TEXT  = "Toggle facet boundary marker";
+    public static final String MARK_FACET_TOGGLE_TITLE = "Toggle Facet Boundary Marker";
+    public static final String MARK_FACET_TRUE_TEXT  = "Set facet boundary marker true";
+    public static final String MARK_FACET_TRUE_TITLE = "Set Facet Boundary Marker True";
+    public static final String MARK_FACET_FALSE_TEXT  = "Set facet boundary marker false";
+    public static final String MARK_FACET_FALSE_TITLE = "Set Facet Boundary Marker False";
     public static final String DEFINE_NODE_ON_EDGE_TEXT  = "Add nodes on edges";
     public static final String DEFINE_NODE_ON_EDGE_TITLE = "Add Node on Edge";
     public static final String DEFINE_NODE_IN_FACET_TEXT  = "Add nodes in facets";

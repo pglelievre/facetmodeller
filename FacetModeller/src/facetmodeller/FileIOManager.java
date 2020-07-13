@@ -15,11 +15,14 @@ import facetmodeller.sections.NoImageDepthSection;
 import facetmodeller.sections.Section;
 import fileio.FileUtils;
 import fileio.PreviousSession;
+import fileio.SessionIO;
 import filters.EleFilter;
 import filters.NodeFilter;
 import filters.PolyFilter;
 import geometry.Dir3D;
 import geometry.MyPoint3D;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.nio.file.Paths;
 import javax.swing.JFileChooser;
@@ -27,7 +30,7 @@ import javax.swing.JFileChooser;
 /** Manages file reading and writing tasks.
  * @author Peter
  */
-public final class FileIOManager extends PreviousSession {
+public final class FileIOManager extends PreviousSession implements SessionIO {
     
     // ------------------ Properties ------------------
     
@@ -36,6 +39,8 @@ public final class FileIOManager extends PreviousSession {
     public static final int EXPORT_DISPLAYED = 2;
     
     private final FacetModeller controller;
+    private int startingIndex = 1; // output starting index (0 or 1)
+    private int precision = 6; // output precision, number of decimal places
     
     // ------------------ Constructor ------------------
     
@@ -44,7 +49,55 @@ public final class FileIOManager extends PreviousSession {
         controller = con;
     }
     
+    // ------------------ Getters ------------------
+    
+    public int getStartingIndex() { return startingIndex; }
+    public int getPrecision() { return precision; }
+    
     // -------------------- Public methods --------------------
+    
+    public void exportOptionsStartingIndex() {
+        String title = "Export Starting Index"; // a title for some dialogs
+        String message = "Would you like the indices to start from 0 or 1?";
+        String def;
+        if (startingIndex==0) {
+            def = "0";
+        } else {
+            def = "1";
+        }
+        int response = Dialogs.question(controller,message,title,"0","1","Cancel",def);
+        switch (response) {
+            case Dialogs.YES_OPTION:
+                startingIndex = 0;
+                break;
+            case Dialogs.NO_OPTION:
+                startingIndex = 1;
+                break;
+            default: // user cancelled
+        }
+    }
+    
+    public void exportOptionsPrecision() {
+        String title = "Export Coordinate Precision"; // a title for some dialogs
+        String message = "Enter the number of decimal places for exporting coordinates?";
+        String input = Dialogs.input(controller,message,title,Integer.toString(precision));
+        if (input==null) { return; } // user cancelled
+        input = input.trim();
+        // Check an appropriate value was entered:
+        int p;
+        try {
+            p = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            Dialogs.error(controller,"You must enter a non-negative integer value. Please try again.",title);
+            return;
+        }
+        if (p<0) {
+            Dialogs.error(controller,"You must enter a non-negative integer value. Please try again.",title);
+            return;
+        }
+        // Set the value:
+        precision = p;
+    }
     
     /** Loads a previously saved FacetModeller session.
      * @param prev If true then the previous session is opened without asking user for the file. */
@@ -165,7 +218,8 @@ public final class FileIOManager extends PreviousSession {
         // Read the ele file if present:
         FacetVector facets = new FacetVector();
         if (eleFile!=null) {
-            FacetVector.ReadFacetsReturnObject readFacetsReturnObj = facets.readEle(controller,"",eleFile,nodes,ndim,false);
+            int startInd = readNodesReturnObj.getStartingIndex();
+            FacetVector.ReadFacetsReturnObject readFacetsReturnObj = facets.readEle(controller,"",eleFile,startInd,nodes,ndim,false);
             errmsg = readFacetsReturnObj.getErrmsg();
             if (errmsg!=null) {
                 return errmsg + System.lineSeparator() + eleFile;
@@ -261,10 +315,9 @@ public final class FileIOManager extends PreviousSession {
         
         // Ask what to write for region attributes:
         boolean byIndex = true;
-        int response;
         if (plc.hasRegions()) {
             String message = "The region attributes can be the region indices or region group IDs. Which would you like to use?";
-            response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
+            int response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
             switch (response) {
                 case Dialogs.YES_OPTION:
                     byIndex = true;
@@ -291,7 +344,7 @@ public final class FileIOManager extends PreviousSession {
             file = new File( root + "." + PolyFilter.POLY );
             chooser.setSelectedFile(file);
         }
-        response = chooser.showSaveDialog(controller);
+        int response = chooser.showSaveDialog(controller);
 
         // Check response and get the selected file:
         if (response != JFileChooser.APPROVE_OPTION) { return; }
@@ -319,7 +372,7 @@ public final class FileIOManager extends PreviousSession {
         if (ndim==2) {
             dir = controller.getSelectedCurrentSection().getDir3D();
         }
-        boolean ok = plc.writePoly(file,ndim,dir,byIndex);
+        boolean ok = plc.writePoly(file,startingIndex,precision,ndim,dir,byIndex);
 
         // Display:
         //if (ok) {
@@ -417,12 +470,12 @@ public final class FileIOManager extends PreviousSession {
             dir = controller.getSelectedCurrentSection().getDir3D();
         }
         boolean ok;
-        ok = plc.writeNodes(file1,ndim,dir);
+        ok = plc.writeNodes(file1,startingIndex,precision,ndim,dir);
         if (!ok) {
            Dialogs.error(controller,"Failed to save .node file.",title);
         }
         if (!plc.hasFacets()) { return; } // don't write .ele file if there are no facets
-        ok = plc.writeFacets(file2,ndim,true); // write non-standard variable facet type .ele file if required
+        ok = plc.writeFacets(file2,startingIndex,precision,ndim,true); // write non-standard variable facet type .ele file if required
         if (!ok) {
            Dialogs.error(controller,"Failed to save .ele file.",title);
         }
@@ -490,7 +543,7 @@ public final class FileIOManager extends PreviousSession {
         if (ndim==2) {
             dir = controller.getSelectedCurrentSection().getDir3D();
         }
-        boolean ok = model.writeNodes(file,ndim,dir);
+        boolean ok = model.writeNodes(file,startingIndex,precision,ndim,dir);
 
         // Display:
         //if (ok) {
@@ -591,7 +644,7 @@ public final class FileIOManager extends PreviousSession {
         controller.resetIDs();
 
         // Write the ele file:
-        boolean ok = model.writeFacets(file,ndim,writevar);
+        boolean ok = model.writeFacets(file,startingIndex,precision,ndim,writevar);
         
         // Display:
         //if (ok) {
@@ -620,9 +673,8 @@ public final class FileIOManager extends PreviousSession {
         
         // Ask what to write for region attributes:
         boolean byIndex;
-        int response;
         String message = "The region attributes can be the region indices or region group IDs. Which would you like to use?";
-        response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
+        int response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
         switch (response) {
             case Dialogs.YES_OPTION:
                 byIndex = true;
@@ -685,8 +737,8 @@ public final class FileIOManager extends PreviousSession {
             dir = controller.getSelectedCurrentSection().getDir3D();
         }
         boolean ok = true;
-        if (nRegion>0) { ok = model.writeRegions(file1,ndim,dir,false,byIndex); }
-        if ( ok && nControl>0 ) { ok = model.writeRegions(file2,ndim,dir,true,byIndex); }
+        if (nRegion>0) { ok = model.writeRegions(file1,startingIndex,precision,ndim,dir,false,byIndex); }
+        if ( ok && nControl>0 ) { ok = model.writeRegions(file2,startingIndex,precision,ndim,dir,true,byIndex); }
 
         // Display:
         //if (ok) {
@@ -715,7 +767,7 @@ public final class FileIOManager extends PreviousSession {
         }
         
         // Ask if the coordinate should have z flipped:
-        int flipz = Dialogs.question(controller,"Do you want to flip the z-axis?",title);
+        int flipz = Dialogs.questionNo(controller,"Do you want to flip the z-axis?",title);
         if (flipz==Dialogs.CANCEL_OPTION) { return; }
         
         // Ask for the file name for saving:
@@ -760,9 +812,9 @@ public final class FileIOManager extends PreviousSession {
         // Write the vtu file:
         boolean ok;
         if (flipz==Dialogs.YES_OPTION) {
-            ok = model.writeVTU(file,true);
+            ok = model.writeVTU(file,precision,true);
         } else {
-            ok = model.writeVTU(file,false);
+            ok = model.writeVTU(file,precision,false);
         }
 
         // Display:
@@ -790,15 +842,14 @@ public final class FileIOManager extends PreviousSession {
         }
         
         // Ask if the coordinate should have z flipped:
-        int flipz = Dialogs.question(controller,"Do you want to flip the z-axis?",title);
+        int flipz = Dialogs.questionNo(controller,"Do you want to flip the z-axis?",title);
         if (flipz==Dialogs.CANCEL_OPTION) { return; }
         
         // Ask what to write for region attributes:
         boolean byIndex = true;
-        int response;
         if (model.hasRegions()) {
             String message = "The region attributes can be the region indices or region group IDs. Which would you like to use?";
-            response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
+            int response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
             switch (response) {
                 case Dialogs.YES_OPTION:
                     byIndex = true;
@@ -822,7 +873,7 @@ public final class FileIOManager extends PreviousSession {
             file = new File(root);
             chooser.setSelectedFile(file);
         }
-        response = chooser.showSaveDialog(controller);
+        int response = chooser.showSaveDialog(controller);
 
         // Check response and get the selected file:
         if (response != JFileChooser.APPROVE_OPTION) { return; }
@@ -861,40 +912,65 @@ public final class FileIOManager extends PreviousSession {
         //   Dialogs.error(this,"Failed to save .fms file.",title);
         //}
         file = new File( root + "." + PolyFilter.POLY );
-        ok = model.writePoly(file,ndim,dir,byIndex);
+        ok = model.writePoly(file,startingIndex,precision,ndim,dir,byIndex);
         if (!ok) {
            Dialogs.error(controller,"Failed to save .poly file.",title);
         }
         file = new File( root + "." + NodeFilter.NODE );
-        ok = model.writeNodes(file,ndim,dir);
+        ok = model.writeNodes(file,startingIndex,precision,ndim,dir);
         if (!ok) {
            Dialogs.error(controller,"Failed to save .node file.",title);
         }
         file = new File( root + "." + EleFilter.ELE );
-        ok = model.writeFacets(file,ndim,true); // write non-standard variable facet type .ele file if required
+        ok = model.writeFacets(file,startingIndex,precision,ndim,true); // write non-standard variable facet type .ele file if required
         if (!ok) {
            Dialogs.error(controller,"Failed to save .ele file.",title);
         }
         file = new File( root + "_regions." + NodeFilter.NODE );
-        if (nRegion>0) { ok = model.writeRegions(file,ndim,dir,false,byIndex); }
+        if (nRegion>0) { ok = model.writeRegions(file,startingIndex,precision,ndim,dir,false,byIndex); }
         if (!ok) {
            Dialogs.error(controller,"Failed to save regions .node file.",title);
         }
         file = new File( root + "_controls." + NodeFilter.NODE );
-        if (nControl>0) { ok = model.writeRegions(file,ndim,dir,true,byIndex); }
+        if (nControl>0) { ok = model.writeRegions(file,startingIndex,precision,ndim,dir,true,byIndex); }
         if (!ok) {
            Dialogs.error(controller,"Failed to save controls .node file.",title);
         }
         file = new File( root + "." + VTUFilter.VTU );
         if (flipz==Dialogs.YES_OPTION) {
-            ok = model.writeVTU(file,true);
+            ok = model.writeVTU(file,precision,true);
         } else {
-            ok = model.writeVTU(file,false);
+            ok = model.writeVTU(file,precision,false);
         }
         if (!ok) {
            Dialogs.error(controller,"Failed to save .vtu file.",title);
         }
 
+    }
+    
+    // -------------------- SectionIO Methods --------------------
+    
+    @Override
+    public boolean writeSessionInformation(BufferedWriter writer) {
+        // Write everything on a single line:
+        String textLine = startingIndex + " " + precision;
+        return FileUtils.writeLine(writer,textLine);
+    }
+    
+    @Override
+    public String readSessionInformation(BufferedReader reader, boolean merge) {
+        // Write everything from a single line:
+        String textLine = FileUtils.readLine(reader);
+        if (textLine==null) { return "Reading export options line."; }
+        textLine = textLine.trim();
+        String[] s = textLine.split("[ ]+");
+        if (s.length<2) { return "Not enough values on export options line."; }
+        try {
+            startingIndex = Integer.parseInt(s[0]);
+            precision     = Integer.parseInt(s[1]);
+        } catch (NumberFormatException e) { return "Parsing export options."; }
+        // Return successfully:
+        return null;
     }
     
 }

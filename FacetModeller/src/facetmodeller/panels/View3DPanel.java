@@ -10,6 +10,11 @@ import facetmodeller.gui.Projector3D;
 import facetmodeller.gui.SceneInfo;
 import facetmodeller.gui.ZBuffer3D;
 import facetmodeller.gui.ZoomerDefault;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_FACETS_BY_GROUP;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_FACETS_BY_MARKER;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_GROUP;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_MARKER;
+import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_SECTION;
 import facetmodeller.plc.Facet;
 import facetmodeller.plc.FacetVector;
 import facetmodeller.plc.Node;
@@ -321,6 +326,10 @@ public class View3DPanel extends PanningPanel implements SessionIO {
             otherSections = null;
         }
         
+        // Get the drawing options for colouring the nodes and facets:
+        int nodeColorBy = controller.getNodeColorBy();
+        int facetColorBy = controller.getFacetColorBy();
+        
         // Add facets to the scene: (this should be done first so that
         // z-buffering can't draw a facet edge over a node)
         boolean showFaces = controller.getShowFaces();
@@ -372,7 +381,9 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                         v.rotate(projector.getRotationMatrix()); // rotated into projected coordinates
                         double d = Math.abs(v.getZ()); // dotted with the z axis (direction not important)
                         d = 1.0 - (1.0-d)*0.8; // too dark otherwise
-                        Color col = facet.getColor();
+                        // Determine the painting colour for the facet:
+                        Color col = getFacetPaintingColor(facetColorBy,facet);
+                        // Apply the shading to the painting colour:
                         float[] hsb = new float[3];
                         Color.RGBtoHSB(col.getRed(),col.getGreen(),col.getBlue(),hsb);
                         hsb[2] *= (float)d; // d is on [0,1]
@@ -427,9 +438,6 @@ public class View3DPanel extends PanningPanel implements SessionIO {
             } // if (facetGroups!=null) 
         } // if (pt1==null) // not rotating
         
-        // Get the drawing option for colouring the nodes:
-        boolean colorBySection = controller.getNodeColorBySection();
-        
         // Add nodes to the scene:
         Composite defaultComposite = g2.getComposite();
         if (pt1!=null) {
@@ -450,12 +458,9 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                 if (!s.isCalibrated()) { continue; } // not possible but I check for it anyway
                 if ( !showAll && !s.equals(currentSection) && otherSections!=null && !otherSections.contains(s) ) { continue; }
                 int id = node.getID(); // index into projectedPoints
-                Color col;
-                if (colorBySection) {
-                    col = node.getSection().getColor();
-                } else {
-                    col = node.getColor();
-                }
+                // Determine the painting colour for the node:
+                Color col = getNodePaintingColor(nodeColorBy,node);
+                // Paint the node:
                 if (pt1==null) {
                     if ( projectedPoints[id] != null ) { // only paint if node is in front of the camera, and if its section is calibrated
                         zbuf.putNode(projectedPoints[id],col,controller.getPointWidth());
@@ -927,6 +932,34 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         projector.setRotationMatrix(m);
          
      }
+    
+    private Color getNodePaintingColor(int nodeColorBy, Node node) {
+        switch (nodeColorBy) {
+            case COLOR_NODES_BY_GROUP:
+                return node.getColor();
+            case COLOR_NODES_BY_SECTION:
+                return node.getSection().getColor();
+            case COLOR_NODES_BY_MARKER:
+                boolean bm = node.getBoundaryMarker();
+                return controller.getBoundaryMarkerNodeColor(bm);
+            default:
+                // should never happen but better safe than sorry
+                return node.getColor();
+        }
+    }
+    
+    private Color getFacetPaintingColor(int facetColorBy, Facet facet) {
+        switch (facetColorBy) {
+            case COLOR_FACETS_BY_GROUP:
+                return facet.getColor();
+            case COLOR_FACETS_BY_MARKER:
+                boolean bm = facet.getBoundaryMarker();
+                return controller.getBoundaryMarkerFacetColor(bm);
+            default:
+                // should never happen but better safe than sorry
+                return facet.getColor();
+        }
+    }
     
     // -------------------- Monitors --------------------
 

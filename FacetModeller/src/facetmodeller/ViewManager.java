@@ -181,7 +181,8 @@ public final class ViewManager implements SessionIO {
     public boolean getShowNormalTails() { return toolPanel.getShowNormalTails(); }
     public boolean getShowNormalHeads() { return toolPanel.getShowNormalHeads(); }
     public boolean getShowRegions() { return toolPanel.getShowRegions(); }
-    public boolean getNodeColorBySection() { return toolPanel.getNodeColorBySection(); }
+    public int getNodeColorBy() { return toolPanel.getNodeColorBy(); }
+    public int getFacetColorBy() { return toolPanel.getFacetColorBy(); }
     public SectionVector getSelectedOtherSections() { return toolPanel.getSelectedOtherSections(); }
     public Section getSelectedCurrentSection() { return toolPanel.getSelectedCurrentSection(); }
     public int getSelectedCurrentSectionIndex() { return toolPanel.getSelectedCurrentSectionIndex(); }
@@ -256,6 +257,8 @@ public final class ViewManager implements SessionIO {
     public Color getEdgeColor() { return paintingOptions.getEdgeColor(); }
     public Color getDefineFacetEdgeColor() { return paintingOptions.getDefineFacetEdgeColor(); }
     public Color getNormalColor() { return paintingOptions.getNormalColor(); }
+    public Color getBoundaryMarkerNodeColor(boolean bm) { return paintingOptions.getBoundaryMarkerNodeColor(bm); }
+    public Color getBoundaryMarkerFacetColor(boolean bm) { return paintingOptions.getBoundaryMarkerFacetColor(bm); }
     public int getPointWidth() { return paintingOptions.getPointWidth(); }
     public int getLineWidth() { return paintingOptions.getLineWidth(); }
     public double getTransparency() { return paintingOptions.getTransparency(); }
@@ -273,6 +276,10 @@ public final class ViewManager implements SessionIO {
     public void selectEdgeColor() { paintingOptions.selectEdgeColor(); }
     public void selectDefineFacetEdgeColor() { paintingOptions.selectDefineFacetEdgeColor(); }
     public void selectNormalColor() { paintingOptions.selectNormalColor(); }
+    public void selectBoundaryNodeColor() { paintingOptions.selectBoundaryNodeColor(); }
+    public void selectNonBoundaryNodeColor() { paintingOptions.selectNonBoundaryNodeColor(); }
+    public void selectBoundaryFacetColor() { paintingOptions.selectBoundaryFacetColor(); }
+    public void selectNonBoundaryFacetColor() { paintingOptions.selectNonBoundaryFacetColor(); }
     public void selectPointWidth() { paintingOptions.selectPointWidth(); }
     public void selectLineWidth() { paintingOptions.selectLineWidth(); }
     public void selectTransparency() { paintingOptions.selectTransparency(); }

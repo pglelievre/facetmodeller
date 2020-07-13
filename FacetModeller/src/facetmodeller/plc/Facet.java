@@ -14,9 +14,10 @@ public class Facet extends HasGroup {
 
     // -------------------- Properties -------------------
 
+    private boolean boundaryMarker = false;
     private final NodeVector nodes = new NodeVector();
 //    private MyPoint3D centroid = null; // centroid point
-//    private MyPoint3D normal = null; // normal vector
+    private MyPoint3D normal = null; // normal vector
 //    private final SectionVector sections = new SectionVector();
 
     // ------------------- Constructors ------------------
@@ -35,6 +36,7 @@ public class Facet extends HasGroup {
     
     // -------------------- Getters -------------------
 
+    public boolean getBoundaryMarker() { return boundaryMarker; }
     public NodeVector getNodes() { return nodes; }
     public SectionVector getSections() {
 //        return sections;
@@ -55,12 +57,18 @@ public class Facet extends HasGroup {
     
     public MyPoint3D getNormal() {
         // Recalculate normal if required:
-        //if ( normal == null ) { calculateNormal(); }
-        //return normal;
-        return calculateNormal();
+        if ( normal == null ) { calculateNormal(); }
+        return normal;
+        //return calculateNormal();
     }
-
+    
+    // -------------------- Setters -------------------
+    
+    public void setBoundaryMarker(boolean bm) { boundaryMarker = bm; }
+    
     // -------------------- Public Methods -------------------
+    
+    public void toggleBoundaryMarker() { boundaryMarker = !boundaryMarker; }
 
     public int size() {
         return nodes.size();
@@ -90,14 +98,14 @@ public class Facet extends HasGroup {
         nodes.add(n);
         // Nullify the centroid and normal so they will be recalculated (when required):
         //centroid = null;
-        //normal = null;
+        normal = null;
     }
 
     public void addNodes(NodeVector n) {
         nodes.addAll(n);
         // Nullify the centroid and normal so they will be recalculated (when required):
         //centroid = null;
-        //normal = null;
+        normal = null;
     }
 
 //    public void addSection(Section s) {
@@ -108,21 +116,21 @@ public class Facet extends HasGroup {
     public void clear() {
         nodes.clear();
         //centroid = null;
-        //normal = null;
+        normal = null;
     }
 
     public void removeNode(Node n) {
         nodes.remove(n);
         // Nullify the centroid and normal so they will be recalculated (when required):
         //centroid = null;
-        //normal = null;
+        normal = null;
     }
 
     public void removeLastNode() {
         nodes.removeLast();
         // Nullify the centroid and normal so they will be recalculated (when required):
         //centroid = null;
-        //normal = null;
+        normal = null;
     }
 
 //    public void removeSection(Section s) {
@@ -172,9 +180,8 @@ public class Facet extends HasGroup {
     /** Reverses the node order in the facet. */
     public void reverse() {
         nodes.reverse();
-        // Nullify the centroid and normal so they will be recalculated (when required):
-        //centroid = null;
-        //normal = null;
+        // Flip the normal vector:
+        if (normal!=null) { normal.neg(); }
     }
 
 //    /** Determines if a supplied point is inside the facet. */
@@ -217,7 +224,7 @@ public class Facet extends HasGroup {
         nodes.sortByIDs();
         // Nullify the centroid and normal so they will be recalculated (when required):
         //centroid = null;
-        //normal = null;
+        normal = null;
     }
 
     /* Returns true if the vector intersects the supplied facet.
@@ -280,24 +287,68 @@ public class Facet extends HasGroup {
     /** Calculates a vector normal to the facet.
      * The vector is normalized.
      */
-    private MyPoint3D calculateNormal() {
+    //private MyPoint3D calculateNormal() {
+    private void calculateNormal() {
         // Check number of nodes:
         int n = size();
-        if (n<3) { return null; } // not supported for 2D facets
-        MyPoint3D p0 = getNode(0).getPoint3D();
-        MyPoint3D p1 = getNode(1).getPoint3D();
-        MyPoint3D v1 = p0.vectorToPoint(p1);
-        // Loop until we find three non-collinear nodes:
-        for (int i=2 ; i<n ; i++) {
-            MyPoint3D p2 = getNode(i).getPoint3D();
-            MyPoint3D v2 = p0.vectorToPoint(p2);
-            MyPoint3D nv = v1.cross(v2);
-            if (nv.norm()!=0.0) { // not collinear
-                nv.normalize();
-                return nv;
-            }
+        if (n<3) {
+            normal = null; // normal angle not supported for 2D facets
+            return;
         }
-        return null;
+        // The normal vector calculation works best if we calculate a plane using vectors that are as close to 90 degrees as possible.
+        // Set tolerance on angle between the two vectors:
+        double angleTol = Math.PI/18.0; // HARDWIRE: increase to speed up, decrease to improve normal calculation
+        double angleBest = Math.PI; // just needs to be initialized to some large value greater than pi/2
+        int[] ibest = null;
+        boolean ok = false; // set to true once we've found an appropriate set of nodes below
+        // Loop over each node:
+        for (int i0=0 ; i0<(n-2) ; i0++ ) {
+            // Set initial node point:
+            MyPoint3D p0 = getNode(i0).getPoint3D();
+            // Loop over each node again:
+            for (int i1=i0+1 ; i1<(n-1) ; i1++ ) {
+                // Set next node point:
+                MyPoint3D p1 = getNode(i1).getPoint3D();
+                // Calculate vector between first pair of points:
+                MyPoint3D v1 = p0.vectorToPoint(p1);
+                // Loop over each node a last time:
+                for (int i2=i1+1 ; i2<n ; i2++ ) {
+                    // Set final node point:
+                    MyPoint3D p2 = getNode(i2).getPoint3D();
+                    // Calculate vector between second pair of points:
+                    MyPoint3D v2 = p0.vectorToPoint(p2);
+                    // Check angle between vectors is appropriate:
+                    double angle = v1.angleToVector(v2); // angle in radians on [0,pi] (0 to 180 degrees)
+                    angle = Math.abs( Math.PI/2.0 - angle ); // angle away from 90 degrees
+                    if ( angle <= angleTol ) { // angle between the vectors is close to pi/2 (90 degrees)
+                        ibest = new int[]{i0,i1,i2};
+                        ok = true;
+                        break; // from inner for loop
+                    }
+                    // Keep track of the best angle so far:
+                    if ( angle < angleBest ) {
+                        angleBest = angle;
+                        ibest = new int[]{i0,i1,i2};
+                    }
+                } // inner for loop
+                // Check if we should exit from middle for loop:
+                if (ok) { break; }
+            } // middle for loop
+            // Check if we should exit from outer for loop:
+            if (ok) { break; }
+        } // outer for loop
+        // Calculate the normal to the plane using the two vectors:
+        MyPoint3D p0 = getNode(ibest[0]).getPoint3D();
+        MyPoint3D p1 = getNode(ibest[1]).getPoint3D();
+        MyPoint3D p2 = getNode(ibest[2]).getPoint3D();
+        MyPoint3D v1 = p0.vectorToPoint(p1);
+        MyPoint3D v2 = p0.vectorToPoint(p2);
+        normal = v1.cross(v2); // vector normal to the plane
+        if (normal.norm()==0.0) { // collinear
+            normal = null;
+        } else {
+            normal.normalize();
+        }
     }
     
 }

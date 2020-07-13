@@ -4,6 +4,7 @@ import dialogs.Dialogs;
 import facetmodeller.commands.CommandVector;
 import facetmodeller.groups.GroupVector;
 import facetmodeller.plc.NodeVector;
+import fileio.FileUtils;
 import geometry.MyPoint2D;
 import geometry.MyPoint2DVector;
 import geometry.MyPoint3D;
@@ -12,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.swing.JFrame;
 
 /** Vertical depth-section with no image.
@@ -21,6 +24,7 @@ public class NoImageDepthSection extends DepthSection {
 
     // ------------------ Properties -------------------
     
+    private boolean isTopo; // required to support obsolete TopoSection
     private File nodeFile, eleFile; // required to support version 2 session files
     private final NoImageSection noImageSection; // composition required because already extending DepthSection class
     
@@ -39,10 +43,23 @@ public class NoImageDepthSection extends DepthSection {
     public NoImageDepthSection(File nf, File ef) { // required to support version 2 session files
         super();
         noImageSection = new NoImageSection("TOPOGRAPHY");
+        isTopo = true;
         nodeFile = nf;
         eleFile = ef;
         // (the files get read later)
     }
+    
+    public NoImageDepthSection(boolean ist) { // required to support obsolete TopoSection
+        super();
+        if (ist) {
+            noImageSection = new NoImageSection("TOPOGRAPHY");
+            isTopo = true;
+            // (the .node and .ele files get read later)
+        } else {
+            noImageSection = new NoImageSection();
+        }
+    }
+    
     public File getNodeFile() { return nodeFile; }
     public File getEleFile() { return eleFile; }
     
@@ -302,7 +319,40 @@ public class NoImageDepthSection extends DepthSection {
     @Override
     public String readSessionInformation(BufferedReader reader, boolean merge) {
         String msg = super.readSessionInformation(reader,merge); if (msg!=null) { return msg; }
-        return noImageSection.readSessionInformation(reader,merge);
+        msg = noImageSection.readSessionInformation(reader,merge); if (msg!=null) { return msg; }
+        // The following is to support older session files that used the obsolete TopoSection:
+        if (!isTopo) { return null; }
+        // Read the node file name:
+        String textLine = FileUtils.readLine(reader);
+        if (textLine==null) { return "Reading .node file for obsolete TopoSection."; }
+        textLine = textLine.trim();
+        if (textLine.startsWith("null")) {
+            nodeFile = null;
+        } else {
+            URI uri;
+            try {
+                uri = new URI(textLine);
+            } catch (URISyntaxException e) { return "Converting .node file string for obsolete TopoSection to URI."; }
+            try {
+                nodeFile = new File(uri); // image file or .node file
+            } catch (IllegalArgumentException e) { return "Converting .node file URI for obsolete TopoSection to File."; }
+        }
+        // Read the ele file name:
+        textLine = FileUtils.readLine(reader);
+        if (textLine==null) { return "Reading .ele file for obsolete TopoSection."; }
+        textLine = textLine.trim();
+        if (textLine.startsWith("null")) {
+            eleFile = null;
+        } else {
+            try {
+                URI uri = new URI(textLine);
+                eleFile = new File(uri); // image file or .node file
+            } catch (URISyntaxException e) { return "Converting .ele file string for obsolete TopoSection to URI."; }
+        }
+        // Skip the min/max/range information:
+        textLine = FileUtils.readLine(reader);
+        if (textLine==null) { return "Reading min/max/range information for obsolete TopoSection."; }
+        return null;
     }
     
 }

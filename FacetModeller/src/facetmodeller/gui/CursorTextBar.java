@@ -98,7 +98,13 @@ public final class CursorTextBar extends TextBar {
                     } else {
                         soff = "on ";
                     }
-                    s = "node #" + ind + "; " + groupName + "; " + soff + sectionName + "; " + closestNode.getFacets().size() + " facets; "
+                    String sbm;
+                    if (closestNode.getBoundaryMarker()) {
+                        sbm = "bm=1; ";
+                    } else {
+                        sbm = "bm=0; ";
+                    }
+                    s = "node #" + ind + "; " + sbm + groupName + "; " + soff + sectionName + "; " + closestNode.getFacets().size() + " facets; "
                             + " (" + closestNode.getPoint3D().toStringCSV() + ")";
                             //+ System.lineSeparator() + "coordinates = (" + closestNode.getPoint3D().toStringCSV() + ")";
                     controller.clearClosestFacet();
@@ -110,13 +116,19 @@ public final class CursorTextBar extends TextBar {
                     Facet closestFacet = controller.getClosestFacet();
                     int ind = controller.indexOfFacet(closestFacet) + 1;
                     if (ind<=0) { return; }
-                    String name = closestFacet.getGroup().getName();
+                    String groupName = closestFacet.getGroup().getName();
                     int n = closestFacet.size();
+                    String sbm;
+                    if (closestFacet.getBoundaryMarker()) {
+                        sbm = "bm=1; ";
+                    } else {
+                        sbm = "bm=0; ";
+                    }
                     if (n>3) {
-                        s = "facet #" + ind + "; " + name + "; " + n + " nodes";
+                        s = "facet #" + ind + "; " + sbm + groupName + "; " + n + " nodes";
                         //s = "facet #" + ind + "; " + name + "; " + System.lineSeparator() + n + " nodes";
                     } else {
-                        s = "facet #" + ind + "; " + name + "; " + "nodes =";
+                        s = "facet #" + ind + "; " + groupName + "; " + "nodes =";
                         //s = "facet #" + ind + "; " + name + ";" + System.lineSeparator() + "nodes =";
                         for (int i=0 ; i<n ; i++ ) {
                             Node node = closestFacet.getNode(i);
@@ -133,11 +145,11 @@ public final class CursorTextBar extends TextBar {
                     Region closestRegion = controller.getClosestRegion();
                     int ind = controller.indexOfRegion(closestRegion) + 1;
                     if (ind<=0) { return; }
-                    String name = closestRegion.getGroup().getName();
+                    String groupName = closestRegion.getGroup().getName();
                     if (closestRegion.getIsControl()) {
-                        s = "region #" + ind + " (control point)" + "; " + name;
+                        s = "region #" + ind + " (control point)" + "; " + groupName;
                     } else {
-                        s = "region #" + ind + " (region point)" + "; " + name;
+                        s = "region #" + ind + " (region point)" + "; " + groupName;
                     }       s = s + "; (" + closestRegion.getPoint3D().toStringCSV() + ")";
                     controller.clearClosestNode();
                     controller.clearClosestFacet();

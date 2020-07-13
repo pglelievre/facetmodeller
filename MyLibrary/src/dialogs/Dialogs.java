@@ -128,7 +128,7 @@ public class Dialogs {
                 JOptionPane.QUESTION_MESSAGE,null,options,options[0]);
     }
 
-    /** Question dialog with yes, no and cancel buttons.
+    /** Question dialog with yes, no and cancel buttons. Default is whatever the Java default is.
      * @param parent Object for centering the dialog on.
      * @param message The question to ask.
      * @param title The title of the dialog.
@@ -136,6 +136,26 @@ public class Dialogs {
      */
     public static int question(Component parent, String message, String title) {
         return JOptionPane.showConfirmDialog(parent,message,title,JOptionPane.YES_NO_CANCEL_OPTION);
+    }
+
+    /** Question dialog with yes, no and cancel buttons. Yes button is default.
+     * @param parent Object for centering the dialog on.
+     * @param message The question to ask.
+     * @param title The title of the dialog.
+     * @return Dialogs.YES_OPTION, Dialogs.NO_OPTION or Dialogs.CANCEL_OPTION.
+     */
+    public static int questionYes(Component parent, String message, String title) {
+        return question(parent,message,title,"Yes","No","Cancel","Yes");
+    }
+
+    /** Question dialog with yes, no and cancel buttons. No button is default.
+     * @param parent Object for centering the dialog on.
+     * @param message The question to ask.
+     * @param title The title of the dialog.
+     * @return Dialogs.YES_OPTION, Dialogs.NO_OPTION or Dialogs.CANCEL_OPTION.
+     */
+    public static int questionNo(Component parent, String message, String title) {
+        return question(parent,message,title,"Yes","No","Cancel","No");
     }
 
     /** Question dialog with altered text on the yes, no and cancel buttons.

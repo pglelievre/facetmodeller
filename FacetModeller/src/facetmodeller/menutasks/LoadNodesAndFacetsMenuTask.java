@@ -148,7 +148,8 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
         boolean doNodeAttsFromFacetDefs = false;
         FacetVector.ReadFacetsReturnObject readFacetsReturnObj = null;
         if (eleFile!=null) {
-            readFacetsReturnObj = facets.readEle(controller,title(),eleFile,nodes,ndim,true);
+            int startingIndex = readNodesReturnObj.getStartingIndex();
+            readFacetsReturnObj = facets.readEle(controller,title(),eleFile,startingIndex,nodes,ndim,true);
             if (readFacetsReturnObj==null) { return; } // user cancelled
             errmsg = readFacetsReturnObj.getErrmsg();
             if (errmsg!=null) {

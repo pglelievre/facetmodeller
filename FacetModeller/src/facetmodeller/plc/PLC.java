@@ -88,6 +88,7 @@ public class PLC {
     
     // -------------------- Public Methods -------------------
 
+    public boolean anyMarked() { return ( nodes.anyMarked() || facets.anyMarked() ) ;}
     public boolean hasNodes() { return !nodes.isEmpty(); }
     public boolean hasFacets() { return !facets.isEmpty(); }
     public boolean hasRegions() { return !regions.isEmpty(); }
@@ -585,23 +586,33 @@ public class PLC {
     /** Writes the information to a file in poly file format.
      * All ID's should be reset before calling this method.
      * @param file
+     * @param startingIndex
+     * @param precision
      * @param ndim
      * @param dir
      * @param byIndex Set to true to write group index as the region attribute instead of the group ID.
      * @return 
      */
-    public boolean writePoly(File file, int ndim, Dir3D dir, boolean byIndex) {
-
+    public boolean writePoly(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean byIndex) {
+        
+        // Check to see if any of the nodes or facets have been specified as boundary objects:
+        boolean dobm = this.anyMarked();
+        
         // Open the file for writing:
         BufferedWriter writer = FileUtils.openForWriting(file);
         if (writer==null) { return false; }
 
         // Write the nodes information line:
-        String textLine = nodes.size() + " " + ndim + " 0 0"; // no attributes or boundary markers
+        String textLine;
+        if (dobm) {
+            textLine = nodes.size() + " " + ndim + " 0 1"; // no attributes but has boundary markers
+        } else {
+            textLine = nodes.size() + " " + ndim + " 0 0"; // no attributes or boundary markers
+        }
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the node list:
-        boolean ok = writeNodeList(writer,ndim,dir,false); // don't write node groups or indices
+        boolean ok = writeNodeList(writer,startingIndex,precision,ndim,dir,false,dobm); // don't write node groups or indices, dobm
         if (!ok) { FileUtils.close(writer); return false; }
         
         // Write the facets information line:
@@ -609,7 +620,7 @@ public class PLC {
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the facet list:
-        ok = writeFacetList(writer,ndim,true,false,false,false); // poly format, don't write facet attributes, 2 dummy values
+        ok = writeFacetList(writer,startingIndex,precision,ndim,true,false,dobm,false,false); // poly format, don't write facet attributes, dobm, 2 dummy values
         if (!ok) { FileUtils.close(writer); return false; }
 
         // Write the hole information:
@@ -621,7 +632,7 @@ public class PLC {
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the region list:
-        ok = writeRegionList(writer,ndim,dir,false,byIndex); // only write true region points
+        ok = writeRegionList(writer,startingIndex,precision,ndim,dir,false,byIndex); // only write true region points
         if (!ok) { FileUtils.close(writer); return false; }
 
         // Close the file:
@@ -634,11 +645,16 @@ public class PLC {
     /** Writes the node information to a file in node file format.
      * All ID's should be reset before calling this method.
      * @param file
+     * @param startingIndex
+     * @param precision
      * @param ndim
      * @param dir
      * @return 
      */
-    public boolean writeNodes(File file, int ndim, Dir3D dir) {
+    public boolean writeNodes(File file, int startingIndex, int precision, int ndim, Dir3D dir) {
+        
+        // Check to see if any of the nodes or facets have been specified as boundary objects:
+        boolean dobm = this.anyMarked();
 
         // Open the file for writing:
         BufferedWriter writer = FileUtils.openForWriting(file);
@@ -647,11 +663,16 @@ public class PLC {
         }
 
         // Write the nodes information line:
-        String textLine = nodes.size() + " " + ndim + " 2 0 \"nodeGroup\",\"nodeIndex\""; // no boundary markers
+        String textLine;
+        if (dobm) {
+            textLine = nodes.size() + " " + ndim + " 2 1 \"nodeGroup\",\"nodeIndex\""; // has boundary markers
+        } else {
+            textLine = nodes.size() + " " + ndim + " 2 0 \"nodeGroup\",\"nodeIndex\""; // no boundary markers
+        }
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the node list:
-        boolean ok = writeNodeList(writer,ndim,dir,true); // write node groups and indices
+        boolean ok = writeNodeList(writer,startingIndex,precision,ndim,dir,true,dobm); // write node groups and indices, dobm
         if (!ok) { FileUtils.close(writer); return false; }
 
         // Close the file:
@@ -664,11 +685,13 @@ public class PLC {
     /** Writes the facet information to a file in ele file format.
      * All ID's should be reset before calling this method.
      * @param file
+     * @param startingIndex
+     * @param precision
      * @param ndim
      * @param writevar true to write non-standard variable facet type .ele file if required
      * @return 
      */
-    public boolean writeFacets(File file, int ndim, boolean writevar) {
+    public boolean writeFacets(File file, int startingIndex, int precision, int ndim, boolean writevar) {
 
         // Open the file for writing:
         BufferedWriter writer = FileUtils.openForWriting(file);
@@ -710,7 +733,7 @@ public class PLC {
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the facet list:
-        boolean ok = writeFacetList(writer,ndim,false,true,dovar,isvar); // ele format (not poly format), write facet attributes
+        boolean ok = writeFacetList(writer,startingIndex,precision,ndim,false,true,false,dovar,isvar); // ele format (not poly format), write facet attributes, no boundary markers
         if (!ok) { FileUtils.close(writer); return false; }
 
         // Close the file:
@@ -723,13 +746,15 @@ public class PLC {
     /** Writes the regions information to a file in node file format.
      * All ID's should be reset before calling this method.
      * @param file
+     * @param startingIndex
+     * @param precision
      * @param ndim
      * @param dir
      * @param doControl Set to true to write control points only, false for true region points only.
      * @param byIndex Set to true to write group index as the region attribute instead of the group ID.
      * @return 
      */
-    public boolean writeRegions(File file, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
+    public boolean writeRegions(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
 
         // Open the file for writing:
         BufferedWriter writer = FileUtils.openForWriting(file);
@@ -749,7 +774,7 @@ public class PLC {
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the region list:
-        boolean ok = writeRegionList(writer,ndim,dir,doControl,byIndex);
+        boolean ok = writeRegionList(writer,startingIndex,precision,ndim,dir,doControl,byIndex);
         if (!ok) { FileUtils.close(writer); return false; }
 
         // Close the file:
@@ -759,15 +784,16 @@ public class PLC {
 
     }
 
-    private boolean writeNodeList(BufferedWriter writer, int ndim, Dir3D dir, boolean writeAttributes) {
+    private boolean writeNodeList(BufferedWriter writer, int startingIndex, int precision, int ndim, Dir3D dir, boolean writeAttributes, boolean writeMarkers) {
 
         // Write the node coordinates, group attributes and optional node indices:
         for (int i=0; i<nodes.size() ; i++ ) {
+            int index = i + startingIndex;
             Node node = nodes.get(i);
-            String textLine = (i+1) + " "; // node index
+            String textLine = index + " "; // node index
             MyPoint3D p3 = node.getPoint3D(); // 3D coordinates
             if (ndim==3) {
-                textLine += p3.toString(TOLZERO);
+                textLine += p3.toString(TOLZERO,precision);
             } else {
                 MyPoint2D p2;
                 if (dir==null) {
@@ -777,11 +803,18 @@ public class PLC {
                 } else {
                     p2 = p3.getPoint2D(dir);
                 } // 2D coordinates
-                textLine += p2.toString(TOLZERO);
+                textLine += p2.toString(TOLZERO,precision);
             }
             if (writeAttributes) {
-                int gid = node.getGroup().getID() + 1;
-                textLine += " " + gid + " " + (i+1); // node group and index
+                int gid = node.getGroup().getID() + startingIndex;
+                textLine += " " + gid + " " + index; // node group and node index
+            }
+            if (writeMarkers) {
+                if (node.getBoundaryMarker()) {
+                    textLine += " 1";
+                } else {
+                    textLine += " 0";
+                }
             }
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
@@ -790,10 +823,11 @@ public class PLC {
 
     }
 
-    private boolean writeFacetList(BufferedWriter writer, int ndim, boolean polyFormat, boolean writeAttributes, boolean dovar, boolean isvar) {
+    private boolean writeFacetList(BufferedWriter writer, int startingIndex, int precision, int ndim, boolean polyFormat, boolean writeAttributes, boolean writeMarkers, boolean dovar, boolean isvar) {
 
         // Write the facet definitions:
         for (int i=0; i<facets.size() ; i++ ) {
+            int index = i + startingIndex;
             Facet facet = facets.get(i);
             int n = facet.size();
             if ( ndim==2 && n!=2 ) { throw new IllegalArgumentException("Ancountered a facet in a 2D model that was not a line."); }
@@ -805,18 +839,25 @@ public class PLC {
                 if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
                 textLine = Integer.toString(n); // number of nodes
             } else {
-                textLine = Integer.toString(i+1); // facet index
+                textLine = Integer.toString(index); // facet index
                 if (!polyFormat && dovar) {
                     textLine += " " + n; // number of nodes in the variable facet
                 }
             }
             for (int j=0 ; j<n ; j++ ) {
-                int id = facet.getNode(j).getID() + 1;
+                int id = facet.getNode(j).getID() + startingIndex;
                 textLine += " " + id; // node IDs
             }
             if (writeAttributes) {
-                int gid = facet.getGroup().getID() + 1;
-                textLine += " " + gid + " " + (i+1); // facet group and index
+                int gid = facet.getGroup().getID() + startingIndex;
+                textLine += " " + gid + " " + index; // facet group and facet index
+            }
+            if (writeMarkers) {
+                if (facet.getBoundaryMarker()) {
+                    textLine += " 1";
+                } else {
+                    textLine += " 0";
+                }
             }
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
@@ -825,18 +866,19 @@ public class PLC {
 
     }
     
-    private boolean writeRegionList(BufferedWriter writer, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
+    private boolean writeRegionList(BufferedWriter writer, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
 
         // Write the region coordinates:
         for (int i=0; i<regions.size() ; i++ ) {
+            int index = i + startingIndex;
             // Check type of region and skip if not the correct type (region or control point):
             Region region = regions.get(i);
             if ( region.getIsControl() != doControl ) { continue; } // skip
             // Write the information:
-            String textLine = (i+1) + " ";
+            String textLine = index + " ";
             MyPoint3D p3 = region.getPoint3D(); // 3D coordinates
             if (ndim==3) {
-                textLine += p3.toString(TOLZERO);
+                textLine += p3.toString(TOLZERO,precision);
             } else {
                 MyPoint2D p2;
                 if (dir==null) {
@@ -846,12 +888,12 @@ public class PLC {
                 } else {
                     p2 = p3.getPoint2D(dir);
                 } // 2D coordinates
-                textLine += p2.toString(TOLZERO);
+                textLine += p2.toString(TOLZERO,precision);
             }
             if (byIndex) {
-                textLine += " " + (i+1); // region index
+                textLine += " " + index; // region index
             } else {
-                int gid = region.getGroup().getID() + 1;
+                int gid = region.getGroup().getID() + startingIndex;
                 textLine += " " + gid; // region group
             }
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
@@ -864,10 +906,11 @@ public class PLC {
     /** Writes the information to a file in vtu file format.
      * All ID's should be reset before calling this method.
      * @param file
+     * @param precision
      * @param flipz
      * @return 
      */
-    public boolean writeVTU(File file, boolean flipz) {
+    public boolean writeVTU(File file, int precision, boolean flipz) {
 
         // Open the file for writing:
         BufferedWriter writer = FileUtils.openForWriting(file);
@@ -908,7 +951,7 @@ public class PLC {
                 p = p.deepCopy();
                 p.flipZ();
             }
-            textLine = p.toString(TOLZERO);
+            textLine = p.toString(TOLZERO,precision);
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
         textLine = "</DataArray>";

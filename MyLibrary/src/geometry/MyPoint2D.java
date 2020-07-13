@@ -3,6 +3,8 @@ package geometry;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /** A 2D point with x,y stored as double precision.
  * @author Peter Lelievre
@@ -354,12 +356,23 @@ public class MyPoint2D {
         return getX() + " " + getY();
     }
 
-    public String toString(double tolzero) {
+    public String toString(double tolzero, int precision) {
         double xt = getX();
         double yt = getY();
         if (Math.abs(xt)<=tolzero)  { xt = 0.0; }
         if (Math.abs(yt)<=tolzero)  { yt = 0.0; }
-        return xt + " " + yt;
+        //return xt + " " + yt;
+        BigDecimal xb = new BigDecimal(xt).setScale(precision,RoundingMode.HALF_UP);
+        BigDecimal yb = new BigDecimal(yt).setScale(precision,RoundingMode.HALF_UP);
+        double xd = xb.doubleValue();
+        double yd = yb.doubleValue();
+        if (precision==0) {
+            int xi = (int)xd;
+            int yi = (int)yd;
+            return xi + " " + yi;
+        } else {
+            return xd + " " + yd;
+        }
     }
 
 }

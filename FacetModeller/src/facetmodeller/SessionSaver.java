@@ -46,6 +46,12 @@ public class SessionSaver {
         // Write interaction manager options:
         if (!con.getInteractionManager().writeSessionInformation(writer)) { FileUtils.close(writer); return false; }
 
+        // Comment start of file i/o options:
+        if (!FileUtils.writeLine(writer,"# FILE I/O OPTIONS")) { FileUtils.close(writer); return false; }
+
+        // Write file i/o manager options:
+        if (!con.getFileIOManager().writeSessionInformation(writer)) { FileUtils.close(writer); return false; }
+
         // Close the file:
         FileUtils.close(writer);
 

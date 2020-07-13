@@ -17,6 +17,7 @@ public abstract class Node extends HasSection implements SessionIO {
     public static final int NODE_ON_SECTION=1; // node coordinates are pixel coordinates for the related image
     public static final int NODE_OFF_SECTION=2; // node coordinates are spatial coordinates???
 
+    private boolean boundaryMarker = false;
     private final FacetVector facets = new FacetVector(); // list of facets associated with the vertex
 
     // -------------------- Constructors -------------------
@@ -41,16 +42,20 @@ public abstract class Node extends HasSection implements SessionIO {
     public abstract MyPoint2D getPoint2D();
     public abstract MyPoint3D getPoint3D();
     
+    public boolean getBoundaryMarker() { return boundaryMarker; }
     public FacetVector getFacets() { return facets; }
     public Facet getFacet(int i) { return facets.get(i); }
     public Color getColor() { return getGroup().getNodeColor(); }
     
     // -------------------- Setters -------------------
 
+    public void setBoundaryMarker(boolean bm) { boundaryMarker = bm; }
     public abstract void setPoint2D(MyPoint2D p);
     public abstract void setPoint3D(MyPoint3D p);
     
     // -------------------- Public Methods -------------------
+    
+    public void toggleBoundaryMarker() { boundaryMarker = !boundaryMarker; }
 
     /** Returns the node neighbours.
      * Will only work with a 3D model and triangular facets.

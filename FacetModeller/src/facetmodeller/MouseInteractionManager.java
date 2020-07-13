@@ -13,9 +13,10 @@ public final class MouseInteractionManager {
     
     // Objects used to perform processing for clicks:
     private final ClickTask ignore, info, defineNode, deleteNode, moveNode, mergeNodes, duplicateNode,
-            changeNodeGroup, changeNodeSection, changeNodeCoords, changeFacetGroup,
+            changeNodeGroup, changeNodeSection, changeNodeCoords, markNodeToggle, markNodeTrue, markNodeFalse,
             definePolyFacet, definePolyFacetTri, defineTriFacet, defineLineFacet,
-            deleteFacet, reverseFacet, flipEdge, defineRegion, deleteRegion, propagateNormals,
+            deleteFacet, changeFacetGroup, reverseFacet, flipEdge,  markFacetToggle, markFacetTrue, markFacetFalse,
+            defineRegion, deleteRegion, propagateNormals,
             defineNodeOnEdge, defineNodeInFacet, originPoint2D, originNode3D, calibrate;
     
     public MouseInteractionManager(FacetModeller con) {
@@ -27,17 +28,23 @@ public final class MouseInteractionManager {
         moveNode = new MoveNodeClickTask(con);
         mergeNodes = new MergeNodesClickTask(con);
         duplicateNode = new DuplicateNodeClickTask(con);
+        markNodeToggle = new MarkNodeClickTask(con,0);
+        markNodeTrue = new MarkNodeClickTask(con,1);
+        markNodeFalse = new MarkNodeClickTask(con,-1);
         changeNodeGroup = new ChangeNodeGroupClickTask(con);
         changeNodeSection = new ChangeNodeSectionClickTask(con);
         changeNodeCoords = new ChangeNodeCoordsClickTask(con);
-        changeFacetGroup = new ChangeFacetGroupClickTask(con);
         definePolyFacet = new DefinePolyFacetClickTask(con,false);
         definePolyFacetTri = new DefinePolyFacetClickTask(con,true);
         defineTriFacet = new DefineTriFacetClickTask(con);
         defineLineFacet = new DefineLineFacetClickTask(con);
         deleteFacet = new DeleteFacetClickTask(con);
+        changeFacetGroup = new ChangeFacetGroupClickTask(con);
         reverseFacet = new ReverseFacetClickTask(con);
         flipEdge = new FlipEdgeClickTask(con);
+        markFacetToggle = new MarkFacetClickTask(con,0);
+        markFacetTrue = new MarkFacetClickTask(con,1);
+        markFacetFalse = new MarkFacetClickTask(con,-1);
         defineRegion = new DefineRegionClickTask(con);
         deleteRegion = new DeleteRegionClickTask(con);
         defineNodeOnEdge = new DefineNodeOnEdgeClickTask(con);
@@ -78,6 +85,12 @@ public final class MouseInteractionManager {
                 return changeNodeSection;
             case ClickModeManager.MODE_CHANGE_NODES_COORDS:
                 return changeNodeCoords;
+            case ClickModeManager.MODE_MARK_NODES_TOGGLE:
+                return markNodeToggle;
+            case ClickModeManager.MODE_MARK_NODES_TRUE:
+                return markNodeTrue;
+            case ClickModeManager.MODE_MARK_NODES_FALSE:
+                return markNodeFalse;
             case ClickModeManager.MODE_CHANGE_FACETS_GROUP:
                 return changeFacetGroup;
             case ClickModeManager.MODE_DEFINE_POLY_FACETS:
@@ -95,6 +108,12 @@ public final class MouseInteractionManager {
             case ClickModeManager.MODE_EDGE_FLIP:
                 return flipEdge;
 //            case ClickModeManager.MODE_SPLIT_TRI_FACETS:
+            case ClickModeManager.MODE_MARK_FACETS_TOGGLE:
+                return markFacetToggle;
+            case ClickModeManager.MODE_MARK_FACETS_TRUE:
+                return markFacetTrue;
+            case ClickModeManager.MODE_MARK_FACETS_FALSE:
+                return markFacetFalse;
             case ClickModeManager.MODE_ADD_NODES_ON_EDGES:
                 return defineNodeOnEdge;
             case ClickModeManager.MODE_ADD_NODES_IN_FACETS:

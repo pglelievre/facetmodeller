@@ -30,16 +30,20 @@ public final class MenuBar extends JMenuBar {
             miExportPoly, miExportPolyGroup, miExportPolyDisplayed, 
             miExportPair, miExportPairGroup, miExportPairDisplayed,
             miExportNodes, miExportFacets, miExportRegions, miExportVTU, miExportAll,
+            miExportOptionsStartingIndex, miExportOptionsPrecision,
             miChangeSectionColor, miPLCInfo,miDefineVOI,
-            miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miNormalColor,miDefaultBackgroundColor,miSelectBackgroundColor,
+            miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miNormalColor,
+            miNodeMarkerTrueColor,miNodeMarkerFalseColor,miFacetMarkerTrueColor,miFacetMarkerFalseColor,
+            miDefaultBackgroundColor,miSelectBackgroundColor,
             miPointWidth, miLineWidth, miTransparency, miNormalLength, miNormalThickness, miEdgeThickness,
             miShiftStep2D,miPanStep2D, miVerticalExaggeration,
             miPickingRadius, miAutoFacetFactor, miToggleToolPanel, miToggleView3DPanel1, miToggleView3DPanel2, miToggleScroller,
             miClearOrigin3D, miShowConfirmationDialogs, miHideConfirmationDialogs;
     private ClickTaskMenuItem miNullMode,miInfoMode,miSetOrigin2DMode, miSetOriginNode3DMode,
-            miAddNodes,miDeleteNodes,miMoveNodes,miMergeNodes,miDuplicateNodes,miChangeNodes,miChangeNodesSection,miChangeNodesCoords,
+            miAddNodes,miDeleteNodes,miMoveNodes,miMergeNodes,miDuplicateNodes,
+            miChangeNodes,miChangeNodesSection,miChangeNodesCoords,miMarkNodesToggle,miMarkNodesTrue,miMarkNodesFalse,
             miDefinePolyFacets,miDefinePolyFacetsTri,miDefineTriFacets,miDefineLineFacets,miDeleteFacets,miChangeFacets,
-            miReverseFacets,miEdgeFlip,miAddNodesInTriFacets,miAddNodesOnEdges,
+            miReverseFacets,miEdgeFlip,miMarkFacetsToggle,miMarkFacetsTrue,miMarkFacetsFalse,miAddNodesInTriFacets,miAddNodesOnEdges,
             miAddRegions,miDeleteRegions,miPropagateNormals;
     private MenuTaskMenuItem miUndo,miSaveSession,miSaveSessionAs,miLoadNodesAndFacets,
             miLoadCrossSectionImages,miLoadDepthSectionImages,miLoadGroups,miSaveGroups,
@@ -96,6 +100,8 @@ public final class MenuBar extends JMenuBar {
         miExportFacets = makeMenuItem("Facets to .ele file",listener);
         miExportRegions = makeMenuItem("Regions to .node file",listener);
         miExportAll = makeMenuItem("All possible files",listener);
+        miExportOptionsStartingIndex = makeMenuItem("Starting index",listener);
+        miExportOptionsPrecision = makeMenuItem("Coordinate precision",listener);
 
         // Build the click mode menu items:
         // (the calibrate click mode is absent)
@@ -111,6 +117,9 @@ public final class MenuBar extends JMenuBar {
         miChangeNodes = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_NODES_GROUP,listener);
         miChangeNodesSection = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_NODES_SECTION,listener);
         miChangeNodesCoords = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_NODES_COORDS,listener);
+        miMarkNodesToggle = makeClickTaskMenuItem(ClickModeManager.MODE_MARK_NODES_TOGGLE,listener);
+        miMarkNodesTrue = makeClickTaskMenuItem(ClickModeManager.MODE_MARK_NODES_TRUE,listener);
+        miMarkNodesFalse = makeClickTaskMenuItem(ClickModeManager.MODE_MARK_NODES_FALSE,listener);
         miAddRegions = makeClickTaskMenuItem(ClickModeManager.MODE_ADD_REGIONS,listener);
         miDeleteRegions = makeClickTaskMenuItem(ClickModeManager.MODE_DELETE_REGIONS,listener);
         miPropagateNormals = makeClickTaskMenuItem(ClickModeManager.MODE_PROPAGATE_NORMALS,listener);
@@ -122,6 +131,9 @@ public final class MenuBar extends JMenuBar {
         miChangeFacets = makeClickTaskMenuItem(ClickModeManager.MODE_CHANGE_FACETS_GROUP,listener);
         miReverseFacets = makeClickTaskMenuItem(ClickModeManager.MODE_REVERSE_FACETS,listener);
         miEdgeFlip = makeClickTaskMenuItem(ClickModeManager.MODE_EDGE_FLIP,listener);
+        miMarkFacetsToggle = makeClickTaskMenuItem(ClickModeManager.MODE_MARK_FACETS_TOGGLE,listener);
+        miMarkFacetsTrue = makeClickTaskMenuItem(ClickModeManager.MODE_MARK_FACETS_TRUE,listener);
+        miMarkFacetsFalse = makeClickTaskMenuItem(ClickModeManager.MODE_MARK_FACETS_FALSE,listener);
         miAddNodesOnEdges = makeClickTaskMenuItem(ClickModeManager.MODE_ADD_NODES_ON_EDGES,listener);
         miAddNodesInTriFacets = makeClickTaskMenuItem(ClickModeManager.MODE_ADD_NODES_IN_FACETS,listener);
         
@@ -201,6 +213,10 @@ public final class MenuBar extends JMenuBar {
         miEdgeColor = makeMenuItem("Change facet edge color",listener);
         miDefineFacetEdgeColor = makeMenuItem("Change facet edge color when defining",listener);
         miNormalColor = makeMenuItem("Change facet normal vector color",listener);
+        miNodeMarkerTrueColor = makeMenuItem("Change boundary node color",listener);
+        miNodeMarkerFalseColor = makeMenuItem("Change non-boundary node color",listener);
+        miFacetMarkerTrueColor = makeMenuItem("Change boundary facet color",listener);
+        miFacetMarkerFalseColor = makeMenuItem("Change non-boundary facet color",listener);
         miPointWidth = makeMenuItem("Point size",listener);
         miLineWidth = makeMenuItem("Line width",listener);
         miTransparency = makeMenuItem("Overlay transparency",listener);
@@ -300,6 +316,11 @@ public final class MenuBar extends JMenuBar {
         exportMenu.add(miExportFacets);
         exportMenu.add(miExportRegions);
         exportMenu.add(miExportAll);
+        // Export options submenu:
+        JMenu exportOptionsMenu = new JMenu("Export options");
+        fileMenu.add(exportOptionsMenu);
+        exportOptionsMenu.add(miExportOptionsStartingIndex);
+        exportOptionsMenu.add(miExportOptionsPrecision);
 
         // Build the mode menu:
         JMenu modeMenu = new JMenu("Click Mode");
@@ -316,6 +337,9 @@ public final class MenuBar extends JMenuBar {
         modeMenu.add(miChangeNodes);
         modeMenu.add(miChangeNodesSection);
         modeMenu.add(miChangeNodesCoords);
+        modeMenu.add(miMarkNodesToggle);
+        modeMenu.add(miMarkNodesTrue);
+        modeMenu.add(miMarkNodesFalse);
         modeMenu.add(miDefinePolyFacets);
         if (ndim==3) {
             modeMenu.add(miDefinePolyFacetsTri);
@@ -330,6 +354,9 @@ public final class MenuBar extends JMenuBar {
             modeMenu.add(miAddNodesOnEdges);
             modeMenu.add(miAddNodesInTriFacets);
         }
+        modeMenu.add(miMarkFacetsToggle);
+        modeMenu.add(miMarkFacetsTrue);
+        modeMenu.add(miMarkFacetsFalse);
         modeMenu.add(miAddRegions);
         modeMenu.add(miDeleteRegions);
         modeMenu.add(miPropagateNormals);
@@ -444,6 +471,10 @@ public final class MenuBar extends JMenuBar {
         displayMenu.add(miEdgeColor);
         displayMenu.add(miDefineFacetEdgeColor);
         if (ndim==3) { displayMenu.add(miNormalColor); }
+        displayMenu.add(miNodeMarkerTrueColor);
+        displayMenu.add(miNodeMarkerFalseColor);
+        displayMenu.add(miFacetMarkerTrueColor);
+        displayMenu.add(miFacetMarkerFalseColor);
         displayMenu.add(miPointWidth);
         displayMenu.add(miLineWidth);
         displayMenu.add(miTransparency);
@@ -514,6 +545,8 @@ public final class MenuBar extends JMenuBar {
             else if (src == miExportFacets) { controller.exportFacets(); }
             else if (src == miExportRegions) { controller.exportRegions(); }
             else if (src == miExportAll) { controller.exportAll(); }
+            else if (src == miExportOptionsStartingIndex) { controller.exportOptionsStartingIndex(); }
+            else if (src == miExportOptionsPrecision) { controller.exportOptionsPrecision(); }
             else if (src == miPLCInfo) { controller.showPLCInfo(); }
             else if (src == miClearOrigin3D) { controller.clearOriginNode3D(); }
             else if (src == miDefineVOI) { controller.defineVOI(); }
@@ -529,6 +562,9 @@ public final class MenuBar extends JMenuBar {
             else if (src == miChangeNodes) { controller.setClickMode(ClickModeManager.MODE_CHANGE_NODES_GROUP); }
             else if (src == miChangeNodesSection) { controller.setClickMode(ClickModeManager.MODE_CHANGE_NODES_SECTION); }
             else if (src == miChangeNodesCoords) { controller.setClickMode(ClickModeManager.MODE_CHANGE_NODES_COORDS); }
+            else if (src == miMarkNodesToggle) { controller.setClickMode(ClickModeManager.MODE_MARK_NODES_TOGGLE); }
+            else if (src == miMarkNodesTrue) { controller.setClickMode(ClickModeManager.MODE_MARK_NODES_TRUE); }
+            else if (src == miMarkNodesFalse) { controller.setClickMode(ClickModeManager.MODE_MARK_NODES_FALSE); }
             else if (src == miAddRegions) { controller.setClickMode(ClickModeManager.MODE_ADD_REGIONS); }
             else if (src == miDeleteRegions) { controller.setClickMode(ClickModeManager.MODE_DELETE_REGIONS); }
             else if (src == miPropagateNormals) { controller.setClickMode(ClickModeManager.MODE_PROPAGATE_NORMALS); }
@@ -540,6 +576,9 @@ public final class MenuBar extends JMenuBar {
             else if (src == miChangeFacets) { controller.setClickMode(ClickModeManager.MODE_CHANGE_FACETS_GROUP); }
             else if (src == miReverseFacets) { controller.setClickMode(ClickModeManager.MODE_REVERSE_FACETS); }
             else if (src == miEdgeFlip) { controller.setClickMode(ClickModeManager.MODE_EDGE_FLIP); }
+            else if (src == miMarkFacetsToggle) { controller.setClickMode(ClickModeManager.MODE_MARK_FACETS_TOGGLE); }
+            else if (src == miMarkFacetsTrue) { controller.setClickMode(ClickModeManager.MODE_MARK_FACETS_TRUE); }
+            else if (src == miMarkFacetsFalse) { controller.setClickMode(ClickModeManager.MODE_MARK_FACETS_FALSE); }
             else if (src == miAddNodesOnEdges) { controller.setClickMode(ClickModeManager.MODE_ADD_NODES_ON_EDGES); }
             else if (src == miAddNodesInTriFacets) { controller.setClickMode(ClickModeManager.MODE_ADD_NODES_IN_FACETS); }
             else if (src == miDefaultBackgroundColor) { controller.setBackgroundColorDefault(); }
@@ -549,6 +588,10 @@ public final class MenuBar extends JMenuBar {
             else if (src == miEdgeColor) { controller.selectEdgeColor(); }
             else if (src == miDefineFacetEdgeColor) { controller.selectDefineFacetEdgeColor(); }
             else if (src == miNormalColor) { controller.selectNormalColor(); }
+            else if (src == miNodeMarkerTrueColor) { controller.selectBoundaryNodeColor(); }
+            else if (src == miNodeMarkerFalseColor) { controller.selectNonBoundaryNodeColor(); }
+            else if (src == miFacetMarkerTrueColor) { controller.selectBoundaryFacetColor(); }
+            else if (src == miFacetMarkerFalseColor) { controller.selectNonBoundaryFacetColor(); }
             else if (src == miPointWidth) { controller.selectPointWidth(); }
             else if (src == miLineWidth) { controller.selectLineWidth(); }
             else if (src == miTransparency) { controller.selectTransparency(); }
@@ -618,6 +661,8 @@ public final class MenuBar extends JMenuBar {
         miExportFacets.setEnabled(hasFacets && allSectionsCalibrated);
         miExportRegions.setEnabled(hasRegions && allSectionsCalibrated);
         miExportAll.setEnabled(hasPLCandAllCalibrated);
+        miExportOptionsStartingIndex.setEnabled(true);
+        miExportOptionsPrecision.setEnabled(true);
 
         // Sections menu items:
         miChangeSectionColor.setEnabled( hasCurrentSection );
@@ -633,6 +678,10 @@ public final class MenuBar extends JMenuBar {
         miEdgeColor.setEnabled(true);
         miDefineFacetEdgeColor.setEnabled(true);
         miNormalColor.setEnabled(is3D);
+        miNodeMarkerTrueColor.setEnabled(true);
+        miNodeMarkerFalseColor.setEnabled(true);
+        miFacetMarkerTrueColor.setEnabled(true);
+        miFacetMarkerFalseColor.setEnabled(true);
         miPointWidth.setEnabled(true);
         miLineWidth.setEnabled(true);
         miTransparency.setEnabled(true);

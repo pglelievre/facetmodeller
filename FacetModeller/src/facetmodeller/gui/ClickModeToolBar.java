@@ -29,9 +29,9 @@ public final class ClickModeToolBar extends JToolBar {
     
     // The ClickTaskButtons:
     private final ClickTaskButton buttonModeInfo, buttonModeSetOrigin2D, buttonModeOriginNode3D, //buttonModeCalibrate,
-        buttonModeAddNodes, buttonModeAddNodesInTriFacets, buttonModeDeleteNodes, buttonModeMoveNodes, buttonModeMergeNodes, buttonModeChangeNodes, buttonModeAddNodesOnEdges,
+        buttonModeAddNodes, buttonModeAddNodesInTriFacets, buttonModeDeleteNodes, buttonModeMoveNodes, buttonModeMergeNodes, buttonModeChangeNodes, buttonModeMarkNodesToggle,
         buttonModeDefinePolyFacets, buttonModeDefinePolyFacetsTri, buttonModeDefineTriFacets, buttonModeDefineLineFacets, buttonModeDeleteFacets, buttonModeChangeFacets,
-        buttonModeReverseFacets, buttonModeEdgeFlip;
+        buttonModeReverseFacets, buttonModeEdgeFlip, buttonModeMarkFacetsToggle, buttonModeAddNodesOnEdges;
         
     private final ArrayList<MenuTaskButton> taskButtons = new ArrayList<>();
     private final ArrayList<ClickTaskButton> clickTaskButtons = new ArrayList<>();
@@ -59,6 +59,7 @@ public final class ClickModeToolBar extends JToolBar {
         buttonModeMoveNodes = makeClickTaskButton(ClickModeManager.MODE_MOVE_NODES,"moveNodes","MN",listener);
         buttonModeMergeNodes = makeClickTaskButton(ClickModeManager.MODE_MERGE_NODES,"mergeNodes","RN",listener);
         buttonModeChangeNodes = makeClickTaskButton(ClickModeManager.MODE_CHANGE_NODES_GROUP,"changeNodes","NG",listener);
+        buttonModeMarkNodesToggle = makeClickTaskButton(ClickModeManager.MODE_MARK_NODES_TOGGLE,"markNodes","BN",listener);
         buttonModeDefinePolyFacets = makeClickTaskButton(ClickModeManager.MODE_DEFINE_POLY_FACETS,"definePolyFacets","PF",listener);
         buttonModeDefinePolyFacetsTri = makeClickTaskButton(ClickModeManager.MODE_DEFINE_POLY_FACETS_TRI,"definePolyFacetsTri","PT",listener);
         buttonModeDefineTriFacets = makeClickTaskButton(ClickModeManager.MODE_DEFINE_TRI_FACETS,"defineTriFacets","TF",listener);
@@ -67,6 +68,7 @@ public final class ClickModeToolBar extends JToolBar {
         buttonModeChangeFacets = makeClickTaskButton(ClickModeManager.MODE_CHANGE_FACETS_GROUP,"changeFacets","FG",listener);
         buttonModeReverseFacets = makeClickTaskButton(ClickModeManager.MODE_REVERSE_FACETS,"reverseFacets","RF",listener);
         buttonModeEdgeFlip = makeClickTaskButton(ClickModeManager.MODE_EDGE_FLIP,"edgeFlip","EF",listener);
+        buttonModeMarkFacetsToggle = makeClickTaskButton(ClickModeManager.MODE_MARK_FACETS_TOGGLE,"markFacets","BF",listener);
         buttonModeAddNodesOnEdges = makeClickTaskButton(ClickModeManager.MODE_ADD_NODES_ON_EDGES,"addNodesOnEdges","NE",listener); 
         buttonModeAddNodesInTriFacets = makeClickTaskButton(ClickModeManager.MODE_ADD_NODES_IN_FACETS,"addNodesInTriFacets","NT",listener);
 
@@ -173,12 +175,6 @@ public final class ClickModeToolBar extends JToolBar {
             case ClickModeManager.MODE_ADD_NODES:
                 button = buttonModeAddNodes;
                 break;
-            case ClickModeManager.MODE_ADD_NODES_ON_EDGES:
-                button = buttonModeAddNodesOnEdges;
-                break;
-            case ClickModeManager.MODE_ADD_NODES_IN_FACETS:
-                button = buttonModeAddNodesInTriFacets;
-                break;
             case ClickModeManager.MODE_DELETE_NODES:
                 button = buttonModeDeleteNodes;
                 break;
@@ -190,6 +186,9 @@ public final class ClickModeToolBar extends JToolBar {
                 break;
             case ClickModeManager.MODE_CHANGE_NODES_GROUP:
                 button = buttonModeChangeNodes;
+                break;
+            case ClickModeManager.MODE_MARK_NODES_TOGGLE:
+                button = buttonModeMarkNodesToggle;
                 break;
             case ClickModeManager.MODE_DEFINE_POLY_FACETS:
                 button = buttonModeDefinePolyFacets;
@@ -214,6 +213,15 @@ public final class ClickModeToolBar extends JToolBar {
                 break;
             case ClickModeManager.MODE_EDGE_FLIP:
                 button = buttonModeEdgeFlip;
+                break;
+            case ClickModeManager.MODE_MARK_FACETS_TOGGLE:
+                button = buttonModeMarkFacetsToggle;
+                break;
+            case ClickModeManager.MODE_ADD_NODES_ON_EDGES:
+                button = buttonModeAddNodesOnEdges;
+                break;
+            case ClickModeManager.MODE_ADD_NODES_IN_FACETS:
+                button = buttonModeAddNodesInTriFacets;
                 break;
             default:
                 return;

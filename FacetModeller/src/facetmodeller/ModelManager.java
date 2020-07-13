@@ -156,20 +156,20 @@ public class ModelManager implements SessionIO {
     public CommandVector translate(MyPoint3D p, GroupVector groups) {
         return plc.translate(p,groups);
     }
-    public boolean writePoly(File file, int ndim, Dir3D dir, boolean byIndex) {
-        return plc.writePoly(file,ndim,dir,byIndex);
+    public boolean writePoly(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean byIndex) {
+        return plc.writePoly(file,startingIndex,precision,ndim,dir,byIndex);
     }
-    public boolean writeNodes(File file, int ndim, Dir3D dir) {
-        return plc.writeNodes(file,ndim,dir);
+    public boolean writeNodes(File file, int startingIndex, int precision, int ndim, Dir3D dir) {
+        return plc.writeNodes(file,startingIndex,precision,ndim,dir);
     }
-    public boolean writeFacets(File file, int ndim, boolean writevar) {
-        return plc.writeFacets(file,ndim,writevar);
+    public boolean writeFacets(File file, int startingIndex, int precision, int ndim, boolean writevar) {
+        return plc.writeFacets(file,startingIndex,precision,ndim,writevar);
     }
-    public boolean writeRegions(File file, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
-        return plc.writeRegions(file,ndim,dir,doControl,byIndex);
+    public boolean writeRegions(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
+        return plc.writeRegions(file,startingIndex,precision,ndim,dir,doControl,byIndex);
     }
-    public boolean writeVTU(File file, boolean flipz) {
-        return plc.writeVTU(file,flipz);
+    public boolean writeVTU(File file, int precision, boolean flipz) {
+        return plc.writeVTU(file,precision,flipz);
     }
     
     // Methods that wrap Section methods:
@@ -571,6 +571,9 @@ public class ModelManager implements SessionIO {
                     break;
                 case Section.SECTION_SNAPSHOT:
                     section = new SnapshotSection();
+                    break;
+                case Section.SECTION_TOPO:
+                    section = new NoImageDepthSection(true); // replacement for obsolete TopoSection (.node and .ele file will be read later)
                     break;
                 default:
                     return "Unmatched section type.";

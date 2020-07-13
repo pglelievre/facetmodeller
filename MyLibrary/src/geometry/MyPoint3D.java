@@ -1,5 +1,8 @@
 package geometry;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /** A 3D point (or vector) with x,y,z stored as double precision.
  * @author Peter Lelievre
  */
@@ -430,14 +433,28 @@ public class MyPoint3D {
         return getX() + " " + getY() + " " + getZ();
     }
 
-    public String toString(double tolzero) {
+    public String toString(double tolzero, int precision) {
         double xt = getX();
         double yt = getY();
         double zt = getZ();
         if (Math.abs(xt)<=tolzero)  { xt = 0.0; }
         if (Math.abs(yt)<=tolzero)  { yt = 0.0; }
         if (Math.abs(zt)<=tolzero)  { zt = 0.0; }
-        return xt + " " + yt + " " + zt;
+        //return xt + " " + yt + " " + zt;
+        BigDecimal xb = new BigDecimal(xt).setScale(precision,RoundingMode.HALF_UP);
+        BigDecimal yb = new BigDecimal(yt).setScale(precision,RoundingMode.HALF_UP);
+        BigDecimal zb = new BigDecimal(zt).setScale(precision,RoundingMode.HALF_UP);
+        double xd = xb.doubleValue();
+        double yd = yb.doubleValue();
+        double zd = zb.doubleValue();
+        if (precision==0) {
+            int xi = (int)xd;
+            int yi = (int)yd;
+            int zi = (int)zd;
+            return xi + " " + yi + " " + zi;
+        } else {
+            return xd + " " + yd + " " + zd;
+        }
     }
     
     public String toStringCSV() {

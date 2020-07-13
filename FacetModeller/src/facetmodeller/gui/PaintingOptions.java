@@ -22,6 +22,10 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     public static final Color DEFAULT_EDGE_COLOR = Color.BLACK;
     public static final Color DEFAULT_DEFINE_EDGE_COLOR = Color.WHITE;
     public static final Color DEFAULT_NORMAL_COLOR = Color.BLACK;
+    public static final Color DEFAULT_NODE_MARKER_TRUE_COLOR = Color.BLACK;
+    public static final Color DEFAULT_NODE_MARKER_FALSE_COLOR = Color.WHITE;
+    public static final Color DEFAULT_FACET_MARKER_TRUE_COLOR = Color.BLACK;
+    public static final Color DEFAULT_FACET_MARKER_FALSE_COLOR = Color.WHITE;
     public static final double DEFAULT_TRANSPARENCY = 0.5;
     public static final double DEFAULT_NORMAL_LENGTH = 10.0;
     public static final boolean DEFAULT_NORMAL_THICK = true;
@@ -32,6 +36,10 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     private Color edgeColor = DEFAULT_EDGE_COLOR; // painting colour for edge overlays
     private Color defineFacetEdgeColor = DEFAULT_DEFINE_EDGE_COLOR; // painting colour for edge overlays when defining facets
     private Color normalColor = DEFAULT_NORMAL_COLOR; // painting colour for facet normals (in 3D panel)
+    private Color nodeMarkerTrueColor = DEFAULT_NODE_MARKER_TRUE_COLOR; // painting colour for nodes with boundary marker = 1
+    private Color nodeMarkerFalseColor = DEFAULT_NODE_MARKER_FALSE_COLOR; // painting colour for nodes with boundary marker = 0
+    private Color facetMarkerTrueColor = DEFAULT_FACET_MARKER_TRUE_COLOR; // painting colour for facets with boundary marker = 1
+    private Color facetMarkerFalseColor = DEFAULT_FACET_MARKER_FALSE_COLOR; // painting colour for facets with boundary marker = 0
     private MyPoint3D origin3D=null; // the origin of the 3D viewer
     private Node originNode3D=null; // a node to use as the origin of the 3D viewer
     private double transparency=DEFAULT_TRANSPARENCY; // overlay transparency for 2D viewer
@@ -47,6 +55,20 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     public Color getEdgeColor() { return edgeColor; }
     public Color getDefineFacetEdgeColor() { return defineFacetEdgeColor; }
     public Color getNormalColor() { return normalColor; }
+    public Color getBoundaryMarkerNodeColor(boolean bm) {
+        if (bm) {
+            return nodeMarkerTrueColor;
+        } else {
+            return nodeMarkerFalseColor;
+        }
+    }
+    public Color getBoundaryMarkerFacetColor(boolean bm) {
+        if (bm) {
+            return facetMarkerTrueColor;
+        } else {
+            return facetMarkerFalseColor;
+        }
+    }
     public MyPoint3D getOrigin3D() { return origin3D; }
     public Node getOriginNode3D() { return originNode3D; }
     public double getVerticalExaggeration() {
@@ -60,6 +82,10 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
     public void setEdgeColor(Color col) { edgeColor = col; }
     public void setDefineFacetEdgeColor(Color col) { defineFacetEdgeColor = col; }
     private void setNormalColor(Color col) { normalColor = col; }
+    private void setNodeMarkerTrueColor(Color col) { nodeMarkerTrueColor = col; }
+    private void setNodeMarkerFalseColor(Color col) { nodeMarkerFalseColor = col; }
+    private void setFacetMarkerTrueColor(Color col) { facetMarkerTrueColor = col; }
+    private void setFacetMarkerFalseColor(Color col) { facetMarkerFalseColor = col; }
     public void setOrigin3D(Node node) {
         originNode3D = node;
         origin3D = node.getPoint3D();
@@ -98,6 +124,35 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         Color col = JColorChooser.showDialog(controller,"Change Facet Normal Vector Color",getNormalColor());
         if (col == null) { return; }
         setNormalColor(col);
+        controller.redraw();
+    }
+
+    /** Allows the user to select the paint colour for boundary nodes. */
+    public void selectBoundaryNodeColor() {
+        Color col = JColorChooser.showDialog(controller,"Change Boundary Node Color",nodeMarkerTrueColor);
+        if (col == null) { return; }
+        setNodeMarkerTrueColor(col);
+        controller.redraw();
+    }
+    /** Allows the user to select the paint colour for non-boundary nodes. */
+    public void selectNonBoundaryNodeColor() {
+        Color col = JColorChooser.showDialog(controller,"Change Non-Boundary Node Color",nodeMarkerFalseColor);
+        if (col == null) { return; }
+        setNodeMarkerFalseColor(col);
+        controller.redraw();
+    }
+    /** Allows the user to select the paint colour for boundary facets. */
+    public void selectBoundaryFacetColor() {
+        Color col = JColorChooser.showDialog(controller,"Change Boundary Facet Color",facetMarkerTrueColor);
+        if (col == null) { return; }
+        setFacetMarkerTrueColor(col);
+        controller.redraw();
+    }
+    /** Allows the user to select the paint colour for non-boundary facets. */
+    public void selectNonBoundaryFacetColor() {
+        Color col = JColorChooser.showDialog(controller,"Change Non-Boundary Facet Color",facetMarkerFalseColor);
+        if (col == null) { return; }
+        setFacetMarkerFalseColor(col);
         controller.redraw();
     }
 
@@ -176,7 +231,7 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         double d;
         try {
             d = Double.parseDouble(ss[0].trim());
-            if ( d<1 ) { throw new NumberFormatException(); }
+            if ( d<=0 ) { throw new NumberFormatException(); }
         } catch (NumberFormatException e) {
             Dialogs.error(controller,"You must enter a positive, non-zero, numerical value. Please try again.","Error");
             return;
@@ -253,32 +308,46 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write the index of the node to use as the origin of the 3D viewer, and the normalLength, and the transparency factor, on the same line:
         if (originNode3D==null) {
-            textLine = "null " + normalLength + " " + transparency + " " + normalThick + " " + edgeThick;
+            textLine = "null";
         } else {
-            textLine = originNode3D.getID() + " " + normalLength + " " + transparency + " " + normalThick + " " + edgeThick;
+            textLine = Integer.toString(originNode3D.getID());
         }
+        textLine += " " + normalLength + " " + transparency + " " + normalThick + " " + edgeThick + " " + Integer.toString(5);
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write normal colour:
         textLine = Integer.toString(normalColor.getRGB());
+        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        // Write boundary marker colours:
+        textLine = Integer.toString(nodeMarkerTrueColor.getRGB());
+        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        textLine = Integer.toString(nodeMarkerFalseColor.getRGB());
+        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        textLine = Integer.toString(facetMarkerTrueColor.getRGB());
+        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        textLine = Integer.toString(facetMarkerFalseColor.getRGB());
         return FileUtils.writeLine(writer,textLine);
     }
     
     @Override
     public String readSessionInformation(BufferedReader reader, boolean merge) {
+        
         // Read common painting options:
         String msg = super.readSessionInformation(reader,merge); if (msg!=null) { return msg; }
+        
         // Read edge colour:
         String textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading edge colour line."; }
         try {
             edgeColor = new Color(Integer.parseInt(textLine.trim())); // parse from RGB string
         } catch (NumberFormatException e) { return "Parsing edge colour."; }
+        
         // Read facet definition edge colour:
         textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading facet definition edge colour line."; }
         try {
             defineFacetEdgeColor = new Color(Integer.parseInt(textLine.trim())); // parse from RGB string
         } catch (NumberFormatException e) { return "Parsing facet definition edge colour."; }
+        
         // Read origin of the 3D viewer:
         textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading 3D origin coordinates line."; }
@@ -295,6 +364,7 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
                 origin3D = new MyPoint3D(x,y,z);
             } catch (NumberFormatException e) { return "Parsing 3D origin coordinates."; }
         }
+        
         // Read the index of the node to use as the origin of the 3D viewer, and the normalLength, from the same line:
         textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading 3D origin node ID line."; }
@@ -331,16 +401,42 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
                 edgeThick = Boolean.parseBoolean(s[4].trim());
             } catch (NumberFormatException e) { return "Parsing edge thick."; }
         }
-        // Read normal colour:
-        if (s.length>4) { // this additional line was added to the session file format in the same commit as the two items above 
+        
+        // Read normal colour if present:
+        if (s.length>4) { // this additional line was added to the session file format in the same commit as normalThick and edgeThick 
             textLine = FileUtils.readLine(reader);
-            if (textLine==null) { return "Reading normal colour line."; }
+            if (textLine==null) { return "Reading normalColor line."; }
             try {
                 normalColor = new Color(Integer.parseInt(textLine.trim())); // parse from RGB string
-            } catch (NumberFormatException e) { return "Parsing normal colour."; }
+            } catch (NumberFormatException e) { return "Parsing normalColor."; }
         }
+        // Read boundary marker colours if present:
+        if (s.length>5) {
+            textLine = FileUtils.readLine(reader);
+            if (textLine==null) { return "Reading nodeMarkerTrueColor line."; }
+            try {
+                nodeMarkerTrueColor = new Color(Integer.parseInt(textLine.trim()));
+            } catch (NumberFormatException e) { return "Parsing nodeMarkerTrueColor."; }
+            textLine = FileUtils.readLine(reader);
+            if (textLine==null) { return "Reading nodeMarkerFalseColor line."; }
+            try {
+                nodeMarkerFalseColor = new Color(Integer.parseInt(textLine.trim()));
+            } catch (NumberFormatException e) { return "Parsing nodeMarkerFalseColor."; }
+            textLine = FileUtils.readLine(reader);
+            if (textLine==null) { return "Reading facetMarkerTrueColor line."; }
+            try {
+                facetMarkerTrueColor = new Color(Integer.parseInt(textLine.trim()));
+            } catch (NumberFormatException e) { return "Parsing facetMarkerTrueColor."; }
+            textLine = FileUtils.readLine(reader);
+            if (textLine==null) { return "Reading facetMarkerFalseColor line."; }
+            try {
+                facetMarkerFalseColor = new Color(Integer.parseInt(textLine.trim()));
+            } catch (NumberFormatException e) { return "Parsing facetMarkerFalseColor."; }
+        }
+        
         // Return successfully:
         return null;
+        
     }
     
 }

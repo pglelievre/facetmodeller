@@ -243,38 +243,43 @@ public class ZBuffer3D extends ZBuffer {
      * @return 
      */
     private ZPlane fitZPlane(MyPoint3D[] facet) {
+        // Check number of points:
+        int n = facet.length;
+        if (n<3) {
+            return null; // normal angle not supported for 2D facets
+        }
         // The plotting works best if we calculate a plane using vectors that are as close to 90 degrees as possible.
         // Set tolerance on angle between the two vectors:
-        double angleTol = Math.PI/3.0; // HARDWIRE: reduce to speed up, increase to improve plotting
-        double angleBest = 0.0;
+        double angleTol = Math.PI/6.0; // HARDWIRE: increase to speed up, decrease to improve normal calculation
+        double angleBest = Math.PI; // just needs to be initialized to some large value greater than pi/2
         int[] ibest = null;
         boolean ok = false; // set to true once we've found an appropriate set of nodes below
         // Loop over each node:
-        for (int i0=0 ; i0<facet.length-2 ; i0++ ) {
+        for (int i0=0 ; i0<(n-2) ; i0++ ) {
             // Set initial node point:
             MyPoint3D p0 = facet[i0];
             // Loop over each node again:
-            for (int i1=i0+1 ; i1<facet.length-1 ; i1++ ) {
+            for (int i1=i0+1 ; i1<(n-1) ; i1++ ) {
                 // Set next node point:
                 MyPoint3D p1 = facet[i1];
                 // Calculate vector between first pair of points:
                 MyPoint3D v1 = p0.vectorToPoint(p1);
                 // Loop over each node a last time:
-                for (int i2=i1+1 ; i2<facet.length ; i2++ ) {
+                for (int i2=i1+1 ; i2<n ; i2++ ) {
                     // Set final node point:
                     MyPoint3D p2 = facet[i2];
                     // Calculate vector between second pair of points:
                     MyPoint3D v2 = p0.vectorToPoint(p2);
                     // Check angle between vectors is appropriate (if too small then zbuffer painting issues can occur):
-                    double angle = v1.angleToVector(v2); // angle in radians on [0,pi]
-                    angle = Math.min( angle , (Math.PI-angle) ); // angle in radian on [0,pi/2]
-                    if ( angle >= angleTol ) {
+                    double angle = v1.angleToVector(v2); // angle in radians on [0,pi] (0 to 180 degrees)
+                    angle = Math.abs( Math.PI/2.0 - angle ); // angle away from 90 degrees
+                    if ( angle <= angleTol ) { // angle between the vectors is close to pi/2 (90 degrees)
                         ibest = new int[]{i0,i1,i2};
                         ok = true;
                         break; // from inner for loop
                     }
                     // Keep track of the best angle so far:
-                    if ( angle > angleBest ) {
+                    if ( angle < angleBest ) {
                         angleBest = angle;
                         ibest = new int[]{i0,i1,i2};
                     }
@@ -292,6 +297,9 @@ public class ZBuffer3D extends ZBuffer {
         MyPoint3D v1 = p0.vectorToPoint(p1);
         MyPoint3D v2 = p0.vectorToPoint(p2);
         MyPoint3D vn = v1.cross(v2); // vector normal to the plane
+        if (vn.norm()==0.0) { // collinear
+            return null;
+        }
         // Create a new ZPlane object:
         ZPlane p = new ZPlane(p0,vn);
         // TODO: check for planar polygonal facet

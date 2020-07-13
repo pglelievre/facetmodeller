@@ -135,6 +135,15 @@ public class FacetVector {
             get(i).setID(i);
         }
     }
+    
+    /** Returns true if any of the facets are marked as being on the boundary.
+     * @return */
+    public boolean anyMarked() {
+        for (int i=0 ; i<size() ; i++ ) {
+            if ( get(i).getBoundaryMarker() ) { return true; }
+        }
+        return false;
+    }
 
     /** Sorts the facets based on their node ID values. */
     public void sortByNodeIDs() {
@@ -349,11 +358,12 @@ public class FacetVector {
      * @param con
      * @param title
      * @param file
+     * @param startingIndex
      * @param nodes
      * @param ndim
      * @param verbose
      * @return null if user cancels; errmsg!=null if error occurs */
-    public ReadFacetsReturnObject readEle(FacetModeller con, String title, File file, NodeVector nodes, int ndim, boolean verbose) {
+    public ReadFacetsReturnObject readEle(FacetModeller con, String title, File file, int startingIndex, NodeVector nodes, int ndim, boolean verbose) {
 
         // Open the file for reading:
         BufferedReader reader = FileUtils.openForReading(file);
@@ -376,6 +386,12 @@ public class FacetVector {
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             FileUtils.close(reader);
             return new ReadFacetsReturnObject("Problem reading .ele file header.");
+        }
+        
+        // Check the number of nodes:
+        if (nfacets<=0) {
+            FileUtils.close(reader);
+            return new ReadFacetsReturnObject("Number of facets in .ele file is non-positive.");
         }
 
         // Check for variable cells:
@@ -445,7 +461,29 @@ public class FacetVector {
             //}
             
             // Split line from file:
-            ss = textLine.split("[ ]+",npf+nat+2);
+            if (isvar) {
+                ss = textLine.split("[ ]+",npf+nat+3);
+            } else {
+                ss = textLine.split("[ ]+",npf+nat+2);
+            }
+            
+            // Check the starting index:
+            if (i==0) {
+                try {
+                    int si = Integer.parseInt(ss[0].trim()); // converts to integer
+                    if ( si!=0 && si!=1 ) {
+                        FileUtils.close(reader);
+                        return new ReadFacetsReturnObject("Unexpected starting index in node file (not 0 or 1).");
+                    }
+                    if ( si != startingIndex ) {
+                        FileUtils.close(reader);
+                        return new ReadFacetsReturnObject("Unexpected starting index in ele file (does not match the node file).");
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    FileUtils.close(reader);
+                    return new ReadFacetsReturnObject("Problem in .ele file: starting index.");
+                }
+            }
             
             // Read the node indices for the ith facet:
             int[] indices = new int[npf];
@@ -461,14 +499,16 @@ public class FacetVector {
                 for ( int j=0 ; j<npf ; j++ ) {
                     // Convert split string element to integer:
                     indices[j] = Integer.parseInt(ss[n+j].trim());
+                    // Adjust the indices as necessary based on the starting index:
+                    if (startingIndex!=0) { // the indices are 1-indexed (or perhaps something else)
+                        // Need to subtract the starting index from those indices for referencing into the 0-indexed Java "newNodes" object:
+                        indices[j] -= startingIndex;
+                    }
                     // Check node indices are consistent with the number of nodes in the supplied node vector:
-                    // (at this point the indices are 1-indexed as for a .node file)
-                    if ( indices[j]<1 || indices[j]>nnodes ) {
+                    if ( indices[j]<0 || indices[j]>=nnodes ) {
                         FileUtils.close(reader);
                         return new ReadFacetsReturnObject("Inconsistent node index encountered in .ele file.");
                     }
-                    // Need to subtract 1 from those indices for referencing into the 0-indexed Java "newNodes" object:
-                    indices[j] -= 1;
                 }
                 // Read the attribute:
                 if (doAtts) {
@@ -539,10 +579,10 @@ public class FacetVector {
         private String errmsg=null;
         
         //public ReadFacetsReturnObject() {}
-        public ReadFacetsReturnObject(boolean ba, boolean br, int i) {
+        public ReadFacetsReturnObject(boolean ba, boolean br, int na) {
             doAtts = ba;
             doRem = br;
-            n = i;
+            n = na;
         }
         public ReadFacetsReturnObject(String s) {
             errmsg = s;
