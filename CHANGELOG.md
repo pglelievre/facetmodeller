@@ -8,12 +8,14 @@ All notable changes to this project will be documented in this file. Dates are i
   - The boundary marker state (0/1) is indicated in the information text bar along with the other node/facet information.
   - There are new radio button options for colouring the nodes and facets based on their boundary marker value.
   - Those colours can be altered in the display menu.
+  - Boundary marker information is only written to output files if any of the boundary markers have been set to 1.
 - Added support for reading .node/.ele/etc files with indexing starting from 0.
 - Similarly, indexing in output .node/.ele/.poly/.vtu files can now start from 0 or 1.
 - The precision used for coordinates when writing files can now be reduced.
 
 ### Bugs squashed
-- If there was no image for a section then the 2D panel was not being painted.
+- If the image file for a section was not found then the model was not being painted in the 2D panel.
+- Added support for older session files that used the obsolete TopoSection class (replaced with NoImageDepthSection class).
 - Variable-facet .ele files were not being read correctly.
 - Length of normal vectors was not allowed to be < 1 (now <= 0).
 - Facet vectors were sometimes plotted in opposite direction for non-triangular facets.
