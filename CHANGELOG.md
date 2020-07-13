@@ -7,11 +7,12 @@ All notable changes to this project will be documented in this file. Dates are i
   - New clickmodes provided for toggling node or facet boundary markers on mouse click, or setting them to either true or false on mouse click/drag.
   - The boundary marker state (0/1) is indicated in the information text bar along with the other node/facet information.
   - There are new radio button options for colouring the nodes and facets based on their boundary marker value.
-  - Those colours can be altered in the display menu.
+  - Consequently, there was some reorganization of the radio button panel so things may look a little different.
+  - The colours used when colouring the nodes/facets based on the their boundary marker value can be altered in the display menu.
   - Boundary marker information is only written to output files if any of the boundary markers have been set to 1.
-- Added support for reading .node/.ele/etc files with indexing starting from 0.
-- Similarly, indexing in output .node/.ele/.poly files can now start from 0 or 1.
-- The precision used for coordinates when writing files can now be changed. The default is 6 decimal places.
+- Added support for reading .node/.ele files with indexing starting from 0. If reading a pair of .node/.ele files then indexing must be consistent.
+- Similarly, indexing in output .node/.ele/.poly files can now start from 0 or 1. Access this option in the menu item File > Export options.
+- The precision used for coordinates when writing files can now be changed (also in menu item File > Export options). The default is 6 decimal places.
 
 ### Bugs squashed
 - If the image file for a section was not found then the model was not being painted in the 2D panel.
