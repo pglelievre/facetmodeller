@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file. Dates are i
   - Boundary marker information is only written to output files if any of the boundary markers have been set to 1.
 - Added support for reading .node/.ele/etc files with indexing starting from 0.
 - Similarly, indexing in output .node/.ele/.poly files can now start from 0 or 1.
-- The precision used for coordinates when writing files can now be reduced.
+- The precision used for coordinates when writing files can now be changed. The default is 6 decimal places.
 
 ### Bugs squashed
 - If the image file for a section was not found then the model was not being painted in the 2D panel.
