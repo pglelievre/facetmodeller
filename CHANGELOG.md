@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. Dates are i
 - The precision used for coordinates when writing files can now be reduced.
 
 ### Bugs squashed
+- If there was no image for a section then the 2D panel was not being painted.
 - Variable-facet .ele files were not being read correctly.
 - Length of normal vectors was not allowed to be < 1 (now <= 0).
 - Facet vectors were sometimes plotted in opposite direction for non-triangular facets.
