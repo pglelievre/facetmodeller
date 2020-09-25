@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+Added menu item for exporting region information to a .vtu file (in addition to the existing option of exporting to a .node file).
 
 ### Bugs squashed
 
