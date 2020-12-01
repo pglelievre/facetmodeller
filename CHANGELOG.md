@@ -3,9 +3,19 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
-Added menu item for exporting region information to a .vtu file (in addition to the existing option of exporting to a .node file).
 
 ### Bugs squashed
+
+## 2020-12-01
+### Changed
+- Added option to show/hide the outline of the image in the 2D panel.
+- Allowed users to control the zooming factor on the 2D and 3D panels.
+- New menu items to assign a boundary marker value to all nodes or facets of the current group.
+- Added menu item for exporting region information to a .vtu file (in addition to the existing option of exporting to a .node file).
+
+### Bugs squashed
+- Boundary markers were not being saved to the session files.
+- Facet information line in exported poly file was not correctly indicating boundary markers.
 
 ## 2020-07-13
 ### Changed
