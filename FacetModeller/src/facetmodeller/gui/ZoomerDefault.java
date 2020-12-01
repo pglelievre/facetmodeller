@@ -13,10 +13,10 @@ public final class ZoomerDefault implements SessionIO { // TODO: implement Zoome
     // ------------------- Properties ------------------
 
     // zoom scaling = ZOOM_Factor^zoom
-    private final int zoomInit;
-    private final int zoomMin;
-    private final int zoomMax;
-    private final double zoomFactor;
+    private int zoomInit;
+    private int zoomMin;
+    private int zoomMax;
+    private double zoomFactor;
     private int zoom;
 
     // ------------------ Constructor ------------------
@@ -35,11 +35,19 @@ public final class ZoomerDefault implements SessionIO { // TODO: implement Zoome
         zoomInit = init;
         zoomMin = min;
         zoomMax = max;
+        setFactor(factor);
+    }
+    
+    // -------------------- Setters --------------------
+
+    public void setFactor(double factor) {
         zoomFactor = factor;
         zoom = zoomInit;
     }
     
     // -------------------- Getters --------------------
+
+    public double getFactor() { return zoomFactor; }
     
     public int getZoom() { return zoom; }
     
@@ -72,18 +80,26 @@ public final class ZoomerDefault implements SessionIO { // TODO: implement Zoome
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write the zoom integer:
-        String textLine = Integer.toString( zoom );
+        String textLine = zoom + " " + zoomInit + " " + zoomMin + " " + zoomMax + " " + zoomFactor;
         return FileUtils.writeLine(writer,textLine);
     }
     
     @Override
     public String readSessionInformation(BufferedReader reader, boolean merge) {
-        // Read the zoom integer:
+        // Read everything from a single line:
         String textLine = FileUtils.readLine(reader);
-        if (textLine==null) { return "Zoom integer line"; }
+        if (textLine==null) { return "Reading zoomer parameters line."; }
+        textLine = textLine.trim();
+        String[] s = textLine.split("[ ]+");
+        if (s.length<1) { return "Not enough values on zoomer parameters line."; }
+        // Read the parameters integer:
         try {
-            zoom = Integer.parseInt(textLine.trim());
-        } catch (NumberFormatException e) { return "Parsing zoom integer line"; }
+            zoom = Integer.parseInt(s[0]);
+            if (s.length>1) { zoomInit = Integer.parseInt(s[1]); }
+            if (s.length>2) { zoomMin = Integer.parseInt(s[2]); }
+            if (s.length>3) { zoomMax = Integer.parseInt(s[3]); }
+            if (s.length>4) { zoomFactor = Double.parseDouble(s[4]); }
+        } catch (NumberFormatException e) { return "Parsing zoomer parameters line"; }
         // Check for zoom out of range:
         if ( zoom < zoomMin ) { zoom = zoomMin; }
         if ( zoom > zoomMax ) { zoom = zoomMax; }

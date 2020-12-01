@@ -655,14 +655,14 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         }
     }
 
-    public void exportRegions() {
+    public void exportRegionsNode() {
 
         // The filter doesn't seem to be working, but it is actually doing what it should
         // according to Mac look-and-feel guidelines, which I think are pretty silly here.
 
         if ( !controller.hasSections() ) { return; }
         
-        String title = "Export Regions"; // a title for some dialogs
+        String title = "Export Regions to .node file"; // a title for some dialogs
 
         // Check regions exist:
         ModelManager model = controller.getModelManager();
@@ -737,8 +737,12 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
             dir = controller.getSelectedCurrentSection().getDir3D();
         }
         boolean ok = true;
-        if (nRegion>0) { ok = model.writeRegions(file1,startingIndex,precision,ndim,dir,false,byIndex); }
-        if ( ok && nControl>0 ) { ok = model.writeRegions(file2,startingIndex,precision,ndim,dir,true,byIndex); }
+        if (nRegion>0) {
+            ok = model.writeRegionsNode(file1,startingIndex,precision,ndim,dir,false,byIndex);
+        }
+        if ( ok && nControl>0 ) {
+            ok = model.writeRegionsNode(file2,startingIndex,precision,ndim,dir,true,byIndex);
+        }
 
         // Display:
         //if (ok) {
@@ -746,6 +750,95 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         //} else {
         if (!ok) {
             Dialogs.error(controller,"Failed to save .node file(s).",title);
+        }
+
+    }
+
+    public void exportRegionsVTU() {
+
+        // The filter doesn't seem to be working, but it is actually doing what it should
+        // according to Mac look-and-feel guidelines, which I think are pretty silly here.
+
+        if ( !controller.hasSections() ) { return; }
+        
+        String title = "Export Regions to .vtu file"; // a title for some dialogs
+
+        // Check regions exist:
+        ModelManager model = controller.getModelManager();
+        if (!model.hasRegions()) {
+            Dialogs.error(controller,"There are no regions to export.",title);
+            return;
+        }
+        
+        // Ask if the coordinate should have z flipped:
+        int response = Dialogs.questionNo(controller,"Do you want to flip the z-axis?",title);
+        if (response==Dialogs.CANCEL_OPTION) { return; }
+        boolean flipz = (response==Dialogs.YES_OPTION);
+        
+        // Ask for the file name for saving:
+        JFileChooser chooser = new JFileChooser();
+        VTUFilter filter = new VTUFilter();
+        chooser.setCurrentDirectory(getSaveDirectory());
+        chooser.addChoosableFileFilter(filter);
+        chooser.setFileFilter(filter);
+        chooser.setDialogTitle(title);
+        chooser.setMultiSelectionEnabled(false);
+        File file = getSessionFile();
+        if (file!=null) {
+            String root = FileUtils.getRoot(file);
+            file = new File( root + "." + VTUFilter.VTU );
+            chooser.setSelectedFile(file);
+        }
+        response = chooser.showSaveDialog(controller);
+
+        // Check response and get the selected file:
+        if (response != JFileChooser.APPROVE_OPTION) { return; }
+        file = chooser.getSelectedFile();
+
+        // Check response:
+        if (file==null) { return; }
+        
+        // Set the save directory to the chosen directory:
+        setSaveDirectory(chooser.getCurrentDirectory());
+
+        // Count number of regions:
+        int nRegion = model.numberOfRegionPoints();
+        int nControl = model.numberOfControlPoints();
+        
+        // There may be two files written:
+        String root = FileUtils.getRoot(file);
+        File file1 = new File( root + "_regions." + VTUFilter.VTU );
+        File file2 = new File( root + "_controls." + VTUFilter.VTU );
+
+        // Check for file overwrite:
+        if (( nRegion>0 && file1.exists() )||( nControl>0 && file2.exists() )) {
+            response = Dialogs.confirm(controller,"Overwrite the existing file(s)?",title);
+            if (response != Dialogs.OK_OPTION) { return; }
+        }
+
+        // Reset the id's:
+        controller.resetIDs();
+
+        // Only write the vtu files if there are regions to write in each:
+        Dir3D dir = null;
+        final int ndim = controller.numberOfDimensions();
+        if (ndim==2) {
+            dir = controller.getSelectedCurrentSection().getDir3D();
+        }
+        boolean ok = true;
+        if (nRegion>0) {
+            ok = model.writeRegionsVTU(file1,startingIndex,precision,ndim,dir,false,flipz); // doControl=false
+        }
+        if ( ok && nControl>0 ) {
+            ok = model.writeRegionsVTU(file2,startingIndex,precision,ndim,dir,true,flipz); // doControl=true
+        }
+        
+        // Display:
+        //if (ok) {
+        //    Dialogs.inform(this,".vtu file saved successfully.",title);
+        //} else {
+        if (!ok) {
+            Dialogs.error(controller,"Failed to save .vtu file(s).",title);
         }
 
     }
@@ -767,8 +860,9 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         }
         
         // Ask if the coordinate should have z flipped:
-        int flipz = Dialogs.questionNo(controller,"Do you want to flip the z-axis?",title);
-        if (flipz==Dialogs.CANCEL_OPTION) { return; }
+        int response = Dialogs.questionNo(controller,"Do you want to flip the z-axis?",title);
+        if (response==Dialogs.CANCEL_OPTION) { return; }
+        boolean flipz = (response==Dialogs.YES_OPTION);
         
         // Ask for the file name for saving:
         JFileChooser chooser = new JFileChooser();
@@ -784,7 +878,7 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
             file = new File( root + "." + VTUFilter.VTU );
             chooser.setSelectedFile(file);
         }
-        int response = chooser.showSaveDialog(controller);
+        response = chooser.showSaveDialog(controller);
 
         // Check response and get the selected file:
         if (response != JFileChooser.APPROVE_OPTION) { return; }
@@ -810,12 +904,7 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         controller.resetIDs();
 
         // Write the vtu file:
-        boolean ok;
-        if (flipz==Dialogs.YES_OPTION) {
-            ok = model.writeVTU(file,precision,true);
-        } else {
-            ok = model.writeVTU(file,precision,false);
-        }
+        boolean ok = model.writeVTU(file,precision,flipz);
 
         // Display:
         //if (ok) {
@@ -842,14 +931,15 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         }
         
         // Ask if the coordinate should have z flipped:
-        int flipz = Dialogs.questionNo(controller,"Do you want to flip the z-axis?",title);
-        if (flipz==Dialogs.CANCEL_OPTION) { return; }
+        int response = Dialogs.questionNo(controller,"Do you want to flip the z-axis?",title);
+        if (response==Dialogs.CANCEL_OPTION) { return; }
+        boolean flipz = (response==Dialogs.YES_OPTION);
         
         // Ask what to write for region attributes:
         boolean byIndex = true;
         if (model.hasRegions()) {
             String message = "The region attributes can be the region indices or region group IDs. Which would you like to use?";
-            int response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
+            response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
             switch (response) {
                 case Dialogs.YES_OPTION:
                     byIndex = true;
@@ -873,7 +963,7 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
             file = new File(root);
             chooser.setSelectedFile(file);
         }
-        int response = chooser.showSaveDialog(controller);
+        response = chooser.showSaveDialog(controller);
 
         // Check response and get the selected file:
         if (response != JFileChooser.APPROVE_OPTION) { return; }
@@ -927,21 +1017,27 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
            Dialogs.error(controller,"Failed to save .ele file.",title);
         }
         file = new File( root + "_regions." + NodeFilter.NODE );
-        if (nRegion>0) { ok = model.writeRegions(file,startingIndex,precision,ndim,dir,false,byIndex); }
+        if (nRegion>0) { ok = model.writeRegionsNode(file,startingIndex,precision,ndim,dir,false,byIndex); }
         if (!ok) {
            Dialogs.error(controller,"Failed to save regions .node file.",title);
         }
         file = new File( root + "_controls." + NodeFilter.NODE );
-        if (nControl>0) { ok = model.writeRegions(file,startingIndex,precision,ndim,dir,true,byIndex); }
+        if (nControl>0) { ok = model.writeRegionsNode(file,startingIndex,precision,ndim,dir,true,byIndex); }
         if (!ok) {
            Dialogs.error(controller,"Failed to save controls .node file.",title);
         }
-        file = new File( root + "." + VTUFilter.VTU );
-        if (flipz==Dialogs.YES_OPTION) {
-            ok = model.writeVTU(file,precision,true);
-        } else {
-            ok = model.writeVTU(file,precision,false);
+        file = new File( root + "_regions." + VTUFilter.VTU );
+        if (nRegion>0) { ok = model.writeRegionsVTU(file,startingIndex,precision,ndim,dir,false,flipz); }
+        if (!ok) {
+           Dialogs.error(controller,"Failed to save regions .vtu file.",title);
         }
+        file = new File( root + "_controls." + VTUFilter.VTU );
+        if (nControl>0) { ok = model.writeRegionsVTU(file,startingIndex,precision,ndim,dir,true,flipz); }
+        if (!ok) {
+           Dialogs.error(controller,"Failed to save controls .vtu file.",title);
+        }
+        file = new File( root + "." + VTUFilter.VTU );
+        ok = model.writeVTU(file,precision,flipz);
         if (!ok) {
            Dialogs.error(controller,"Failed to save .vtu file.",title);
         }

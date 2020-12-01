@@ -165,8 +165,11 @@ public class ModelManager implements SessionIO {
     public boolean writeFacets(File file, int startingIndex, int precision, int ndim, boolean writevar) {
         return plc.writeFacets(file,startingIndex,precision,ndim,writevar);
     }
-    public boolean writeRegions(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
-        return plc.writeRegions(file,startingIndex,precision,ndim,dir,doControl,byIndex);
+    public boolean writeRegionsNode(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
+        return plc.writeRegionsNode(file,startingIndex,precision,ndim,dir,doControl,byIndex);
+    }
+    public boolean writeRegionsVTU(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean flipz) {
+        return plc.writeRegionsVTU(file,startingIndex,precision,ndim,dir,doControl,flipz);
     }
     public boolean writeVTU(File file, int precision, boolean flipz) {
         return plc.writeVTU(file,precision,flipz);
@@ -338,8 +341,8 @@ public class ModelManager implements SessionIO {
         // Loop over each node:
         for (int i=0 ; i<nnodes ; i++ ) {
             Node node = getNode(i);
-            // Write node ID and indication of ith node type:
-            textLine = node.getID() + " " + node.getType();
+            // Write node ID, indication of ith node type and boundary marker (the latter is a later addition):
+            textLine = node.getID() + " " + node.getType() + " " + node.getBoundaryMarker();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
             // Write the node information:
             if (!node.writeSessionInformation(writer)) { return false; }
@@ -419,8 +422,8 @@ public class ModelManager implements SessionIO {
                 textLine = textLine + " " + facetSections.get(j).getID();
             }
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
-            // Write the group id:
-            textLine = Integer.toString( facet.getGroup().getID() );
+            // Write the group id and boundary marker (the latter is a later addition):
+            textLine = facet.getGroup().getID() + " " + facet.getBoundaryMarker();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         }
 
@@ -499,10 +502,12 @@ public class ModelManager implements SessionIO {
             ss = textLine.split("[ ]+");
             if (ss.length<2) { return "Not enough values on node ID etc. line."; }
             int nodeType;
+            boolean bmarker = false;
             try {
                 int nodeID = Integer.parseInt(ss[0].trim());
                 if ( nodeID != i ) { return "Unmatched node ID"; }
                 nodeType = Integer.parseInt(ss[1].trim());
+                if (ss.length>2) {  bmarker = Boolean.parseBoolean(ss[2].trim()); }
             } catch (NumberFormatException e) { return "Parsing node ID etc."; }
             Node node;
             switch (nodeType) {
@@ -516,6 +521,9 @@ public class ModelManager implements SessionIO {
                     return "Unmatched node type.";
             }
             if (node==null) { return "Unexpected empty new Node created."; }
+            // Set the node boundary marker:
+            node.setBoundaryMarker(bmarker);
+            // Read the additional information for the node (depends on the node type):
             String msg = node.readSessionInformation(reader,merge);
             if (msg!=null) { return "Reading information for node " + i + "." + System.lineSeparator() + msg.trim(); }
             plc2.addNode(node);
@@ -676,16 +684,20 @@ public class ModelManager implements SessionIO {
                 sections2.get(id).addFacet(facet);
             }
             */
-            // Read the group id:
+            // Read the group id and boundary marker:
             textLine = FileUtils.readLine(reader);
-            if (textLine==null) { return "Reading facet group ID line."; }
+            if (textLine==null) { return "Reading facet group ID and boundary marker line."; }
             textLine = textLine.trim();
             ss = textLine.split("[ ]+");
-            if (ss.length<1) { return "No values on facet group ID line."; }
+            if (ss.length<1) { return "No values on facet group ID and boundary marker line."; }
             int id;
+            boolean bmarker = false;
             try {
                 id = Integer.parseInt(ss[0].trim()); // converts to integer
-            } catch (NumberFormatException e) { return "Parsing facet group ID."; }
+                if (ss.length>1) {  bmarker = Boolean.parseBoolean(ss[1].trim()); }
+            } catch (NumberFormatException e) { return "Parsing facet group ID and boundary marker line."; }
+            // Set the facet boundary marker:
+            facet.setBoundaryMarker(bmarker);
             // Cross-link the facet and group:
             facet.setGroup( groups2.get(id) );
             groups2.get(id).addFacet(facet);

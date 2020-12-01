@@ -102,6 +102,8 @@ public final class Panel2D extends JPanel implements ZoomableSessionIO {
         resetScroller();
         controller.resetShiftButtonText();
     }
+    public double getZoomFactor(){ return imagePanel.getZoomFactor(); }
+    public void setZoomFactor(double d) { imagePanel.setZoomFactor(d); }
     public void resetScroller() {
         if (controller.getShowScroller()) { imageScroller.getViewport().setView(imagePanel); }
     }

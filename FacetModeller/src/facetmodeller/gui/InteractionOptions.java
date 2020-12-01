@@ -26,6 +26,11 @@ public final class InteractionOptions implements SessionIO {
     private boolean showScroller = false; /* Determines whether to show the scroller for the 2D panel. */
 //    private boolean showPickingRadius = false; /* Determines whether to plot the picking radius. */
 
+    /**
+     * Interaction options for 3D panel.
+     * @param con
+     * @param nDimensions
+     */
     public InteractionOptions(FacetModeller con, int nDimensions) {
         controller = con;
         showView3DPanel = (nDimensions==3);
@@ -118,7 +123,7 @@ public final class InteractionOptions implements SessionIO {
     
     @Override
     public String readSessionInformation(BufferedReader reader, boolean merge) {
-        // Write everything from a single line:
+        // Read everything from a single line:
         String textLine = FileUtils.readLine(reader);
         if (textLine==null) { return "Reading interaction options line."; }
         textLine = textLine.trim();

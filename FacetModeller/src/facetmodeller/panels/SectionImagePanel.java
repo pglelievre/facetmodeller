@@ -9,6 +9,7 @@ import static facetmodeller.panels.RadioButtonsPanel.COLOR_FACETS_BY_MARKER;
 import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_GROUP;
 import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_MARKER;
 import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_SECTION;
+import static facetmodeller.panels.ViewsPanel.DEFAULT_ZOOM_FACTOR;
 import facetmodeller.plc.Facet;
 import facetmodeller.plc.FacetVector;
 import facetmodeller.plc.Node;
@@ -66,8 +67,8 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
      */
     public SectionImagePanel(FacetModeller con) {
         super();
-        zoomer = new ZoomerDefault(-1,-2,2000,1.2d); // init, min, max, factor
         controller = con;
+        zoomer = new ZoomerDefault(-1,-2,2000,DEFAULT_ZOOM_FACTOR); // init, min, max, factor
         // Set mouse and keyboard listeners:
         addMouseListener(new MouseClickMonitor()); // listens for mouse clicks
         addMouseMotionListener(new MouseMoveMonitor()); // listens for mouse motion
@@ -111,6 +112,13 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
 //        setPanY(0);
         repaint();
     }
+    
+    public double getZoomFactor(){ return zoomer.getFactor(); }
+    public void setZoomFactor(double d) {
+        if (d==zoomer.getFactor()) { return; }
+        zoomer.setFactor(d);
+        zoomReset();
+    }
 
     // -------------------- Overridden Methods --------------------
 
@@ -148,6 +156,7 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         int shiftY = controller.getShiftingY();
         int mode = controller.getClickMode();
         boolean showImage = controller.getShowImage();
+        boolean showImageOutline = controller.getShowImageOutline();
 
         // Get the other sections being displayed (if any exist):
         SectionVector otherSections;
@@ -362,19 +371,32 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         // Use Java2D graphics for overlays:
         Graphics2D g2 = (Graphics2D) g;
         g2.setComposite(composite);
-        if (!hasImage || !showImage) {
+        if (!hasImage || !showImage) { // section does not have an image or user does not want image shown
             double imageWidth  = currentSection.getWidth();
             double imageHeight = currentSection.getHeight();
             double scaledWidth  = scaling*imageWidth;
             double scaledHeight = scaling*imageHeight;
             Color col = currentSection.getColor();
+            boolean ok = false;
             if (col==null) { col = getBackground(); }
-            if (!hasImage && showImage) {
+            // Plot a coloured rectangle:
+            if (!hasImage && showImage) { // section does not have an image and user wants image shown
                 g2.setColor(col);
                 g2.fillRect((int)translation.getX(),(int)translation.getY(),(int)scaledWidth,(int)scaledHeight);
+                ok = true;
             }
-            g2.setColor(Color.black);
-            g2.drawRect((int)translation.getX(),(int)translation.getY(),(int)scaledWidth,(int)scaledHeight);
+            // Plot outline of image:
+            if (showImageOutline) {
+                g2.setColor(Color.black);
+                g2.drawRect((int)translation.getX(),(int)translation.getY(),(int)scaledWidth,(int)scaledHeight);
+                ok = true;
+            }
+            // Make sure something is plotted:
+            if (!ok) {
+                col = getBackground(); 
+                g2.setColor(col);
+                g2.drawRect((int)translation.getX(),(int)translation.getY(),(int)scaledWidth,(int)scaledHeight);
+            }
         }
         g2.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,

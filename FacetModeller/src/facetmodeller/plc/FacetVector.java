@@ -145,6 +145,14 @@ public class FacetVector {
         return false;
     }
 
+    /** Sets all boundary markers to true or false.
+     * @param b */
+    public void setMarkers(boolean b) {
+        for (int i=0 ; i<size() ; i++ ) {
+            get(i).setBoundaryMarker(b);
+        }
+    }
+
     /** Sorts the facets based on their node ID values. */
     public void sortByNodeIDs() {
         Collections.sort(vector,new FacetNodeIDComparator());

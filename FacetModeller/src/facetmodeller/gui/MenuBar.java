@@ -29,14 +29,14 @@ public final class MenuBar extends JMenuBar {
             miOpenSession, miOpenPreviousSession,
             miExportPoly, miExportPolyGroup, miExportPolyDisplayed, 
             miExportPair, miExportPairGroup, miExportPairDisplayed,
-            miExportNodes, miExportFacets, miExportRegions, miExportVTU, miExportAll,
+            miExportNodes, miExportFacets, miExportRegionsNode, miExportRegionsVTU, miExportVTU, miExportAll,
             miExportOptionsStartingIndex, miExportOptionsPrecision,
             miChangeSectionColor, miPLCInfo,miDefineVOI,
             miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miNormalColor,
             miNodeMarkerTrueColor,miNodeMarkerFalseColor,miFacetMarkerTrueColor,miFacetMarkerFalseColor,
             miDefaultBackgroundColor,miSelectBackgroundColor,
             miPointWidth, miLineWidth, miTransparency, miNormalLength, miNormalThickness, miEdgeThickness,
-            miShiftStep2D,miPanStep2D, miVerticalExaggeration,
+            miShiftStep2D, miPanStep2D, miZoomFactor2D, miZoomFactor3D, miVerticalExaggeration,
             miPickingRadius, miAutoFacetFactor, miToggleToolPanel, miToggleView3DPanel1, miToggleView3DPanel2, miToggleScroller,
             miClearOrigin3D, miShowConfirmationDialogs, miHideConfirmationDialogs;
     private ClickTaskMenuItem miNullMode,miInfoMode,miSetOrigin2DMode, miSetOriginNode3DMode,
@@ -50,6 +50,7 @@ public final class MenuBar extends JMenuBar {
             miSectionInfo,miNewNoImageCrossSection,miNewNoImageDepthSection,miNewSnapshotSection,miResetSnapshotSection,miReduceSectionImage,
             miReverseGroupOrder,miGroupUp1,miGroupUp2,miGroupTop,miGroupDown1,miGroupDown2,miGroupBottom,
             miSectionName, miGroupName,miGroupColor,miGroupNodeColor,miGroupFacetColor,miGroupRegionColor,
+            miGroupNodeMarkerTrue, miGroupNodeMarkerFalse, miGroupFacetMarkerTrue, miGroupFacetMarkerFalse,
             miCopyCalibration, miNodesAtCalibration, miAddNodesVOI, miAddNodesSection, miAddNodeCoordinates,
             miSnapToCalibration,miSnapToCalibrationVertical,miSnapToCalibrationHorizontal,
             miSnapToVOI,miSnapToVOIVertical,miSnapToVOIHorizontal,
@@ -98,7 +99,8 @@ public final class MenuBar extends JMenuBar {
         miExportPolyDisplayed = makeMenuItem("Displayed groups to .poly file",listener);
         miExportPairDisplayed = makeMenuItem("Displayed groups to .node/.ele files",listener);
         miExportFacets = makeMenuItem("Facets to .ele file",listener);
-        miExportRegions = makeMenuItem("Regions to .node file",listener);
+        miExportRegionsNode = makeMenuItem("Regions to .node file",listener);
+        miExportRegionsVTU = makeMenuItem("Regions to .vtu file",listener);
         miExportAll = makeMenuItem("All possible files",listener);
         miExportOptionsStartingIndex = makeMenuItem("Starting index",listener);
         miExportOptionsPrecision = makeMenuItem("Coordinate precision",listener);
@@ -170,6 +172,10 @@ public final class MenuBar extends JMenuBar {
         miGroupNodeColor = makeMenuTaskMenuItem(new ChangeGroupNodeColorMenuTask(controller),"Node colour",listener);
         miGroupFacetColor = makeMenuTaskMenuItem(new ChangeGroupFacetColorMenuTask(controller),"Facet colour",listener);
         miGroupRegionColor = makeMenuTaskMenuItem(new ChangeGroupRegionColorMenuTask(controller),"Region colour",listener);
+        miGroupNodeMarkerTrue = makeMenuTaskMenuItem(new ChangeGroupNodeMarkerMenuTask(controller,true),"Mark nodes as boundary",listener);
+        miGroupNodeMarkerFalse = makeMenuTaskMenuItem(new ChangeGroupNodeMarkerMenuTask(controller,false),"Mark nodes as non-boundary",listener);
+        miGroupFacetMarkerTrue = makeMenuTaskMenuItem(new ChangeGroupFacetMarkerMenuTask(controller,true),"Mark facets as boundary",listener);
+        miGroupFacetMarkerFalse = makeMenuTaskMenuItem(new ChangeGroupFacetMarkerMenuTask(controller,false),"Mark facets as non-boundary",listener);
         miSplitGroupVOI = makeMenuTaskMenuItem(new SplitGroupVOIMenuTask(controller),"By VOI",listener);
         miSplitGroupBoundary = makeMenuTaskMenuItem(new SplitGroupBoundaryMenuTask(controller),"Boundary nodes from facet definitions",listener);
 
@@ -227,6 +233,8 @@ public final class MenuBar extends JMenuBar {
         // Build the interaction menu items:
         miShiftStep2D = makeMenuItem("Shift step (2D viewer)",listener);
         miPanStep2D = makeMenuItem("Pan step (2D viewer)",listener);
+        miZoomFactor2D = makeMenuItem("Zoom factor (2D viewer)",listener);
+        miZoomFactor3D = makeMenuItem("Zoom factor (3D viewer)",listener);
         miPickingRadius = makeMenuItem("Picking/snapping distance","Change the distance used when picking and snapping nodes",listener);
         miAutoFacetFactor = makeMenuItem("Facet selection factor",listener);
         miShowConfirmationDialogs = makeMenuItem("Show all confirmation dialogs",listener);
@@ -284,6 +292,7 @@ public final class MenuBar extends JMenuBar {
     private void addMenuItems() {
         
         int ndim = controller.numberOfDimensions();
+        boolean is3D = ( ndim == 3 );
 
         // Build the FacetModeller menu:
         JMenu mainMenu = new JMenu("FacetModeller");
@@ -314,7 +323,8 @@ public final class MenuBar extends JMenuBar {
         exportMenu.add(miExportPolyDisplayed);
         exportMenu.add(miExportPairDisplayed);
         exportMenu.add(miExportFacets);
-        exportMenu.add(miExportRegions);
+        exportMenu.add(miExportRegionsNode);
+        exportMenu.add(miExportRegionsVTU);
         exportMenu.add(miExportAll);
         // Export options submenu:
         JMenu exportOptionsMenu = new JMenu("Export options");
@@ -341,15 +351,16 @@ public final class MenuBar extends JMenuBar {
         modeMenu.add(miMarkNodesTrue);
         modeMenu.add(miMarkNodesFalse);
         modeMenu.add(miDefinePolyFacets);
-        if (ndim==3) {
+        if (is3D) {
             modeMenu.add(miDefinePolyFacetsTri);
             modeMenu.add(miDefineTriFacets);
+        } else {
+            modeMenu.add(miDefineLineFacets);
         }
-        if (ndim==2) { modeMenu.add(miDefineLineFacets); }
         modeMenu.add(miDeleteFacets);
         modeMenu.add(miChangeFacets);
         modeMenu.add(miReverseFacets);
-        if (ndim==3) {
+        if (is3D) {
             modeMenu.add(miEdgeFlip);
             modeMenu.add(miAddNodesOnEdges);
             modeMenu.add(miAddNodesInTriFacets);
@@ -367,7 +378,7 @@ public final class MenuBar extends JMenuBar {
         sectionsMenu.add(miSectionInfo);
         sectionsMenu.add(miNewNoImageCrossSection);
         sectionsMenu.add(miNewNoImageDepthSection);
-        if (ndim==3) {
+        if (is3D) {
             sectionsMenu.add(miNewSnapshotSection);
             sectionsMenu.add(miResetSnapshotSection);
         }
@@ -375,10 +386,10 @@ public final class MenuBar extends JMenuBar {
         sectionsMenu.add(miSectionName);
         sectionsMenu.add(miCalibrate);
         sectionsMenu.add(miCalibrateTyped);
-        if (ndim==3) { sectionsMenu.add(miCopyCalibration); }
+        if (is3D) { sectionsMenu.add(miCopyCalibration); }
         sectionsMenu.add(miNodesAtCalibration);
         sectionsMenu.add(miChangeSectionColor);
-        if (ndim==3) { sectionsMenu.add(miDeleteSection); }
+        if (is3D) { sectionsMenu.add(miDeleteSection); }
 
         // Build the groups menu:
         JMenu groupsMenu = new JMenu("Groups");
@@ -406,6 +417,10 @@ public final class MenuBar extends JMenuBar {
         changeGroupMenu.add(miGroupNodeColor);
         changeGroupMenu.add(miGroupFacetColor);
         changeGroupMenu.add(miGroupRegionColor);
+        changeGroupMenu.add(miGroupNodeMarkerTrue);
+        changeGroupMenu.add(miGroupNodeMarkerFalse);                
+        changeGroupMenu.add(miGroupFacetMarkerTrue);
+        changeGroupMenu.add(miGroupFacetMarkerFalse);                
         // Split submenu:
         JMenu splitGroupMenu = new JMenu("Split current group");
         groupsMenu.add(splitGroupMenu);
@@ -422,7 +437,7 @@ public final class MenuBar extends JMenuBar {
         snapMenu.add(miSnapToCalibration);
         snapMenu.add(miSnapToCalibrationVertical);
         snapMenu.add(miSnapToCalibrationHorizontal);
-        if (ndim==3) {
+        if (is3D) {
             snapMenu.add(miSnapToVOI);
             snapMenu.add(miSnapToVOIVertical);
             snapMenu.add(miSnapToVOIHorizontal);
@@ -431,21 +446,21 @@ public final class MenuBar extends JMenuBar {
         snapMenu.add(miSnapToGridVertical);
         snapMenu.add(miSnapToGridHorizontal);
         // Some other stuff:
-        if (ndim==3) { modelMenu.add(miTranslate); }
+        if (is3D) { modelMenu.add(miTranslate); }
         modelMenu.add(miScalePixels);
-        if (ndim==3) { modelMenu.add(miDefineVOI); }
+        if (is3D) { modelMenu.add(miDefineVOI); }
         // Add submenu:
         JMenu addMenu = new JMenu("Add node(s)");
         modelMenu.add(addMenu);
-        if (ndim==3) { addMenu.add(miAddNodesVOI); }
+        if (is3D) { addMenu.add(miAddNodesVOI); }
         addMenu.add(miAddNodesSection);
-        if (ndim==3) { addMenu.add(miAddNodeCoordinates); }
+        if (is3D) { addMenu.add(miAddNodeCoordinates); }
         // Find submenu:
         JMenu findMenu = new JMenu("Find");
         modelMenu.add(findMenu);
         findMenu.add(miFindNodesIndex);
         findMenu.add(miFindFacetsIndex);
-        if (ndim==3) { findMenu.add(miFindNodesVOI); }
+        if (is3D) { findMenu.add(miFindNodesVOI); }
         findMenu.add(miFindNodesCalibration);
         findMenu.add(miFindUnusedNodes);
         findMenu.add(miFindBadFacets);
@@ -470,7 +485,7 @@ public final class MenuBar extends JMenuBar {
         displayMenu.add(miCalibrationColor);
         displayMenu.add(miEdgeColor);
         displayMenu.add(miDefineFacetEdgeColor);
-        if (ndim==3) { displayMenu.add(miNormalColor); }
+        if (is3D) { displayMenu.add(miNormalColor); }
         displayMenu.add(miNodeMarkerTrueColor);
         displayMenu.add(miNodeMarkerFalseColor);
         displayMenu.add(miFacetMarkerTrueColor);
@@ -478,7 +493,7 @@ public final class MenuBar extends JMenuBar {
         displayMenu.add(miPointWidth);
         displayMenu.add(miLineWidth);
         displayMenu.add(miTransparency);
-        if (ndim==3) {
+        if (is3D) {
             displayMenu.add(miNormalLength);
             displayMenu.add(miNormalThickness);
             displayMenu.add(miEdgeThickness);
@@ -487,9 +502,13 @@ public final class MenuBar extends JMenuBar {
         // Build the interaction menu:
         JMenu interactionMenu = new JMenu("Interaction");
         this.add(interactionMenu);
-        if (ndim==3) {
+        if (is3D) {
             interactionMenu.add(miShiftStep2D);
             interactionMenu.add(miPanStep2D);
+        }
+        interactionMenu.add(miZoomFactor2D);
+        if (is3D) {
+            interactionMenu.add(miZoomFactor3D);
         }
         interactionMenu.add(miPickingRadius);
         interactionMenu.add(miAutoFacetFactor);
@@ -497,7 +516,7 @@ public final class MenuBar extends JMenuBar {
         interactionMenu.add(miHideConfirmationDialogs);
         
         // Build the 3D view menu:
-        if ( ndim==3 ) {
+        if (is3D) {
             JMenu view3DMenu = new JMenu("3D View");
             this.add(view3DMenu);
             view3DMenu.add(miNodeOrigin3D);
@@ -512,7 +531,7 @@ public final class MenuBar extends JMenuBar {
         JMenu windowMenu = new JMenu("Window");
         this.add(windowMenu);
         windowMenu.add(miToggleToolPanel);
-        if (ndim==3) { windowMenu.add(miToggleView3DPanel2); }
+        if (is3D) { windowMenu.add(miToggleView3DPanel2); }
         windowMenu.add(miToggleScroller);
 
     }
@@ -543,7 +562,8 @@ public final class MenuBar extends JMenuBar {
             else if (src == miExportPolyDisplayed) { controller.exportPoly(FileIOManager.EXPORT_DISPLAYED); }
             else if (src == miExportPairDisplayed) { controller.exportPair(FileIOManager.EXPORT_DISPLAYED); }
             else if (src == miExportFacets) { controller.exportFacets(); }
-            else if (src == miExportRegions) { controller.exportRegions(); }
+            else if (src == miExportRegionsNode) { controller.exportRegionsNode(); }
+            else if (src == miExportRegionsVTU) { controller.exportRegionsVTU(); }
             else if (src == miExportAll) { controller.exportAll(); }
             else if (src == miExportOptionsStartingIndex) { controller.exportOptionsStartingIndex(); }
             else if (src == miExportOptionsPrecision) { controller.exportOptionsPrecision(); }
@@ -600,6 +620,8 @@ public final class MenuBar extends JMenuBar {
             else if (src == miEdgeThickness) { controller.selectEdgeThickness(); }
             else if (src == miShiftStep2D) { controller.selectShiftStep2D(); }
             else if (src == miPanStep2D) { controller.selectPanStep2D(); }
+            else if (src == miZoomFactor2D) { controller.selectZoomFactor2D(); }
+            else if (src == miZoomFactor3D) { controller.selectZoomFactor3D(); }
             else if (src == miPickingRadius) { controller.selectPickingRadius(); }
             else if (src == miAutoFacetFactor) { controller.selectAutoFacetFactor(); }
             else if (src == miShowConfirmationDialogs) { controller.setShowConfirmationDialogs(true); }
@@ -659,7 +681,8 @@ public final class MenuBar extends JMenuBar {
         miExportPolyDisplayed.setEnabled(hasNodesandAllCalibrated);
         miExportPairDisplayed.setEnabled(hasNodesandAllCalibrated);
         miExportFacets.setEnabled(hasFacets && allSectionsCalibrated);
-        miExportRegions.setEnabled(hasRegions && allSectionsCalibrated);
+        miExportRegionsNode.setEnabled(hasRegions && allSectionsCalibrated);
+        miExportRegionsVTU.setEnabled(hasRegions && allSectionsCalibrated);
         miExportAll.setEnabled(hasPLCandAllCalibrated);
         miExportOptionsStartingIndex.setEnabled(true);
         miExportOptionsPrecision.setEnabled(true);
@@ -691,6 +714,9 @@ public final class MenuBar extends JMenuBar {
         
         // Interaction menu items:
         miShiftStep2D.setEnabled(is3D);
+        miPanStep2D.setEnabled(is3D);
+        miZoomFactor2D.setEnabled(true);
+        miZoomFactor3D.setEnabled(is3D);
         miPanStep2D.setEnabled(is3D);
         miPickingRadius.setEnabled(true);
         miAutoFacetFactor.setEnabled(true);

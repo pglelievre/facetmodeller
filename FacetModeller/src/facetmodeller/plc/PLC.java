@@ -616,7 +616,11 @@ public class PLC {
         if (!ok) { FileUtils.close(writer); return false; }
         
         // Write the facets information line:
-        textLine = facets.size() + " 0"; // no boundary markers
+        if (dobm) {
+            textLine = facets.size() + " 1"; // has boundary markers
+        } else {
+            textLine = facets.size() + " 0"; // no boundary markers
+        }
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         
         // Write the facet list:
@@ -754,7 +758,7 @@ public class PLC {
      * @param byIndex Set to true to write group index as the region attribute instead of the group ID.
      * @return 
      */
-    public boolean writeRegions(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
+    public boolean writeRegionsNode(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean byIndex) {
 
         // Open the file for writing:
         BufferedWriter writer = FileUtils.openForWriting(file);
@@ -1071,6 +1075,154 @@ public class PLC {
         textLine = "</DataArray>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         textLine = "</CellData>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+
+        // Write final 3 lines:
+        textLine = "</Piece>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "</UnstructuredGrid>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "</VTKFile>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        
+        // Close the file:
+        FileUtils.close(writer);
+
+        return true;
+
+    }
+
+    /** Writes the regions information to a file in vtu file format.
+     * All ID's should be reset before calling this method.
+     * @param file
+     * @param startingIndex
+     * @param precision
+     * @param ndim
+     * @param dir
+     * @param doControl Set to true to write control points only, false for true region points only.
+     * @param flipz
+     * @return 
+     */
+    public boolean writeRegionsVTU(File file, int startingIndex, int precision, int ndim, Dir3D dir, boolean doControl, boolean flipz) {
+
+        // Open the file for writing:
+        BufferedWriter writer = FileUtils.openForWriting(file);
+        if (writer==null) {
+            return false;
+        }
+
+        // Determine the number of regions (or control points):
+        int n;
+        if (doControl) {
+            n = regions.numberOfControlPoints();
+        } else {
+            n = regions.numberOfRegionPoints();
+        }
+        
+        // Write first 2 lines:
+        String textLine = "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"LittleEndian\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "<UnstructuredGrid>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+
+        // Write piece information:
+        textLine = "<Piece NumberOfPoints=\"" + n + "\" NumberOfCells=\"" + n + "\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+
+        // Write the region coordinates:
+        textLine = "<Points>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "<DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        for (int i=0; i<regions.size() ; i++ ) {
+            Region region = regions.get(i);
+            // Check if it's the correct thing (region vs control point):
+            if (doControl!=region.getIsControl()) { continue; } // skip if not the correct thing
+            // Write the region coordinates:
+            MyPoint3D p = region.getPoint3D();
+            if (flipz) {
+                p = p.deepCopy();
+                p.flipZ();
+            }
+            textLine = p.toString(TOLZERO,precision);
+            if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        }
+        textLine = "</DataArray>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "</Points>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        
+        // Write the facet specifications:
+        textLine = "<Cells>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "<DataArray type=\"Int32\" Name=\"connectivity\" Format=\"ascii\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        for (int i=0; i<regions.size() ; i++ ) {
+            Region region = regions.get(i);
+            // Check if it's the correct thing (region vs control point):
+            if (doControl!=region.getIsControl()) { continue; } // skip if not the correct thing
+            // Write the cell index:
+            textLine = Integer.toString(i);
+            if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        }
+        textLine = "</DataArray>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        
+        // Write the offsets for each facet:
+        textLine = "<DataArray type=\"Int32\" Name=\"offsets\" Format=\"ascii\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        for (int i=0; i<regions.size() ; i++ ) {
+            Region region = regions.get(i);
+            // Check if it's the correct thing (region vs control point):
+            if (doControl!=region.getIsControl()) { continue; } // skip if not the correct thing
+            // Write the offsets:
+            textLine = Integer.toString(i+1);
+            if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        }
+        textLine = "</DataArray>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+
+        // Write the facet types:
+        textLine = "<DataArray type=\"Int32\" Name=\"types\" Format=\"ascii\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        for (int i=0; i<regions.size() ; i++ ) {
+            Region region = regions.get(i);
+            // Check if it's the correct thing (region vs control point):
+            if (doControl!=region.getIsControl()) { continue; } // skip if not the correct thing
+            // Write the facet type:
+            textLine = "1";
+            if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        }
+        textLine = "</DataArray>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "</Cells>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+
+        // Write region groups and indices as attribute values:
+        textLine = "<PointData Scalars=\"regionGroup regionIndex\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "<DataArray type=\"Float32\" Name=\"regionGroup\" Format=\"ascii\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        for (int i=0; i<regions.size() ; i++ ) {
+            Region region = regions.get(i);
+            if (doControl!=region.getIsControl()) { continue; } // skip if not the correct thing
+            int gid = region.getGroup().getID() + 1;
+            textLine = Integer.toString( gid );
+            if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        }
+        textLine = "</DataArray>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "<DataArray type=\"Float32\" Name=\"regionIndex\" Format=\"ascii\">";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        for (int i=0; i<regions.size() ; i++ ) {
+            Region region = regions.get(i);
+            if (doControl!=region.getIsControl()) { continue; } // skip if not the correct thing
+            textLine = Integer.toString( i+1 );
+            if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        }
+        textLine = "</DataArray>";
+        if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
+        textLine = "</PointData>";
         if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
 
         // Write final 3 lines:

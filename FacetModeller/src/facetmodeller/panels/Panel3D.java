@@ -55,6 +55,8 @@ public final class Panel3D extends JPanel implements ZoomableSessionIO {
         viewPanel.zoomReset();
         controller.resetShiftButtonText();
     }
+    public double getZoomFactor(){ return viewPanel.getZoomFactor(); }
+    public void setZoomFactor(double d) { viewPanel.setZoomFactor(d); }
     
     // -------------------- SectionIO Methods --------------------
     

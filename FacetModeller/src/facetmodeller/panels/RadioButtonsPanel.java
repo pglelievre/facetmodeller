@@ -27,8 +27,8 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
     public static final int COLOR_FACETS_BY_MARKER = 2;
     
     private final FacetModeller controller;
-    private final JRadioButton showImageButton ,showRegionsButton;
-    private JRadioButton showOutlinesButton, showAllButton, showVOIButton, showFacesButton, 
+    private final JRadioButton showImageButton, showImageOutlineButton, showRegionsButton;
+    private JRadioButton showSectionOutlinesButton, showAllSectionsButton, showVOIButton, showFacesButton, 
             showNormalsButton, showNormalTailsButton, showNormalHeadsButton,
             nodeColorByGroupButton, nodeColorBySectionButton, nodeColorByMarkerButton,
             facetColorByGroupButton, facetColorByMarkerButton;
@@ -38,8 +38,10 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
         // Set the controller:
         controller = con;
         
-        // Create the show image radio buttion:
+        // Create new MyActionListener object to assign to various GUI elements.
         MyActionListener actionListener = new MyActionListener();
+        
+        // Create the show image radio buttion:
         showImageButton = new JRadioButton("");
         showImageButton.setVerticalTextPosition(AbstractButton.CENTER);
         showImageButton.setHorizontalTextPosition(AbstractButton.LEFT);
@@ -48,11 +50,20 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
         showImageButton.addActionListener(actionListener);
         showImageButton.setSelected(true);
         
+        // Create the show image outline radio buttion:
+        showImageOutlineButton = new JRadioButton("");
+        showImageOutlineButton.setVerticalTextPosition(AbstractButton.CENTER);
+        showImageOutlineButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        showImageOutlineButton.setText("outline");
+        showImageOutlineButton.setToolTipText("Show outline of image for the current section in the 2D viewer?");
+        showImageOutlineButton.addActionListener(actionListener);
+        showImageOutlineButton.setSelected(true);
+        
         // Create the show regions button:
         showRegionsButton = new JRadioButton("");
         showRegionsButton.setVerticalTextPosition(AbstractButton.CENTER);
         showRegionsButton.setHorizontalTextPosition(AbstractButton.LEFT);
-        showRegionsButton.setText("Show regions");
+        showRegionsButton.setText("regions");
         showRegionsButton.setToolTipText("Show the regions?");
         showRegionsButton.addActionListener(actionListener);
         showRegionsButton.setSelected(true);
@@ -96,20 +107,20 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
     //        showOtherButton.setToolTipText("Show overlays for other sections?");
     //        showOtherButton.addActionListener(actionListener);
     //        showOtherButton.setSelected(true);
-            showOutlinesButton = new JRadioButton("");
-            showOutlinesButton.setVerticalTextPosition(AbstractButton.CENTER);
-            showOutlinesButton.setHorizontalTextPosition(AbstractButton.LEFT);
-            showOutlinesButton.setText("sections");
-            showOutlinesButton.setToolTipText("Show outlines of the selected other sections in the 3D viewer?");
-            showOutlinesButton.addActionListener(actionListener);
-            showOutlinesButton.setSelected(true);
-            showAllButton = new JRadioButton("");
-            showAllButton.setVerticalTextPosition(AbstractButton.CENTER);
-            showAllButton.setHorizontalTextPosition(AbstractButton.LEFT);
-            showAllButton.setText("all objects");
-            showAllButton.setToolTipText("Show all sections in the 3D viewer or only those for the selected sections?");
-            showAllButton.addActionListener(actionListener);
-            showAllButton.setSelected(true);
+            showSectionOutlinesButton = new JRadioButton("");
+            showSectionOutlinesButton.setVerticalTextPosition(AbstractButton.CENTER);
+            showSectionOutlinesButton.setHorizontalTextPosition(AbstractButton.LEFT);
+            showSectionOutlinesButton.setText("sections");
+            showSectionOutlinesButton.setToolTipText("Show outlines of the selected other sections in the 3D viewer?");
+            showSectionOutlinesButton.addActionListener(actionListener);
+            showSectionOutlinesButton.setSelected(true);
+            showAllSectionsButton = new JRadioButton("");
+            showAllSectionsButton.setVerticalTextPosition(AbstractButton.CENTER);
+            showAllSectionsButton.setHorizontalTextPosition(AbstractButton.LEFT);
+            showAllSectionsButton.setText("all objects");
+            showAllSectionsButton.setToolTipText("Show all sections in the 3D viewer or only those for the selected sections?");
+            showAllSectionsButton.addActionListener(actionListener);
+            showAllSectionsButton.setSelected(true);
             showVOIButton = new JRadioButton("");
             showVOIButton.setVerticalTextPosition(AbstractButton.CENTER);
             showVOIButton.setHorizontalTextPosition(AbstractButton.LEFT);
@@ -178,6 +189,7 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
         JPanel showImageRegionsPanel = new JPanel();
         showImageRegionsPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         showImageRegionsPanel.add(showImageButton);
+        showImageRegionsPanel.add(showImageOutlineButton);
         showImageRegionsPanel.add(showRegionsButton);
         if (ndim==3) {
             this.setLayout(new GridLayout(6,1));
@@ -189,9 +201,9 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             showIn3DPanel2.setLayout(new FlowLayout(FlowLayout.TRAILING));
             showIn3DPanel3.setLayout(new FlowLayout(FlowLayout.TRAILING));
             showIn3DPanel1.add(new JLabel(" Show in 3D:"));
-            showIn3DPanel1.add(showOutlinesButton);
+            showIn3DPanel1.add(showSectionOutlinesButton);
             showIn3DPanel1.add(showVOIButton);
-            showIn3DPanel2.add(showAllButton);
+            showIn3DPanel2.add(showAllSectionsButton);
             showIn3DPanel2.add(showFacesButton);
             showIn3DPanel3.add(showNormalsButton);
             showIn3DPanel3.add(showNormalTailsButton);
@@ -219,11 +231,13 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             if (src==null) { return; }
 //            if (src == showOtherButton) {
 //                drawCurrentSection();
-            if (src==showOutlinesButton) {
+            if (src==showSectionOutlinesButton) {
                 controller.redraw3D();
-            } else if (src == showAllButton) {
+            } else if (src == showAllSectionsButton) {
                 controller.redraw3D();
             } else if (src == showImageButton) {
+                controller.redraw2D();
+            } else if (src == showImageOutlineButton) {
                 controller.redraw2D();
             } else if (src == showVOIButton) {
                 controller.redraw3D();
@@ -294,6 +308,9 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
     public boolean getShowImage() {
         return showImageButton.isSelected();
     }
+    public boolean getShowImageOutline() {
+        return showImageOutlineButton.isSelected();
+    }
 //    public boolean getShowOther() {
 //        if (showOtherButton==null) {
 //            return false;
@@ -301,18 +318,18 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
 //            return showOtherButton.isSelected();
 //        }
 //    }
-    public boolean getShowOutlines() {
-        if (showOutlinesButton==null) {
+    public boolean getShowSectionOutlines() {
+        if (showSectionOutlinesButton==null) {
             return false;
         } else {
-            return showOutlinesButton.isSelected();
+            return showSectionOutlinesButton.isSelected();
         }
     }
-    public boolean getShowAll() {
-        if (showAllButton==null) {
+    public boolean getShowAllSections() {
+        if (showAllSectionsButton==null) {
             return false;
         } else {
-            return showAllButton.isSelected();
+            return showAllSectionsButton.isSelected();
         }
     }
     public boolean getShowVOI() {
@@ -379,11 +396,11 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
     public boolean writeSessionInformation(BufferedWriter writer) {
         // Write booleans all on a single line:
         String textLine;
-        if ( showOutlinesButton != null ) { // then it's a 3D model
+        if ( showSectionOutlinesButton != null ) { // then it's a 3D model
             textLine =
                     showImageButton.isSelected() + " " + 
-                    showOutlinesButton.isSelected() + " " + 
-                    showAllButton.isSelected() + " " + 
+                    showSectionOutlinesButton.isSelected() + " " + 
+                    showAllSectionsButton.isSelected() + " " + 
                     showVOIButton.isSelected() + " " + 
                     showFacesButton.isSelected() + " " + 
                     showRegionsButton.isSelected() + " " + 
@@ -392,9 +409,10 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                     showNormalTailsButton.isSelected() + " " + //  9th boolean is a later addition, hence the if statement below in readSessionInformat
                     showNormalHeadsButton.isSelected() + " " + // 10th boolean is a later addition, hence the if statement below in readSessionInformat
                     nodeColorByGroupButton.isSelected() + " " + // later addition, hence separated from related information in 7th line
-                    nodeColorByMarkerButton.isSelected() + " " +
-                    facetColorByGroupButton.isSelected() + " " +
-                    facetColorByMarkerButton.isSelected();
+                    nodeColorByMarkerButton.isSelected() + " " + // (later addition)
+                    facetColorByGroupButton.isSelected() + " " + // (later addition)
+                    facetColorByMarkerButton.isSelected() + " " + // (later addition)
+                    showImageOutlineButton.isSelected() + " "; // (later addition)
         } else { // 2D model
             textLine =
                     showImageButton.isSelected() + " " +
@@ -410,7 +428,8 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                     nodeColorByGroupButton.isSelected() + " " +
                     nodeColorByMarkerButton.isSelected() + " " +
                     facetColorByGroupButton.isSelected() + " " +
-                    facetColorByMarkerButton.isSelected();
+                    facetColorByMarkerButton.isSelected() + " " +
+                    showImageOutlineButton.isSelected();
         }
         return FileUtils.writeLine(writer,textLine);
     }
@@ -427,11 +446,11 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
             boolean is;
             // Read the booleans and set the radio button selections:
             is = Boolean.parseBoolean(s[0]); showImageButton.setSelected(is);
-            if (showOutlinesButton!=null) { // if statements here and below are important to distinguish between 2D and 3D models
-                is = Boolean.parseBoolean(s[1]); showOutlinesButton.setSelected(is);
+            if (showSectionOutlinesButton!=null) { // if statements here and below are important to distinguish between 2D and 3D models
+                is = Boolean.parseBoolean(s[1]); showSectionOutlinesButton.setSelected(is);
             }
-            if (showAllButton!=null) {
-                is = Boolean.parseBoolean(s[2]); showAllButton.setSelected(is);
+            if (showAllSectionsButton!=null) {
+                is = Boolean.parseBoolean(s[2]); showAllSectionsButton.setSelected(is);
             }
             if (showVOIButton!=null) {
                 is = Boolean.parseBoolean(s[3]); showVOIButton.setSelected(is);
@@ -501,6 +520,13 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                     facetColorByMarkerButton.setSelected(false);
                 }
                 facetColorByMarkerButton.setEnabled(ok);
+            }
+            if (showImageOutlineButton!=null) {
+                if (s.length>14) {
+                    is = Boolean.parseBoolean(s[13]); showImageOutlineButton.setSelected(is);
+                } else {
+                    showImageOutlineButton.setSelected(true);
+                }
             }
         } catch (NumberFormatException e) { return "Parsing radio button booleans."; }
         // Return successfully:

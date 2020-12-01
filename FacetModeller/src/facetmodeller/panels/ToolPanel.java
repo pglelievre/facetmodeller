@@ -72,8 +72,9 @@ public final class ToolPanel extends JPanel implements SessionIO {
 
     // Wrappers for the RadioButtonsPanel class:
     public boolean getShowImage() { return radioButtonsPanel.getShowImage(); }
-    public boolean getShowOutlines() { return radioButtonsPanel.getShowOutlines(); }
-    public boolean getShowAll() { return radioButtonsPanel.getShowAll(); }
+    public boolean getShowImageOutline() { return radioButtonsPanel.getShowImageOutline(); }
+    public boolean getShowSectionOutlines() { return radioButtonsPanel.getShowSectionOutlines(); }
+    public boolean getShowAllSections() { return radioButtonsPanel.getShowAllSections(); }
     public boolean getShowVOI() { return radioButtonsPanel.getShowVOI(); }
     public boolean getShowFaces() { return radioButtonsPanel.getShowFaces(); }
     public boolean getShowNormals() { return radioButtonsPanel.getShowNormals(); }

@@ -1,5 +1,6 @@
 package facetmodeller;
 
+import dialogs.Dialogs;
 import facetmodeller.groups.Group;
 import facetmodeller.groups.GroupVector;
 import facetmodeller.gui.ClickModeToolBar;
@@ -173,8 +174,9 @@ public final class ViewManager implements SessionIO {
     public int getClickMode() { return toolPanel.getClickMode(); }
     public void setClickMode(int mode) { toolPanel.setClickMode(mode); }
     public boolean getShowImage() { return toolPanel.getShowImage(); }
-    public boolean getShowOutlines() { return toolPanel.getShowOutlines(); }
-    public boolean getShowAll() { return toolPanel.getShowAll(); }
+    public boolean getShowImageOutline() { return toolPanel.getShowImageOutline(); }
+    public boolean getShowSectionOutlines() { return toolPanel.getShowSectionOutlines(); }
+    public boolean getShowAllSections() { return toolPanel.getShowAllSections(); }
     public boolean getShowVOI() { return toolPanel.getShowVOI(); }
     public boolean getShowFaces() { return toolPanel.getShowFaces(); }
     public boolean getShowNormals() { return toolPanel.getShowNormals(); }
@@ -247,6 +249,7 @@ public final class ViewManager implements SessionIO {
     public MyPoint2DVector getPaintedRegionPoints() { return viewsPanel.getPaintedRegionPoints(); }
     public void resetScroller() { viewsPanel.resetScroller(); }
     public void zoomReset2D() { viewsPanel.zoomReset2D(); }
+    //public void zoomReset3D() { viewsPanel.zoomReset3D(); }
     public boolean getMouseInside2D() { return viewsPanel.getMouseInside2D(); }
     public Projector3D getProjector3D() { return viewsPanel.getProjector3D(); }
     public Matrix3D getRotationMatrix3D() { return viewsPanel.getRotationMatrix3D(); }
@@ -291,6 +294,43 @@ public final class ViewManager implements SessionIO {
     public void selectSectionColor() { paintingOptions.selectSectionColor(); }
     public MyPoint3D getOrigin3D() { return paintingOptions.getOrigin3D(); }
     public void clearOrigin3D() { paintingOptions.clearOrigin3D(); }
+    
+    // -------------------- Methods with Dialogs --------------------
+    
+    /** Allows the user to change the zoom factor for 2D panel.  */
+    public void selectZoomFactor2D() {
+        double d = selectZoomFactor("Enter the zoom factor for the 2D panel:","Zoom Factor 2D",viewsPanel.getZoomFactor2D());
+        if (d<=1) { return; }
+        viewsPanel.setZoomFactor2D(d);
+    }
+    
+    /** Allows the user to change the zoom factor for 3D panel.  */
+    public void selectZoomFactor3D() {
+        double d = selectZoomFactor("Enter the zoom factor for the 3D panel:","Zoom Factor 3D",viewsPanel.getZoomFactor3D());
+        if (d<=1) { return; }
+        viewsPanel.setZoomFactor3D(d);
+    }
+    
+    /** Helper subroutine for changing the zoom factor for either 2D or 3D panel. **/
+    private double selectZoomFactor(String prompt, String title, double def) {
+        String response = Dialogs.input(controller,prompt,title,Double.toString(def));
+        if (response == null) { return -1.0d; }
+        response = response.trim();
+        String[] ss = response.split("[ ]+");
+        if (ss.length!=1) {
+            Dialogs.error(controller,"You must enter a single numeric value. Please try again.","Error");
+            return -1.0d;
+        }
+        double d;
+        try {
+            d = Double.parseDouble(ss[0].trim());
+            if ( d<=1.0 || d>2.0 ) { throw new NumberFormatException(); }
+        } catch (NumberFormatException e) {
+            Dialogs.error(controller,"You must enter a positive real value on (1,2]. Please try again.","Error");
+            return -1.0d;
+        }
+        return d;
+    }
     
     // -------------------- SectionIO Methods --------------------
     

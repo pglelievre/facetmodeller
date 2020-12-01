@@ -208,6 +208,14 @@ public class NodeVector {
         return false;
     }
 
+    /** Sets all boundary markers to true or false.
+     * @param b */
+    public void setMarkers(boolean b) {
+        for (int i=0 ; i<size() ; i++ ) {
+            get(i).setBoundaryMarker(b);
+        }
+    }
+
     /** Resets the ID values from 0 to the size of the vector in the order listed. */
     public void resetIDs() {
         for (int i=0 ; i<size() ; i++ ) {

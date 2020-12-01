@@ -127,6 +127,8 @@ public class Group extends HasID implements SessionIO {
     public void setNodeColor(Color c) { nodeColor = c; }
     public void setFacetColor(Color c) { facetColor = c; }
     public void setRegionColor(Color c) { regionColor = c; }
+    public void setNodeMarkers(boolean b) { nodes.setMarkers(b); }
+    public void setFacetMarkers(boolean b) { facets.setMarkers(b); }
 
 //    public void setRegion(Region r) { region = r; } // use setRegion(null) to nullify the region.
 

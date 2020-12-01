@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 public final class ViewsPanel extends JPanel implements SessionIO {
     private static final long serialVersionUID = 1L;
     
+    public static final double DEFAULT_ZOOM_FACTOR = 1.2;
     private final Panel2D panel2D;
     private Panel3D panel3D;
     
@@ -72,6 +73,11 @@ public final class ViewsPanel extends JPanel implements SessionIO {
     public MyPoint2DVector getPaintedRegionPoints() { return panel2D.getPaintedRegionPoints(); }
     public boolean getMouseInside2D() { return panel2D.getMouseInside(); }
     public void zoomReset2D() { panel2D.zoomReset(); }
+    //public void zoomReset3D() { panel3D.zoomReset(); }
+    public double getZoomFactor2D() { return panel2D.getZoomFactor(); }
+    public double getZoomFactor3D() { return panel3D.getZoomFactor(); }
+    public void setZoomFactor2D(double d) { panel2D.setZoomFactor(d); }
+    public void setZoomFactor3D(double d) { panel3D.setZoomFactor(d); }
     public void redraw2D() { panel2D.redraw(); }
     public Color getBackgroundColor() { return panel2D.getBackgroundColor(); }
     public void setBackgroundColor(Color col) {

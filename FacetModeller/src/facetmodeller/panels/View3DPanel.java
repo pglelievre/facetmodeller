@@ -15,6 +15,7 @@ import static facetmodeller.panels.RadioButtonsPanel.COLOR_FACETS_BY_MARKER;
 import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_GROUP;
 import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_MARKER;
 import static facetmodeller.panels.RadioButtonsPanel.COLOR_NODES_BY_SECTION;
+import static facetmodeller.panels.ViewsPanel.DEFAULT_ZOOM_FACTOR;
 import facetmodeller.plc.Facet;
 import facetmodeller.plc.FacetVector;
 import facetmodeller.plc.Node;
@@ -87,7 +88,7 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         
         super();
         controller = con;
-        zoomer = new ZoomerDefault(0,-2,2000,1.2d); // the initial view fits the model to the panel width
+        zoomer = new ZoomerDefault(0,-2,2000,DEFAULT_ZOOM_FACTOR); // the initial view fits the model to the panel width
         
         // Set mouse and keyboard listeners:
         addListeners();
@@ -129,6 +130,13 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         setPanX(0);
         setPanY(0);
         repaint();
+    }
+    
+    public double getZoomFactor(){ return zoomer.getFactor(); }
+    public void setZoomFactor(double d) {
+        if (d==zoomer.getFactor()) { return; }
+        zoomer.setFactor(d);
+        zoomReset();
     }
     
     // --------------------Methods associated with the ViewBar class --------------------
@@ -285,8 +293,8 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         // otherwise I'll draw everything using a zbuffer. I'll deal with this below
         // by checking the status of the pt1 variable. I'll need some common information first:
 //        boolean showOther = controller.getShowOther(); // if true then draws outlines around other sections
-        boolean showOutlines = controller.getShowOutlines(); // if true then draws outlines around other sections
-        boolean showAll = controller.getShowAll(); // if false then only show nodes/facets associated with selected section(s)
+        boolean showOutlines = controller.getShowSectionOutlines(); // if true then draws outlines around other sections
+        boolean showAll = controller.getShowAllSections(); // if false then only show nodes/facets associated with selected section(s)
         
         // Get drawing styles for overlays:
         final int edgeWidth = controller.getLineWidth();

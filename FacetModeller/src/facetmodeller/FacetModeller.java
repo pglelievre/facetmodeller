@@ -404,8 +404,9 @@ public final class FacetModeller extends JFrameExit {
     public int getClickMode() { return viewManager.getClickMode(); }
     public void setClickMode(int mode) { viewManager.setClickMode(mode); }
     public boolean getShowImage() { return viewManager.getShowImage(); }
-    public boolean getShowOutlines() { return viewManager.getShowOutlines(); }
-    public boolean getShowAll() { return viewManager.getShowAll(); }
+    public boolean getShowImageOutline() { return viewManager.getShowImageOutline(); }
+    public boolean getShowSectionOutlines() { return viewManager.getShowSectionOutlines(); }
+    public boolean getShowAllSections() { return viewManager.getShowAllSections(); }
     public boolean getShowVOI() { return viewManager.getShowVOI(); }
     public boolean getShowFaces() { return viewManager.getShowFaces(); }
     public boolean getShowNormals() { return viewManager.getShowNormals(); }
@@ -474,6 +475,9 @@ public final class FacetModeller extends JFrameExit {
     public MyPoint2DVector getPaintedRegionPoints() { return viewManager.getPaintedRegionPoints(); }
     public void resetScroller() { viewManager.resetScroller(); }
     public void zoomReset2D() { viewManager.zoomReset2D(); }
+    //public void zoomReset3D() { viewManager.zoomReset3D(); }
+    public void selectZoomFactor2D() { viewManager.selectZoomFactor2D(); }
+    public void selectZoomFactor3D() { viewManager.selectZoomFactor3D(); }
     public boolean getMouseInside2D() { return viewManager.getMouseInside2D(); }
     public Projector3D getProjector3D() { return viewManager.getProjector3D(); }
     public Matrix3D getRotationMatrix3D() { return viewManager.getRotationMatrix3D(); }
@@ -580,7 +584,8 @@ public final class FacetModeller extends JFrameExit {
     public void exportVTU() { fileIOManager.exportVTU(); }
     public void exportNodes() { fileIOManager.exportNodes(); }
     public void exportFacets() { fileIOManager.exportFacets(); }
-    public void exportRegions() { fileIOManager.exportRegions(); }
+    public void exportRegionsNode() { fileIOManager.exportRegionsNode(); }
+    public void exportRegionsVTU() { fileIOManager.exportRegionsVTU(); }
     public void exportAll() { fileIOManager.exportAll(); }
     
     // Wrappers for the UndoVector class:
