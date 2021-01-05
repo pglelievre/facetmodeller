@@ -493,9 +493,8 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                 if (s.length>10) {
                     is = Boolean.parseBoolean(s[10]); nodeColorByGroupButton.setSelected(is);
                 } else {
-                    nodeColorByGroupButton.setSelected(false);
+                    nodeColorByGroupButton.setSelected(true);
                 }
-                nodeColorByGroupButton.setEnabled(ok);
             }
             if (nodeColorByMarkerButton!=null) {
                 if (s.length>11) {
@@ -503,15 +502,13 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                 } else {
                     nodeColorByMarkerButton.setSelected(false);
                 }
-                nodeColorByMarkerButton.setEnabled(ok);
             }
             if (facetColorByGroupButton!=null) {
                 if (s.length>12) {
                     is = Boolean.parseBoolean(s[12]); facetColorByGroupButton.setSelected(is);
                 } else {
-                    facetColorByGroupButton.setSelected(false);
+                    facetColorByGroupButton.setSelected(true);
                 }
-                facetColorByGroupButton.setEnabled(ok);
             }
             if (facetColorByMarkerButton!=null) {
                 if (s.length>13) {
@@ -519,7 +516,6 @@ public final class RadioButtonsPanel extends JPanel implements SessionIO {
                 } else {
                     facetColorByMarkerButton.setSelected(false);
                 }
-                facetColorByMarkerButton.setEnabled(ok);
             }
             if (showImageOutlineButton!=null) {
                 if (s.length>14) {

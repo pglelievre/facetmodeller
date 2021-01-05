@@ -128,7 +128,7 @@ public final class CursorTextBar extends TextBar {
                         s = "facet #" + ind + "; " + sbm + groupName + "; " + n + " nodes";
                         //s = "facet #" + ind + "; " + name + "; " + System.lineSeparator() + n + " nodes";
                     } else {
-                        s = "facet #" + ind + "; " + groupName + "; " + "nodes =";
+                        s = "facet #" + ind + "; " + sbm + groupName + "; " + "nodes =";
                         //s = "facet #" + ind + "; " + name + ";" + System.lineSeparator() + "nodes =";
                         for (int i=0 ; i<n ; i++ ) {
                             Node node = closestFacet.getNode(i);
