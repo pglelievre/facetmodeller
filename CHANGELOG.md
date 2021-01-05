@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ### Bugs squashed
 
+## 2021-01-05
+### Bugs squashed
+- Boundary marker information was not being displayed for facets in 2D models.
+- Radio buttons for colouring nodes and facets were not enabled when loading 2D model.
+
 ## 2020-12-01
 ### Changed
 - Added option to show/hide the outline of the image in the 2D panel.
