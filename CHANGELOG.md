@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+- When a section image file is missing, the program now looks for it in the most recent directory from which a file was opened.
 
 ### Bugs squashed
 
