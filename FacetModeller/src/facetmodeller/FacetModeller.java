@@ -199,9 +199,17 @@ public final class FacetModeller extends JFrameExit {
                             InteractionDialogs.imageFileError(this);
                             return;
                         }
-                        // Ask the user to locate the image file:
-                        file = InteractionDialogs.imageFileRequest(this,file);
-                        if (file==null) { return; }
+                        // Check if the file exists in the current open directory:
+                        if (this.getOpenDirectory()!=null) {
+                            file = new File( this.getOpenDirectory(), file.getName() );
+                        }
+                        if (!file.exists()) { // (file doesn't exist in current open directory)
+                            // Ask the user to locate the image file:
+                            file = InteractionDialogs.imageFileRequest(this,this.getOpenDirectory(),file);
+                            if (file==null) { return; }
+                        }
+                        // Change the open directory:
+                        this.setOpenDirectory(file.getParentFile());
                         // Set the file (this also reads the image from the file):
                         currentSection.setImageFile(file);
                         // Get the section image:

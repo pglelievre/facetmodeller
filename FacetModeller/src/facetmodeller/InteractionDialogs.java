@@ -32,10 +32,14 @@ public class InteractionDialogs {
         Dialogs.inform(con,"The image file could not be read. Please check the file format.","File Read Error");
     }
     
-    public static File imageFileRequest(Component con, File file) {
+    public static File imageFileRequest(Component con, File dir, File file) {
         JFileChooser chooser = new JFileChooser();
         filters.ImageFilter imageFilter = new filters.ImageFilter();
-        chooser.setCurrentDirectory(file.getParentFile());
+        if (file.getParentFile().exists()) {
+            chooser.setCurrentDirectory(file.getParentFile());
+        } else {
+            chooser.setCurrentDirectory(dir);
+        }
         chooser.addChoosableFileFilter(imageFilter);
         chooser.setFileFilter(imageFilter);
         //chooser.setAcceptAllFileFilterUsed(false);
