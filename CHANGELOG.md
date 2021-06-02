@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file. Dates are i
 ## [Unreleased]
 ### Changed
 - When a section image file is missing, the program now looks for it in the most recent directory from which a file was opened.
+- New menu option to copy the current section and its nodes (the copied nodes are not added to any facets).
+- Allowed user to optionally change the name of an image section to something different than the related file name (to clear that optional name, change it again and specify the string "null").
 
 ### Bugs squashed
+- Error was occurring when trying to paint the 3D scene when there were only nodes on uncalibrated sections.
 
 ## 2021-01-05
 ### Bugs squashed
