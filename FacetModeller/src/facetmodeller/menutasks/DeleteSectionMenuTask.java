@@ -47,7 +47,7 @@ public final class DeleteSectionMenuTask extends ControlledMenuTask {
         controller.undoVectorAdd(com);
         // Reset the selections:
         if (ind==0) {
-            controller.clearCurrentSectionSelection(); // there are no longer any sections loaded
+            controller.clearCurrentSectionSelection();
         } else {
             controller.setSelectedCurrentSectionIndex(ind-1); // positions the current section to that before the one deleted
         }

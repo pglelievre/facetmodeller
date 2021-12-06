@@ -242,6 +242,15 @@ public final class FacetModeller extends JFrameExit {
         }
     }
     
+    public void moveVOI() {
+        if ( modelManager.moveVOI(this) ) {
+            // Enable or disable menu items:
+            checkItemsEnabled();
+            // Redraw:
+            redraw();
+        }
+    }
+    
     public void openSession(boolean prev) {
         fileIOManager.openSession(prev);
         // Clear the undo information:
@@ -356,6 +365,7 @@ public final class FacetModeller extends JFrameExit {
     public void addGroup(Group g, int i) { modelManager.addGroup(g,i); }
     public void addGroups(GroupVector gv) { modelManager.addGroups(gv); }
     public void removeGroup(Group g) { modelManager.removeGroup(g); }
+    //public void addNodes(NodeVector nodes) { modelManager.addNodes(nodes); }
     public void addSectionsFromFiles(File[] files, boolean iscross) {
         modelManager.addSectionsFromFiles(files,iscross);
     }

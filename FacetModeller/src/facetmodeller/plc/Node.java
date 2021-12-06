@@ -30,7 +30,7 @@ public abstract class Node extends HasSection implements SessionIO {
 
     // -------------------- Copy -------------------
 
-//    public abstract Node deepCopy();
+    public abstract Node deepCopyPointAndGroup(); // copy only the point and group information, not facet or section membership.
     
     // -------------------- Checkers -------------------
     

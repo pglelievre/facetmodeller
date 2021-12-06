@@ -34,6 +34,18 @@ public class ImageDepthSection extends DepthSection {
     
     // -------------------- Deep Copy --------------------
     
+    @Override
+    public ImageDepthSection copySection() {
+        // Create new object:
+        ImageDepthSection newSection = new ImageDepthSection();
+        // Deep copy some of the DefaultSectionInfo:
+        this.copyTypedAndColorTo(newSection);
+        // Deep copy the ImageSection information:
+        this.imageSection.deepCopyTo(newSection.imageSection);
+        // Return the new object:
+        return newSection;
+    }
+    
 //    @Override
 //    public ImageDepthSection deepCopy() {
 //        ImageDepthSection s = new ImageDepthSection();

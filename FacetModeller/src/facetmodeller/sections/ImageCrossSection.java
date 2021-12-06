@@ -32,6 +32,18 @@ public class ImageCrossSection extends CrossSection {
     
     // -------------------- Deep Copy --------------------
     
+    @Override
+    public ImageCrossSection copySection() {
+        // Create new object:
+        ImageCrossSection newSection = new ImageCrossSection();
+        // Deep copy some of the DefaultSectionInfo:
+        this.copyTypedAndColorTo(newSection);
+        // Deep copy the ImageSection information:
+        this.imageSection.deepCopyTo(newSection.imageSection);
+        // Return the new object:
+        return newSection;
+    }
+    
 //    @Override
 //    public ImageCrossSection deepCopy() {
 //        ImageCrossSection s = new ImageCrossSection();

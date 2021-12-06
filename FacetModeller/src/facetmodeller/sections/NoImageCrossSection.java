@@ -35,6 +35,18 @@ public class NoImageCrossSection extends CrossSection {
     
     // -------------------- Deep Copy --------------------
     
+    @Override
+    public NoImageCrossSection copySection() {
+        // Create new object:
+        NoImageCrossSection newSection = new NoImageCrossSection();
+        // Deep copy some of the DefaultSectionInfo:
+        this.copyTypedAndColorTo(newSection);
+        // Deep copy the NoImageSection information:
+        this.noImageSection.deepCopyTo(newSection.noImageSection);
+        // Return the new object:
+        return newSection;
+    }
+    
 //    @Override
 //    public NoImageCrossSection deepCopy() {
 //        NoImageCrossSection s = new NoImageCrossSection();

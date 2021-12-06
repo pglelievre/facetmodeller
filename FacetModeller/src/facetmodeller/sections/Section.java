@@ -50,6 +50,12 @@ public abstract class Section extends HasID implements SessionIO {
     
     // -------------------- Copy --------------------
     
+    public abstract Section copySection(); // Should make deep copy of self but not copies of any PLC information attached.
+
+    public void copyTypedAndColorTo(Section newSection) {
+        defaultInfo.copyTypedAndColorTo(newSection.defaultInfo);
+    }
+    
     // -------------------- Checkers --------------------
 
     public abstract int getType(); // returns one of the section types above; should only be used in SessionSaver
@@ -141,6 +147,9 @@ public abstract class Section extends HasID implements SessionIO {
     
     public void addNode(Node n) {
         defaultInfo.addNode(n);
+    }
+    public void addNodes(NodeVector n) {
+        defaultInfo.addNodes(n);
     }
     public void removeNode(Node n) {
         defaultInfo.removeNode(n);

@@ -33,6 +33,13 @@ public class NodeOnSection extends Node {
 
     // -------------------- Deep Copy -------------------
 
+    @Override
+    public NodeOnSection deepCopyPointAndGroup() {
+        NodeOnSection newNode = new NodeOnSection(this.p2.deepCopy(),null,this.getGroup());
+        newNode.setBoundaryMarker( this.getBoundaryMarker() );
+        return newNode;
+    }
+
 //    @Override
 //    public Node deepCopy() {
 //        Node newNode = new NodeOnSection(p2,getSection(),getGroup());

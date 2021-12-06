@@ -27,6 +27,7 @@ import fileio.SessionIO;
 import geometry.Dir3D;
 import geometry.MyPoint2D;
 import geometry.MyPoint3D;
+import geometry.MyPoint3DVector;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -137,6 +138,7 @@ public class ModelManager implements SessionIO {
     public int indexOfFacet(Facet f) { return plc.indexOfFacet(f); }
     public int indexOfRegion(Region r) { return plc.indexOfRegion(r); }
     public void addNode(Node n) { plc.addNode(n); }
+    //public void addNodes(NodeVector nodes) { plc.addNodes(nodes); }
     public void removeNode(Node n) { plc.removeNode(n); }
     public void addFacet(Facet f) { plc.addFacet(f); }
     public void removeFacet(Facet f) { plc.removeFacet(f); }
@@ -294,6 +296,38 @@ public class ModelManager implements SessionIO {
         
         // Make the new VOI:
         voi = new VOI(x1,x2,y1,y2,z1,z2);
+        
+        // Return successfully:
+        return true;
+        
+    }
+    
+    /** Sets the VOI to the current model extents.
+     * @param con
+     * @return  */
+    public boolean moveVOI(Component con) {
+        
+        // Define dialog title:
+        String title = "Set VOI to Model Extents";
+        
+        // Get current model extents:
+        MyPoint3DVector points = plc.extents();
+        
+        // Check the points:
+        if (points==null)  {
+            Dialogs.error(con,"There are no calibrated node points.",title);
+            return false;
+        }
+        MyPoint3D p1 = points.get(0);
+        MyPoint3D p2 = points.get(1);
+        MyPoint3D d = MyPoint3D.minus(p1,p2);
+        if ( d.getX()==0 || d.getY()==0 || d.getZ()==0 )  {
+            Dialogs.error(con,"There are not enough calibrated node points.",title);
+            return false;
+        }
+        
+        // Make the new VOI:
+        voi = new VOI(p1,p2);
         
         // Return successfully:
         return true;

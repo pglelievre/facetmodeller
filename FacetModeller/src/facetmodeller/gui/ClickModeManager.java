@@ -164,7 +164,7 @@ public final class ClickModeManager {
                 || m==ClickModeManager.MODE_ADD_NODES_IN_FACETS
                 || m==ClickModeManager.MODE_ADD_NODES_ON_EDGES) {
             if (!controller.isSelectedNodeGroup(g)) {
-                int response = Dialogs.question(controller,"Would like the current node group to be selected for drawing?","Warning");
+                int response = Dialogs.question(controller,"Would you like the current node group to be selected for drawing?","Warning");
                 if (response==Dialogs.CANCEL_OPTION) { return; }
                 if (response==Dialogs.YES_OPTION) {
                     controller.addToNodeGroupSelection(g);
@@ -177,7 +177,7 @@ public final class ClickModeManager {
                 || m==ClickModeManager.MODE_CHANGE_FACETS_GROUP
                 || m==ClickModeManager.MODE_EDGE_FLIP ) { // || m==MODE_SPLIT_TRI_FACETS ) {
             if (!controller.isSelectedFacetGroup(g)) {
-                int response = Dialogs.question(controller,"Would like the current facet group to be selected for drawing?","Warning");
+                int response = Dialogs.question(controller,"Would you like the current facet group to be selected for drawing?","Warning");
                 if (response==Dialogs.CANCEL_OPTION) { return; }
                 if (response==Dialogs.YES_OPTION) {
                     controller.addToFacetGroupSelection(g);

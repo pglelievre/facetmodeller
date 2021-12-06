@@ -33,6 +33,16 @@ public class NodeVector {
 
     // ------------------- Copy ------------------
 
+    public NodeVector deepCopyNodesOnPointAndGroup() {
+        NodeVector newNodes = new NodeVector();
+        for ( int i=0 ; i<size() ; i++ ) {
+            Node node = get(i);
+            if (node.isOff()) { continue; } // skip this node
+            Node newNode = node.deepCopyPointAndGroup();
+            newNodes.add(newNode);
+        }
+        return newNodes;
+    }
 //    public NodeVector deepCopy() {
 //        NodeVector nodes = new NodeVector();
 //        for ( int i=0 ; i<size() ; i++ ) {

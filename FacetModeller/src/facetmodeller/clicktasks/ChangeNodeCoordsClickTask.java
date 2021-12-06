@@ -2,10 +2,13 @@ package facetmodeller.clicktasks;
 
 import dialogs.Dialogs;
 import facetmodeller.FacetModeller;
+import facetmodeller.commands.ChangeNodeCoordinateCommand;
+import facetmodeller.commands.Command;
 import facetmodeller.commands.MergeNodesCommand;
 import facetmodeller.gui.ClickModeManager;
 import facetmodeller.plc.Node;
 import facetmodeller.plc.NodeOffSection;
+import facetmodeller.plc.NodeOnSection;
 import geometry.MyPoint2D;
 import geometry.MyPoint3D;
 
@@ -45,39 +48,84 @@ public final class ChangeNodeCoordsClickTask extends ControlledClickTask {
         if (node==null) { return; }
         // Nullify temporary objects:
         controller.clearClosestNode(); // (or else the old closest node point will be painted)
-        // Ask user for confirmation, if required, and get 3D node coordinates:
+        // Check for on-section node:
+        boolean do3D = true;
         if (!node.isOff()) {
-            int response = Dialogs.confirm(controller,"The node will be changed to a 3D off-section node.",title());
-            if (response!=Dialogs.OK_OPTION) { return; }
+            // Ask user how to continue:
+            int response = Dialogs.question(controller,"What coordinates do you want to specify for this on-section node?",title(),"3D spatial","2D pixel","Cancel");
+            if (response==Dialogs.CANCEL_OPTION) { return; }
+            do3D = (response==Dialogs.YES_OPTION);
+            if (do3D) {
+                response = Dialogs.confirm(controller,"The node will be changed to a 3D off-section node.",title());
+                if (response!=Dialogs.OK_OPTION) { return; }
+            }
         }
-        // Get the existing node coordinates:
-        MyPoint3D p3 = node.getPoint3D();
-        // Ask the user for the new node coordinates:
-        String message = "You must enter three numeric values separated by spaces. Please try again.";
-        String prompt = "Enter the new 3D coordinates (x y z) for the node, separated by spaces:";
-        String input = Dialogs.input(controller,prompt,title(),p3.toString());
-        if (input==null) { return; } // user cancelled
-        input = input.trim();
-        String s[];
-        s = input.split("[ ]+");
-        if (s.length!=3) {
-            Dialogs.error(controller,message,title());
-            return;
+        // Do whatever is required:
+        Command com;
+        if (do3D) { // it's an off-section node, or we're converting an no-section node to an off-section node, and we're changing the 3D spatial coordinates
+            // Get the node's existing 3D coordinates:
+            MyPoint3D p3 = node.getPoint3D();
+            // Ask the user for the new node coordinates:
+            String message = "You must enter three numeric values separated by spaces. Please try again.";
+            String prompt = "Enter the new 3D spatial coordinates (x y z) for the node, separated by spaces:";
+            String input = Dialogs.input(controller,prompt,title(),p3.toString());
+            if (input==null) { return; } // user cancelled
+            input = input.trim();
+            String s[];
+            s = input.split("[ ]+");
+            if (s.length!=3) {
+                Dialogs.error(controller,message,title());
+                return;
+            }
+            double x,y,z;
+            try {
+                x = Double.parseDouble(s[0].trim());
+                y = Double.parseDouble(s[1].trim());
+                z = Double.parseDouble(s[2].trim());
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                Dialogs.error(controller,message,title());
+                return;
+            }
+            // Create a new 3D point object:
+            p3 = new MyPoint3D(x,y,z);
+            if (node.isOff()) {
+                // Change the 3D spatial coordinates of the off-section node:
+                com = new ChangeNodeCoordinateCommand((NodeOffSection)node,p3); com.execute();
+            } else {
+                // Create a new off-section node object at the specified 3D spatial coordinates, attached to the same section and group as the old node:
+                Node newNode = new NodeOffSection(p3,node.getSection(),node.getGroup());
+                // Replace the old node with the new node:
+                com = new MergeNodesCommand(controller.getModelManager(),node,newNode,title()); com.execute();
+            }
+        } else { // it's an on-section node and we're changing the 2D pixel coordinates
+            // Get the node's existing 2D coordinates:
+            MyPoint2D p2 = node.getPoint2D();
+            // Ask the user for the new node coordinates:
+            String message = "You must enter two numeric values separated by spaces. Please try again.";
+            String prompt = "Enter the new 2D pixel coordinates (x y) for the node, separated by spaces:";
+            String input = Dialogs.input(controller,prompt,title(),p2.toString());
+            if (input==null) { return; } // user cancelled
+            input = input.trim();
+            String s[];
+            s = input.split("[ ]+");
+            if (s.length!=2) {
+                Dialogs.error(controller,message,title());
+                return;
+            }
+            double x,y;
+            try {
+                x = Double.parseDouble(s[0].trim());
+                y = Double.parseDouble(s[1].trim());
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                Dialogs.error(controller,message,title());
+                return;
+            }
+            // Create a new 2D point object:
+            p2 = new MyPoint2D(x,y);
+            // Change the 2D pixel coordinates of the on-section node:
+            com = new ChangeNodeCoordinateCommand((NodeOnSection)node,p2); com.execute();
         }
-        double x,y,z;
-        try {
-            x = Double.parseDouble(s[0].trim());
-            y = Double.parseDouble(s[1].trim());
-            z = Double.parseDouble(s[2].trim());
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            Dialogs.error(controller,message,title());
-            return;
-        }
-        // Create a new off-section node object at the specified coordinates, attached to the same section and group as the old node:
-        p3 = new MyPoint3D(x,y,z);
-        Node newNode = new NodeOffSection(p3,node.getSection(),node.getGroup());
-        // Replace the old node with the new node:
-        MergeNodesCommand com = new MergeNodesCommand(controller.getModelManager(),node,newNode,title()); com.execute();
+        // Add the command to the undo information:
         controller.undoVectorAdd(com);
         // Enable or disable menu items:
         controller.checkItemsEnabled();

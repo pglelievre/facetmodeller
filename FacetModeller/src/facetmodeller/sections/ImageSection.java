@@ -20,6 +20,8 @@ import javax.swing.JFrame;
 public class ImageSection implements SessionIO {
 
     // ------------------ Properties -------------------
+
+    private String name = null; // optional user-defined name for the section
     
     private MyPoint2D clicked1 = null; // 1st clicked calibration point (in image panel coordinates)
     private MyPoint2D clicked2 = null; // 2nd clicked calibration point (in image panel coordinates)
@@ -39,13 +41,20 @@ public class ImageSection implements SessionIO {
     
     // -------------------- Copy --------------------
     
-    public ImageSection deepCopy() {
-        ImageSection s = new ImageSection();
-        s.setClicked1( this.clicked1.deepCopy() );
-        s.setClicked2( this.clicked2.deepCopy() );
-        s.setHasImage( this.hasImage.deepCopy() );
-        return s;
+    public void deepCopyTo(ImageSection newImageSection) {
+        newImageSection.setName( this.name );
+        if (this.clicked1!=null) { newImageSection.setClicked1( this.clicked1.deepCopy() ); }
+        if (this.clicked2!=null) { newImageSection.setClicked2( this.clicked2.deepCopy() ); }
+        newImageSection.setHasImage( this.hasImage.deepCopy() );
     }
+    
+//    public ImageSection deepCopy() {
+//        ImageSection s = new ImageSection();
+//        s.setClicked1( this.clicked1.deepCopy() );
+//        s.setClicked2( this.clicked2.deepCopy() );
+//        s.setHasImage( this.hasImage.deepCopy() );
+//        return s;
+//    }
 
     // -------------------- Checkers --------------------
 
@@ -54,7 +63,7 @@ public class ImageSection implements SessionIO {
     public boolean isCalibrated() {
         return ( clicked1!=null && clicked2!=null );
     }
-    public boolean canChangeName() { return false; }
+    public boolean canChangeName() { return true; }
     
     // -------------------- Getters --------------------
 
@@ -83,7 +92,17 @@ public class ImageSection implements SessionIO {
     public void setClicked1(MyPoint2D p) { clicked1 = p; }
     public void setClicked2(MyPoint2D p) { clicked2 = p; }
     
-    public void setName(String s) {};
+    public void setName(String s) {
+        if (s==null) {
+            name = null;
+        } else {
+            if (s.startsWith("null")) {
+                name = null;
+            } else {
+                name = s;
+            }
+        }
+    }
     
     // -------------------- Private Methods --------------------
     
@@ -93,8 +112,20 @@ public class ImageSection implements SessionIO {
 
     // -------------------- Public Methods --------------------
     
-    public String shortName() { return hasImage.getName(); }
-    public String longName() { return hasImage.fileString(); }
+    public String shortName() {
+        if (name==null) {
+            return hasImage.getName();
+        } else {
+            return name;
+        }
+    }
+    public String longName() {
+        if (name==null) {
+            return hasImage.fileString();
+        } else {
+            return name;
+        }
+    }
     
     public void scalePixels(double f) {
         if (clicked1!=null) { clicked1.times(f); }
@@ -305,8 +336,19 @@ public class ImageSection implements SessionIO {
     @Override
     public boolean writeSessionInformation(BufferedWriter writer) {
         
+        // Write a dummy line to tell the reader that a name is coming (a new addition to the session file format):
+        String textLine = "IMAGESECTIONNAMELINE";
+        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        
+        // Write the section name or "NULL" if null:
+        if (name==null) {
+            textLine = "null";
+        } else {
+            textLine = name.trim();
+        }
+        if (!FileUtils.writeLine(writer,textLine)) { return false; }
+        
         // Check the section is calibrated:
-        String textLine;
         if (isCalibrated()) {
             // Write clicked points:
             textLine = clicked1.toString();
@@ -328,9 +370,25 @@ public class ImageSection implements SessionIO {
     @Override
     public String readSessionInformation(BufferedReader reader, boolean merge) {
         
-        // Read the clicked points:
+        // Read the first line:
         String textLine = FileUtils.readLine(reader);
-        if (textLine==null) { return "Reading first clicked calibration point line."; }
+        if (textLine==null) { return "Reading first line for ImageSection object."; }
+        
+        // Check if that first line was "IMAGESECTIONNAMELINE" and if so, read the name from the line that follows:
+        if (textLine.startsWith("IMAGESECTIONNAMELINE")) {
+            textLine = FileUtils.readLine(reader);
+            if (textLine==null) { return "Reading name line."; }
+            if (textLine.startsWith("null")) {
+                name = null;
+            } else {
+                name = textLine.trim();
+            }
+            // Read next line, which should now be the first clicked calibration point line:
+            textLine = FileUtils.readLine(reader);
+            if (textLine==null) { return "Reading first clicked calibration point line."; }
+        }
+        
+        // Read the clicked points:
         textLine = textLine.trim();
         if (!textLine.startsWith("null")) {
             String[] ss = textLine.split("[ ]+");

@@ -39,6 +39,18 @@ public class DefaultSectionInfo {
     
     // -------------------- Copy --------------------
     
+    // Just copies the typed points and colour; nodes and regions not altered.
+    public void copyTypedAndColorTo(DefaultSectionInfo newInfo) {
+        int r,g,b,a;
+        r = this.color.getRed();
+        g = this.color.getGreen();
+        b = this.color.getBlue();
+        a = this.color.getAlpha();
+        newInfo.color = new Color(r,g,b,a);
+        if (this.typed1!=null) { newInfo.setTyped1( this.typed1.deepCopy() ); }
+        if (this.typed2!=null) { newInfo.setTyped2( this.typed2.deepCopy() ); }
+    }
+    
 //    public DefaultSectionInfo deepCopy() {
 //        int r,g,b,a;
 //        r = this.color.getRed();
@@ -126,6 +138,9 @@ public class DefaultSectionInfo {
 
     public void addNode(Node n) {
         if (!nodes.contains(n)) { nodes.add(n); }
+    }
+    public void addNodes(NodeVector n) {
+        nodes.addAll(n);
     }
 
     public void removeNode(Node n) { nodes.remove(n); }

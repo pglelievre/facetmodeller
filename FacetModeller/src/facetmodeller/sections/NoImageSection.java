@@ -32,11 +32,16 @@ public class NoImageSection implements SessionIO {
     
     // -------------------- Copy --------------------
     
-    public NoImageSection deepCopy() {
-        NoImageSection s = new NoImageSection(name);
-        s.setHeight( this.height );
-        return s;
+    public void deepCopyTo(NoImageSection newNoImageSection) {
+        newNoImageSection.setName( this.name );
+        newNoImageSection.setHeight( this.height );
     }
+    
+//    public NoImageSection deepCopy() {
+//        NoImageSection s = new NoImageSection(name);
+//        s.setHeight( this.height );
+//        return s;
+//    }
 
     // -------------------- Checkers --------------------
 

@@ -41,6 +41,9 @@ public final class SnapshotSection extends Section {
     
     // -------------------- Deep Copy --------------------
     
+    @Override
+    public Section copySection() { return null; } // this should not be allowed
+    
 //    @Override
 //    public SnapshotSection deepCopy() {
 //        SnapshotSection s = new SnapshotSection();

@@ -65,6 +65,22 @@ public class NoImageDepthSection extends DepthSection {
     
     // -------------------- Deep Copy --------------------
     
+    @Override
+    public NoImageDepthSection copySection() {
+        // Create new object:
+        NoImageDepthSection newSection = new NoImageDepthSection();
+        // Deep copy some of the DefaultSectionInfo:
+        this.copyTypedAndColorTo(newSection);
+        // Deep copy the NoImageSection information:
+        this.noImageSection.deepCopyTo(newSection.noImageSection);
+        // Deep copy the rest of the properties for NoImageDepthSection objects:
+        newSection.isTopo = this.isTopo;
+        newSection.nodeFile = new File(this.nodeFile.toURI());
+        newSection.eleFile = new File(this.eleFile.toURI());
+        // Return the new object:
+        return newSection;
+    }
+    
 //    @Override
 //    public NoImageDepthSection deepCopy() {
 //        NoImageDepthSection s = new NoImageDepthSection();

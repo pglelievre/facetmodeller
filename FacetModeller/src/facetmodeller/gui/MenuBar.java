@@ -31,7 +31,7 @@ public final class MenuBar extends JMenuBar {
             miExportPair, miExportPairGroup, miExportPairDisplayed,
             miExportNodes, miExportFacets, miExportRegionsNode, miExportRegionsVTU, miExportVTU, miExportAll,
             miExportOptionsStartingIndex, miExportOptionsPrecision,
-            miChangeSectionColor, miPLCInfo,miDefineVOI,
+            miChangeSectionColor, miPLCInfo,miDefineVOI,miMoveVOI,
             miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miNormalColor,
             miNodeMarkerTrueColor,miNodeMarkerFalseColor,miFacetMarkerTrueColor,miFacetMarkerFalseColor,
             miDefaultBackgroundColor,miSelectBackgroundColor,
@@ -58,7 +58,8 @@ public final class MenuBar extends JMenuBar {
             miClearPLC,miClearFacets,miFindBadFacets,miFindHoles,miFindUnusedNodes,
             miDeleteDuplicateNodes,miMergeDuplicateNodes,miFindNodesCalibration,miFindNodesVOI,
             miFindNodesIndex,miFindFacetsIndex,miSplitGroupVOI,miSplitGroupBoundary,
-            miDeleteNodeGroup,miDeleteFacetGroup,miDeleteDisplayedNodes,miDeleteDisplayedFacets,miDeleteSection,miNewGroup,miDeleteGroup,miMergeGroups,
+            miDeleteNodeGroup,miDeleteFacetGroup,miDeleteDisplayedNodes,miDeleteDisplayedFacets,
+            miCopySection,miDeleteSection,miNewGroup,miDeleteGroup,miMergeGroups,
             miCalibrate,miNodeOrigin3D,miCalibrateTyped,miSaveView3D,miLoadView3D;
     private final ArrayList<ClickTaskMenuItem> clickTaskMenuItems = new ArrayList<>();
     private final ArrayList<MenuTaskMenuItem> menuTaskMenuItems = new ArrayList<>();
@@ -152,6 +153,7 @@ public final class MenuBar extends JMenuBar {
         miCopyCalibration = makeMenuTaskMenuItem(new CopyCalibrationMenuTask(controller),listener);
         miNodesAtCalibration = makeMenuTaskMenuItem(new NodesAtCalibrationMenuTask(controller),listener);
         miChangeSectionColor = makeMenuItem("Change section plotting color",listener);
+        miCopySection = makeMenuTaskMenuItem(new CopySectionMenuTask(controller),listener);
         miDeleteSection = makeMenuTaskMenuItem(new DeleteSectionMenuTask(controller),listener);
 
         // Build the groups menu items:
@@ -195,6 +197,7 @@ public final class MenuBar extends JMenuBar {
         miClearPLC = makeMenuTaskMenuItem(new ClearPLCMenuTask(controller),"All nodes, facets and regions",listener);
         miClearFacets = makeMenuTaskMenuItem(new ClearFacetsMenuTask(controller),"All facets",listener);
         miDefineVOI = makeMenuItem("Define volume of interest (VOI)",listener);
+        miMoveVOI = makeMenuItem("Set VOI to current model extents",listener);
         miAddNodesVOI = makeMenuTaskMenuItem(new DefineNodesVOIMenuTask(controller),"nodes on VOI corners",listener);
         miAddNodesSection = makeMenuTaskMenuItem(new DefineNodesSectionMenuTask(controller),"nodes on section corners",listener);
         miAddNodeCoordinates = makeMenuTaskMenuItem(new DefineNodeCoordinatesMenuTask(controller),"node at specified coordinates",listener);
@@ -389,7 +392,10 @@ public final class MenuBar extends JMenuBar {
         if (is3D) { sectionsMenu.add(miCopyCalibration); }
         sectionsMenu.add(miNodesAtCalibration);
         sectionsMenu.add(miChangeSectionColor);
-        if (is3D) { sectionsMenu.add(miDeleteSection); }
+        if (is3D) {
+            sectionsMenu.add(miCopySection);
+            sectionsMenu.add(miDeleteSection);
+        }
 
         // Build the groups menu:
         JMenu groupsMenu = new JMenu("Groups");
@@ -448,7 +454,10 @@ public final class MenuBar extends JMenuBar {
         // Some other stuff:
         if (is3D) { modelMenu.add(miTranslate); }
         modelMenu.add(miScalePixels);
-        if (is3D) { modelMenu.add(miDefineVOI); }
+        if (is3D) {
+            modelMenu.add(miDefineVOI);
+            modelMenu.add(miMoveVOI);
+        }
         // Add submenu:
         JMenu addMenu = new JMenu("Add node(s)");
         modelMenu.add(addMenu);
@@ -570,6 +579,7 @@ public final class MenuBar extends JMenuBar {
             else if (src == miPLCInfo) { controller.showPLCInfo(); }
             else if (src == miClearOrigin3D) { controller.clearOriginNode3D(); }
             else if (src == miDefineVOI) { controller.defineVOI(); }
+            else if (src == miMoveVOI) { controller.moveVOI(); }
             else if (src == miNullMode) { controller.setClickMode(ClickModeManager.MODE_NULL); }
             else if (src == miSetOrigin2DMode) { controller.setClickMode(ClickModeManager.MODE_ORIGIN_2D); }
             else if (src == miSetOriginNode3DMode) { controller.setClickMode(ClickModeManager.MODE_ORIGIN_NODE_3D); }
@@ -693,6 +703,7 @@ public final class MenuBar extends JMenuBar {
         // Model menu items:
         miPLCInfo.setEnabled(true);
         miDefineVOI.setEnabled(is3D);
+        miMoveVOI.setEnabled(is3D && hasNodesandAllCalibrated);
         
         // Display menu items:
         miDefaultBackgroundColor.setEnabled(true);

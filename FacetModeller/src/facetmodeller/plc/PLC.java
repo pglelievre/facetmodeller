@@ -12,6 +12,7 @@ import fileio.FileUtils;
 import geometry.Dir3D;
 import geometry.MyPoint2D;
 import geometry.MyPoint3D;
+import geometry.MyPoint3DVector;
 import java.io.*;
 
 /** A piecewise linear complex.
@@ -159,32 +160,42 @@ public class PLC {
         if (numberOfNodes()==0) { return null; }
         
         // Calculate x,y,z coordinate ranges for all node and region vertices in the plc:
+        boolean foundOne = false; // I'll set it to true as soon as I find a node that can be converted to a 3D point
         MyPoint3D p0 = origin;
-        MyPoint3D p = getNode(0).getPoint3D();
-        MyPoint3D p1 = p.deepCopy();
-        MyPoint3D p2 = p.deepCopy();
+        MyPoint3D p1 = null;
+        MyPoint3D p2 = null;
         double r = 0.0; // will hold largest node distance from origin
-        if (p0!=null) {
-            r = p0.distanceToPoint(p);
-        }
-        for (int i=1 ; i<numberOfNodes() ; i++ ) {
-            p = getNode(i).getPoint3D();
+        for (int i=0 ; i<numberOfNodes() ; i++ ) {
+            MyPoint3D p = getNode(i).getPoint3D();
             if (p==null) { continue; } // if the node's section is not calibrated
-            p1.min(p);
-            p2.max(p);
-            if (p0!=null) {
-                r = Math.max( r , p0.distanceToPoint(p) );
+            if (foundOne) {
+                if (p1!=null) { p1.min(p); } // this check should not be necessary but it avoid a Java warning message
+                if (p2!=null) { p2.max(p); } // this check should not be necessary but it avoid a Java warning message
+                if (p0!=null) { r = Math.max( r , p0.distanceToPoint(p) ); }
+            } else {
+                p1 = p.deepCopy();
+                p2 = p.deepCopy();
+                if (p0!=null) { r = p0.distanceToPoint(p); }
+                foundOne = true;
             }
         }
         for (int i=0 ; i<numberOfRegions() ; i++ ) {
-            p = getRegion(i).getPoint3D();
+            MyPoint3D p = getRegion(i).getPoint3D();
             if (p==null) { continue; } // if the region's section is not calibrated
-            p1.min(p);
-            p2.max(p);
-            if (p0!=null) {
-                r = Math.max( r , p0.distanceToPoint(p) );
+            if (foundOne) {
+                if (p1!=null) { p1.min(p); } // this check should not be necessary but it avoids a Java warning message
+                if (p2!=null) { p2.max(p); } // this check should not be necessary but it avoids a Java warning message
+                if (p0!=null) { r = Math.max( r , p0.distanceToPoint(p) ); }
+            } else {
+                p1 = p.deepCopy();
+                p2 = p.deepCopy();
+                if (p0!=null) { r = p0.distanceToPoint(p); }
+                foundOne = true;
             }
         }
+        
+        // Make sure there was at least a node or region that can be painted:
+        if (!foundOne) { return null; }
         
         // Calculate the centroid and width of the coordinate ranges found above:
         SceneInfo info = new SceneInfo();
@@ -194,7 +205,7 @@ public class PLC {
             p0.times(0.5);
         }
         info.setOrigin(p0);
-        p = MyPoint3D.minus(p2,p1);
+        MyPoint3D p = MyPoint3D.minus(p2,p1);
         info.setDimensions(p);
         if ( origin==null || r==0.0 ) {
             r = p.max();
@@ -230,6 +241,38 @@ public class PLC {
         // Return:
         return info;
         
+    }
+    
+    public MyPoint3DVector extents() {
+        
+        // Check for empty PLC:
+        if (numberOfNodes()==0) { return null; }
+        
+        // Calculate x,y,z coordinate ranges for all node and region vertices in the plc:
+        boolean foundOne = false; // I'll set it to true as soon as I find a node that can be converted to a 3D point
+        MyPoint3D p1 = null;
+        MyPoint3D p2 = null;
+        for (int i=0 ; i<numberOfNodes() ; i++ ) {
+            MyPoint3D p = getNode(i).getPoint3D();
+            if (p==null) { continue; } // if the node's section is not calibrated
+            if (foundOne) {
+                if (p1!=null) { p1.min(p); } // this check should not be necessary but it avoids a Java warning message
+                if (p2!=null) { p2.max(p); } // this check should not be necessary but it avoids a Java warning message
+            } else {
+                p1 = p.deepCopy();
+                p2 = p.deepCopy();
+                foundOne = true;
+            }
+        }
+        
+        // Check for no appropriate nodes:
+        if (!foundOne) { return null; }
+        
+        // Return information in required object:
+        MyPoint3DVector points = new MyPoint3DVector();
+        points.add(p1);
+        points.add(p2);
+        return points;
     }
     
     /** Snaps points to VOI.
