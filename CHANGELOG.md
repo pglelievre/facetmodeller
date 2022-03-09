@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+- Added menu item for exporting of a 3D node file for a 2D model, which is also exported with "all files" with suffix "\_3D".
 ### Bugs squashed
 
 ## 2021-12-06
