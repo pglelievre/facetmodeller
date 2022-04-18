@@ -132,7 +132,7 @@ public final class FacetModeller extends JFrameExit {
     }
     @Override
     protected String contactString() {
-        return "Contact: plelievre@mun.ca";
+        return "Contact: plelievre@mta.ca";
     }
     
     public int versionInt() {
@@ -600,7 +600,7 @@ public final class FacetModeller extends JFrameExit {
     public void exportPoly(int whatToExport) { fileIOManager.exportPoly(whatToExport); }
     public void exportPair(int whatToExport) { fileIOManager.exportPair(whatToExport); }
     public void exportVTU() { fileIOManager.exportVTU(); }
-    public void exportNodes() { fileIOManager.exportNodes(); }
+    public void exportNodes(boolean force3D) { fileIOManager.exportNodes(force3D); }
     public void exportFacets() { fileIOManager.exportFacets(); }
     public void exportRegionsNode() { fileIOManager.exportRegionsNode(); }
     public void exportRegionsVTU() { fileIOManager.exportRegionsVTU(); }

@@ -204,6 +204,7 @@ public class FacetVector {
      */
     public NodeVector findBoundaryNodes() {
         BoundaryInfo info = findBoundaryInfo(true);
+        if (info==null) { return null; }
         return info.nodes;
     }
     

@@ -482,14 +482,19 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
 
     }
 
-    public void exportNodes() {
+    public void exportNodes(boolean force3D) {
 
         // The filter doesn't seem to be working, but it is actually doing what it should
         // according to Mac look-and-feel guidelines, which I think are pretty silly here.
 
         if ( !controller.hasSections() ) { return; }
-
-        String title = "Export Nodes"; // a title for some dialogs
+        
+        String title;  // a title for some dialogs
+        if (force3D) {
+            title = "Export 3D Nodes";
+        } else {
+            title = "Export Nodes";
+        }
 
         // Check nodes exist:
         ModelManager model = controller.getModelManager();
@@ -539,7 +544,8 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
 
         // Write the node file:
         Dir3D dir = null;
-        final int ndim = controller.numberOfDimensions();
+        int ndim = controller.numberOfDimensions();
+        if ( ndim==2 && force3D ) { ndim=3; }
         if (ndim==2) {
             dir = controller.getSelectedCurrentSection().getDir3D();
         }
@@ -1010,6 +1016,13 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         ok = model.writeNodes(file,startingIndex,precision,ndim,dir);
         if (!ok) {
            Dialogs.error(controller,"Failed to save .node file.",title);
+        }
+        if (ndim==2) {
+            file = new File( root + "_3D." + NodeFilter.NODE );
+            ok = model.writeNodes(file,startingIndex,precision,3,null); // ndim=3, dir=null (hardwired in this call)
+            if (!ok) {
+               Dialogs.error(controller,"Failed to save 3D .node file.",title);
+            }
         }
         file = new File( root + "." + EleFilter.ELE );
         ok = model.writeFacets(file,startingIndex,precision,ndim,true); // write non-standard variable facet type .ele file if required

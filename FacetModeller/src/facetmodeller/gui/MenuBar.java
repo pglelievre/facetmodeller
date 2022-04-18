@@ -29,7 +29,7 @@ public final class MenuBar extends JMenuBar {
             miOpenSession, miOpenPreviousSession,
             miExportPoly, miExportPolyGroup, miExportPolyDisplayed, 
             miExportPair, miExportPairGroup, miExportPairDisplayed,
-            miExportNodes, miExportFacets, miExportRegionsNode, miExportRegionsVTU, miExportVTU, miExportAll,
+            miExportNodes, miExportNodes3D, miExportFacets, miExportRegionsNode, miExportRegionsVTU, miExportVTU, miExportAll,
             miExportOptionsStartingIndex, miExportOptionsPrecision,
             miChangeSectionColor, miPLCInfo,miDefineVOI,miMoveVOI,
             miCalibrationColor,miEdgeColor,miDefineFacetEdgeColor,miNormalColor,
@@ -95,6 +95,7 @@ public final class MenuBar extends JMenuBar {
         miExportPair = makeMenuItem("Model to .node/.ele files",listener);
         miExportVTU = makeMenuItem("Model to .vtu file",listener);
         miExportNodes = makeMenuItem("Nodes to .node file",listener);
+        miExportNodes3D = makeMenuItem("Nodes to 3D .node file",listener);
         miExportPolyGroup = makeMenuItem("Selected group to .poly file",listener);
         miExportPairGroup = makeMenuItem("Selected group to .node/.ele files",listener);
         miExportPolyDisplayed = makeMenuItem("Displayed groups to .poly file",listener);
@@ -321,6 +322,9 @@ public final class MenuBar extends JMenuBar {
         exportMenu.add(miExportPair);
         exportMenu.add(miExportVTU);
         exportMenu.add(miExportNodes);
+        if (!is3D) {
+            exportMenu.add(miExportNodes3D);
+        }
         exportMenu.add(miExportPolyGroup);
         exportMenu.add(miExportPairGroup);
         exportMenu.add(miExportPolyDisplayed);
@@ -452,7 +456,8 @@ public final class MenuBar extends JMenuBar {
         snapMenu.add(miSnapToGridVertical);
         snapMenu.add(miSnapToGridHorizontal);
         // Some other stuff:
-        if (is3D) { modelMenu.add(miTranslate); }
+        //if (is3D) { modelMenu.add(miTranslate); }
+        modelMenu.add(miTranslate); // I'm not entirely sure if this makes sense to make available for 2D models.
         modelMenu.add(miScalePixels);
         if (is3D) {
             modelMenu.add(miDefineVOI);
@@ -463,7 +468,8 @@ public final class MenuBar extends JMenuBar {
         modelMenu.add(addMenu);
         if (is3D) { addMenu.add(miAddNodesVOI); }
         addMenu.add(miAddNodesSection);
-        if (is3D) { addMenu.add(miAddNodeCoordinates); }
+        //if (is3D) { addMenu.add(miAddNodeCoordinates); }
+        addMenu.add(miAddNodeCoordinates); // I'm not entirely sure if this makes sense to make available for 2D models.
         // Find submenu:
         JMenu findMenu = new JMenu("Find");
         modelMenu.add(findMenu);
@@ -552,8 +558,7 @@ public final class MenuBar extends JMenuBar {
             Object src = event.getSource();
             if (src==null) { return; }
             // Deal with the MenuTaskMenuItems:
-            if (src instanceof MenuTaskMenuItem) {
-                MenuTaskMenuItem tmi = (MenuTaskMenuItem) src; // cast
+            if (src instanceof MenuTaskMenuItem tmi) {
                 tmi.execute();
                 return;
             }
@@ -565,7 +570,8 @@ public final class MenuBar extends JMenuBar {
             else if (src == miExportPoly) { controller.exportPoly(FileIOManager.EXPORT_ALL); }
             else if (src == miExportPair) { controller.exportPair(FileIOManager.EXPORT_ALL); }
             else if (src == miExportVTU) { controller.exportVTU(); }
-            else if (src == miExportNodes) { controller.exportNodes(); }
+            else if (src == miExportNodes) { controller.exportNodes(false); }
+            else if (src == miExportNodes3D) { controller.exportNodes(true); }
             else if (src == miExportPolyGroup) { controller.exportPoly(FileIOManager.EXPORT_CURRENT); }
             else if (src == miExportPairGroup) { controller.exportPair(FileIOManager.EXPORT_CURRENT); }
             else if (src == miExportPolyDisplayed) { controller.exportPoly(FileIOManager.EXPORT_DISPLAYED); }
