@@ -3,8 +3,14 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
-- Added menu item for exporting of a 3D node file for a 2D model, which is also exported with "all files" with suffix "\_3D".
 ### Bugs squashed
+
+## 2022-06-13
+### Changed
+- Added menu item for exporting of a 3D node file for a 2D model, which is also exported with "all files" with suffix "\_3D".
+- See bug squashed below: increased maximum number of facet groups split to 16 (can increase further in future if required).
+### Bugs squashed
+- When loading .node/.ele files, splitting facets into different groups based on attributes in the file was not working.
 
 ## 2021-12-06
 ### Changed
