@@ -232,7 +232,7 @@ public final class LoadNodesAndFacetsMenuTask extends ControlledMenuTask {
             int n = readFacetsReturnObj.getN();
             for (int i=0 ; i<n ; i++ ) {
                 // Create a new group object with default name:
-                String name = "_FacetAtts" + (i+1);
+                String name = currentGroup.getName() + "_FacetAtts" + (i+1);
                 Group g = new Group(name); // default colour will be black
                 // Add the group object to the list of new groups:
                 newFacetGroups.add(g);

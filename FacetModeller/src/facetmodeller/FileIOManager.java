@@ -698,7 +698,7 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         chooser.setCurrentDirectory(getSaveDirectory());
         chooser.addChoosableFileFilter(filter);
         chooser.setFileFilter(filter);
-        chooser.setDialogTitle(title);
+        chooser.setDialogTitle( title + " (suffixes \"_regions\" and \"_controls\" will be added to the file name specified)");
         chooser.setMultiSelectionEnabled(false);
         File file = getSessionFile();
         if (file!=null) {

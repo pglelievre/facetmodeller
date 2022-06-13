@@ -18,7 +18,7 @@ public class FacetVector {
 
     // -------------------- Properties -------------------
     
-    public static final int MAX_UNIQUE_ATTRIBUTES = 10; // file reading hardwire
+    public static final int MAX_UNIQUE_ATTRIBUTES = 16; // file reading hardwire
 
     // Favour composition over inheritence!
     private ArrayList<Facet> vector = new ArrayList<>();
@@ -544,11 +544,6 @@ public class FacetVector {
                     doAtts = false;
                     uniqueAttributes.clear();
                 }
-                // Check for single unique attribute value:
-                if (uniqueAttributes.size()<=1) {
-                    doAtts = false;
-                    uniqueAttributes.clear();
-                }
             }
             
             // Create a new facet object containing the appropriate nodes and add it to the facet vector:
@@ -572,6 +567,12 @@ public class FacetVector {
             }
             
         }
+        
+        // Check for single unique attribute value:
+        //if (uniqueAttributes.size()<=1) {
+        //    doAtts = false;
+        //    uniqueAttributes.clear();
+        //}
 
         // Close the file and return:
         FileUtils.close(reader);
