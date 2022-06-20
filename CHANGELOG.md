@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. Dates are i
 
 ## [Unreleased]
 ### Changed
+- Added radio button to turn on or off plotting of calibration points.
 ### Bugs squashed
 
 ## 2022-06-13
