@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. Dates are i
 - Added radio button to turn on or off plotting of calibration points.
 ### Bugs squashed
 - The "copy section" menu command did not work unless a .node and .ele file had been loaded in the selected section.
+- Tool panel and 3D viewing panel were not being shown/hidden based on information in loaded session file.
 
 ## 2022-06-13
 ### Changed
