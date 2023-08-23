@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. Dates are i
 ### Bugs squashed
 - The "copy section" menu command did not work unless a .node and .ele file had been loaded in the selected section.
 - Tool panel and 3D viewing panel were not being shown/hidden based on information in loaded session file.
+- After saving the session from the menu, pressing the save button on the tool bar behaved like you hadn't already saved.
 
 ## 2022-06-13
 ### Changed
