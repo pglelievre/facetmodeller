@@ -5,7 +5,7 @@ Free for academic use. Please see documentation for further policies.
 
 The "FacetModeller/dist8" folder contains the FacetModeller distribution as a compiled .jar file using JDK 8.
 
-The "FacetModeller/dist16" folder contains the FacetModeller distribution as a compiled .jar file using JDK 16.
+The "FacetModeller/dist19" folder contains the FacetModeller distribution as a compiled .jar file using JDK 19.
 
 If you are just hoping to run FacetModeller, grab one of those "dist" directories and launch file "FacetModeller.jar" inside it. If you want to do some development, read on.
 
