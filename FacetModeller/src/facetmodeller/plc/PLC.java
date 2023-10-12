@@ -840,7 +840,7 @@ public class PLC {
             String textLine = index + " "; // node index
             MyPoint3D p3 = node.getPoint3D(); // 3D coordinates
             if (ndim==3) {
-                textLine += p3.toString(TOLZERO,precision);
+                textLine += p3.toStringSpaces(TOLZERO,precision);
             } else {
                 MyPoint2D p2;
                 if (dir==null) {
@@ -925,7 +925,7 @@ public class PLC {
             String textLine = index + " ";
             MyPoint3D p3 = region.getPoint3D(); // 3D coordinates
             if (ndim==3) {
-                textLine += p3.toString(TOLZERO,precision);
+                textLine += p3.toStringSpaces(TOLZERO,precision);
             } else {
                 MyPoint2D p2;
                 if (dir==null) {
@@ -998,7 +998,7 @@ public class PLC {
                 p = p.deepCopy();
                 p.flipZ();
             }
-            textLine = p.toString(TOLZERO,precision);
+            textLine = p.toStringSpaces(TOLZERO,precision);
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
         textLine = "</DataArray>";
@@ -1187,7 +1187,7 @@ public class PLC {
                 p = p.deepCopy();
                 p.flipZ();
             }
-            textLine = p.toString(TOLZERO,precision);
+            textLine = p.toStringSpaces(TOLZERO,precision);
             if (!FileUtils.writeLine(writer,textLine)) { FileUtils.close(writer); return false; }
         }
         textLine = "</DataArray>";

@@ -41,6 +41,7 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
     private final FacetModeller controller;
     private int startingIndex = 1; // output starting index (0 or 1)
     private int precision = 6; // output precision, number of decimal places
+    private boolean saved = false; // set to true once a session has been saved or loaded
     
     // ------------------ Constructor ------------------
     
@@ -53,6 +54,11 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
     
     public int getStartingIndex() { return startingIndex; }
     public int getPrecision() { return precision; }
+    public boolean getSaved() { return saved; }
+    
+    // ------------------ Setters ------------------
+    
+    public void setSaved(boolean s) { saved = s; }
     
     // -------------------- Public methods --------------------
     
@@ -107,7 +113,7 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         
         // Ask for the name of the saved session file:
         if ( !prev || getSessionFile()==null ) {
-            boolean ok = openSession(controller,title,new SessionFilter());
+            boolean ok = chooseOpenSession(controller,title,new SessionFilter());
             if (!ok) { return; }
         }
 
@@ -170,6 +176,9 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
             }
         }
         
+        // Show or hide panels as indicated in the session file:
+        controller.showOrHidePanels();
+        
         // Load the new section image:
         //resetSectionImage();
         // Enable or disable menu items:
@@ -179,6 +188,9 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         
         // Set the window title bar to include the name of the session:
         controller.resetTitle();
+        
+        // Indicate that a session has been saved:
+        setSaved(true);
 
         // Show success dialog:
         if (errmsg==null) {

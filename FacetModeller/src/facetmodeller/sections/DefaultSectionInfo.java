@@ -191,9 +191,9 @@ public class DefaultSectionInfo {
         // Check the section is calibrated:
         if (isCalibrated()) {
             // Write the typed points:
-            textLine = typed1.toString();
+            textLine = typed1.toStringSpaces();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
-            textLine = typed2.toString();
+            textLine = typed2.toStringSpaces();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         } else {
             // Write "null" twice:

@@ -95,7 +95,7 @@ public class Region extends HasSection implements SessionIO {
         String textLine = Boolean.toString(isControl);
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write point coordinates, attribute and volume:
-        textLine = p2.toString();
+        textLine = p2.toStringSpaces();
 //        textLine = p2.toString() + " " + hasAttribute + " " + attribute + " " + hasVolume + " " + volume;
         return FileUtils.writeLine(writer,textLine);
     }

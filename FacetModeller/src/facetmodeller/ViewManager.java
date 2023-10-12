@@ -111,10 +111,24 @@ public final class ViewManager implements SessionIO {
         controller.setTitle( "FacetModeller  ----  " + controller.getSessionFile().getName() );
     }
     
+    /** Resets the showing/hiding of anything that can be shown/hidden (toggled things). */
+    public void showOrHidePanels() {
+        showOrHideToolPanel();
+        showOrHideView3DPanel();
+        showOrHideScroller();
+    }
+    
     /** Toggles the tool panel (show or hide). */
     public void toggleToolPanel() {
-        Container contentPane = controller.getContentPane();
         boolean show = controller.toggleShowToolPanel(); // toggles and returns toggled value
+        showOrHideToolPanel(show);
+    }
+    private void showOrHideToolPanel() {
+        boolean show = controller.getShowToolPanel();
+        showOrHideToolPanel(show);
+    }
+    private void showOrHideToolPanel(boolean show) {
+        Container contentPane = controller.getContentPane();
         if (show) {
             // Attach the toolPanel to the window:
             contentPane.add(toolPanel,BorderLayout.WEST);
@@ -129,6 +143,15 @@ public final class ViewManager implements SessionIO {
     public void toggleView3DPanel() {
         if (controller.is2D()) { return; }
         boolean show = controller.toggleShowView3DPanel(); // toggles and returns toggled value
+        showOrHideView3DPanel(show);
+    }
+    private void showOrHideView3DPanel() {
+        if (controller.is2D()) { return; }
+        boolean show = controller.getShowView3DPanel();
+        showOrHideView3DPanel(show);
+    }
+    private void showOrHideView3DPanel(boolean show) {
+        if (controller.is2D()) { return; }
         viewsPanel.showOrHideView3DPanel(show);
         controller.getContentPane().validate();
     }
@@ -136,6 +159,13 @@ public final class ViewManager implements SessionIO {
     /** Toggles the scrollers on the 2D image panel (show or hide). */
     public void toggleScroller() {
         boolean show = controller.toggleShowScroller(); // toggles and returns toggled value
+        showOrHideScroller(show);
+    }
+    private void showOrHideScroller() {
+        boolean show = controller.getShowScroller();
+        showOrHideScroller(show);
+    }
+    private void showOrHideScroller(boolean show) {
         viewsPanel.showOrHideScroller(show);
         controller.getContentPane().validate();
         updateCursorBar(null);
@@ -183,6 +213,7 @@ public final class ViewManager implements SessionIO {
     public boolean getShowNormalTails() { return toolPanel.getShowNormalTails(); }
     public boolean getShowNormalHeads() { return toolPanel.getShowNormalHeads(); }
     public boolean getShowRegions() { return toolPanel.getShowRegions(); }
+    public boolean getShowCalibration() { return toolPanel.getShowCalibration(); }
     public int getNodeColorBy() { return toolPanel.getNodeColorBy(); }
     public int getFacetColorBy() { return toolPanel.getFacetColorBy(); }
     public SectionVector getSelectedOtherSections() { return toolPanel.getSelectedOtherSections(); }

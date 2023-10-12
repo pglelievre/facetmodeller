@@ -2,6 +2,7 @@ package facetmodeller;
 
 import facetmodeller.clicktasks.ClickTask;
 import facetmodeller.commands.*;
+import facetmodeller.filters.SessionFilter;
 import facetmodeller.groups.Group;
 import facetmodeller.groups.GroupVector;
 import facetmodeller.gui.ClickModeManager;
@@ -26,7 +27,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
 
 /** For building 2D or 3D models.
  * @author Peter Lelievre
@@ -259,10 +259,6 @@ public final class FacetModeller extends JFrameExit {
         checkItemsEnabled();
     }
     
-    public boolean saveSession(String title, FileFilter filter, boolean saveAs) {
-        return fileIOManager.saveSession(this,title,filter,saveAs);
-    }
-    
     public void clearOriginNode3D() {
         // Clear the origin:
         viewManager.clearOrigin3D();
@@ -312,6 +308,9 @@ public final class FacetModeller extends JFrameExit {
     
     // ------------------- Wrappers -------------------
     // TODO: make sure wrapper methods are all used. I may want to comment them or make them private.
+    
+    // Wrappers for the OpenAndSave class:
+    public boolean chooseSaveSession(String title, boolean saveAs) { return fileIOManager.chooseSaveSession(this,title,new SessionFilter(),saveAs); }
     
     // Wrappers for the managers that should be used sparingly:
     public ModelManager getModelManager() { return modelManager; } // TODO: check this is used sparingly
@@ -404,6 +403,7 @@ public final class FacetModeller extends JFrameExit {
     
     // Wrappers for the ViewManager class:
     public void resetTitle() { viewManager.resetTitle(); }
+    public void showOrHidePanels() { viewManager.showOrHidePanels(); }
     public void toggleToolPanel() { viewManager.toggleToolPanel(); }
     public void toggleView3DPanel() { viewManager.toggleView3DPanel(); }
     public void toggleScroller() { viewManager.toggleScroller(); }
@@ -431,6 +431,7 @@ public final class FacetModeller extends JFrameExit {
     public boolean getShowNormalTails() { return viewManager.getShowNormalTails(); }
     public boolean getShowNormalHeads() { return viewManager.getShowNormalHeads(); }
     public boolean getShowRegions() { return viewManager.getShowRegions(); }
+    public boolean getShowCalibration() { return viewManager.getShowCalibration(); }
     public int getNodeColorBy() { return viewManager.getNodeColorBy(); }
     public int getFacetColorBy() { return viewManager.getFacetColorBy(); }
     public SectionVector getSelectedOtherSections() { return viewManager.getSelectedOtherSections(); }
@@ -586,7 +587,9 @@ public final class FacetModeller extends JFrameExit {
     public Facet calculateLineFacet(MyPoint2D p) { return synthesizer.calculateLineFacet(p); }
     public int whichTemporaryOverlayIsClosest(MyPoint2D p) { return synthesizer.whichIsClosest(p); }
     
-    // Wrappers for the FacetModellerIO class:
+    // Wrappers for the fileIOManager class:
+    public boolean getSaved() { return fileIOManager.getSaved(); }
+    public void setSaved(boolean s) { fileIOManager.setSaved(s); }
     public File getSessionFile() { return fileIOManager.getSessionFile(); }
     public void setSessionFile(File f) { fileIOManager.setSessionFile(f); }
     public File getOpenDirectory() { return fileIOManager.getOpenDirectory(); }

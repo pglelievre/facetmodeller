@@ -179,7 +179,7 @@ public class ImageSection implements SessionIO {
         if (p==null) {
             input = Dialogs.input(con,prompt,title);
         } else {
-            input = Dialogs.input(con,prompt,title,p.toString());
+            input = Dialogs.input(con,prompt,title,p.toStringSpaces());
         }
         if (input==null) { return null; } // user cancelled
         input = input.trim();
@@ -275,7 +275,7 @@ public class ImageSection implements SessionIO {
             if (p==null) {
                 input = Dialogs.input(con,prompt,title);
             } else {
-                input = Dialogs.input(con,prompt,title,p.toString());
+                input = Dialogs.input(con,prompt,title,p.toStringSpaces());
             }
             if (input==null) { return null; } // user cancelled
             input = input.trim();
@@ -351,9 +351,9 @@ public class ImageSection implements SessionIO {
         // Check the section is calibrated:
         if (isCalibrated()) {
             // Write clicked points:
-            textLine = clicked1.toString();
+            textLine = clicked1.toStringSpaces();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
-            textLine = clicked2.toString();
+            textLine = clicked2.toStringSpaces();
             if (!FileUtils.writeLine(writer,textLine)) { return false; }
         } else {
             // Write "null" twice:

@@ -303,7 +303,7 @@ public final class PaintingOptions extends CommonPaintingOptions implements Sess
         if (origin3D==null) {
             textLine = "null";
         } else {
-            textLine = origin3D.toString();
+            textLine = origin3D.toStringSpaces();
         }
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         // Write the index of the node to use as the origin of the 3D viewer, and the normalLength, and the transparency factor, on the same line:

@@ -229,7 +229,7 @@ public class ModelManager implements SessionIO {
         prompt = "Enter the Easting limits:";
         if (hasVOI()) {
             p = getEastingLimits();
-            input = Dialogs.input(con,prompt,title,p.toString());
+            input = Dialogs.input(con,prompt,title,p.toStringSpaces());
         } else {
             input = Dialogs.input(con,prompt,title);
         }
@@ -252,7 +252,7 @@ public class ModelManager implements SessionIO {
         prompt = "Enter the Northing limits:";
         if (hasVOI()) {
             p = getNorthingLimits();
-            input = Dialogs.input(con,prompt,title,p.toString());
+            input = Dialogs.input(con,prompt,title,p.toStringSpaces());
         } else {
             input = Dialogs.input(con,prompt,title);
         }
@@ -275,7 +275,7 @@ public class ModelManager implements SessionIO {
         prompt = "Enter the Elevation limits:";
         if (hasVOI()) {
             p = getElevationLimits();
-            input = Dialogs.input(con,prompt,title,p.toString());
+            input = Dialogs.input(con,prompt,title,p.toStringSpaces());
         } else {
             input = Dialogs.input(con,prompt,title);
         }

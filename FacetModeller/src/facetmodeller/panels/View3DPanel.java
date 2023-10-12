@@ -484,7 +484,6 @@ public class View3DPanel extends PanningPanel implements SessionIO {
         }
         
         // Add regions to the scene:
-        if (pt1==null) {
         if (controller.getShowRegions()) {
             for (int i=0 ; i<model.numberOfRegions() ; i++ ) {
                 Region region = model.getRegion(i);
@@ -495,11 +494,17 @@ public class View3DPanel extends PanningPanel implements SessionIO {
                 // Project the region point:
                 MyPoint3D p = spaceToImage(region.getPoint3D());
                 if (p==null) { continue; } // region is behind camera
-                // Process the region through the zbuffer:
-                zbuf.putNode(p,region.getColor(),controller.getPointWidth());
+                // Determine the painting colour for the region point:
+                Color col = region.getColor();
+                // Paint the region point:
+                if (pt1==null) {
+                    zbuf.putNode(p,col,controller.getPointWidth());
+                } else {
+                    g2.setPaint(col);
+                    g2.fillOval( (int)p.getX() - w/2 , (int)p.getY() - w/2 , w , w );
+                }
             }
         }
-        } // if (pt1==null) // not rotating
         
         // Draw the outlines of the selected sections:
         if (pt1==null) {

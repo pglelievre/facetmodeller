@@ -68,7 +68,7 @@ public final class ChangeNodeCoordsClickTask extends ControlledClickTask {
             // Ask the user for the new node coordinates:
             String message = "You must enter three numeric values separated by spaces. Please try again.";
             String prompt = "Enter the new 3D spatial coordinates (x y z) for the node, separated by spaces:";
-            String input = Dialogs.input(controller,prompt,title(),p3.toString());
+            String input = Dialogs.input(controller,prompt,title(),p3.toStringSpaces());
             if (input==null) { return; } // user cancelled
             input = input.trim();
             String s[];
@@ -103,7 +103,7 @@ public final class ChangeNodeCoordsClickTask extends ControlledClickTask {
             // Ask the user for the new node coordinates:
             String message = "You must enter two numeric values separated by spaces. Please try again.";
             String prompt = "Enter the new 2D pixel coordinates (x y) for the node, separated by spaces:";
-            String input = Dialogs.input(controller,prompt,title(),p2.toString());
+            String input = Dialogs.input(controller,prompt,title(),p2.toStringSpaces());
             if (input==null) { return; } // user cancelled
             input = input.trim();
             String s[];

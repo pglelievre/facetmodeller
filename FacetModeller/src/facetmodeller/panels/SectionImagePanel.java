@@ -636,7 +636,7 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
 
         // Paint the calibration points (if not topography):
         //boolean isTopo = currentSection.isTopo();
-        if (hasImage && currentSection.isCalibrated()) {
+        if ( controller.getShowCalibration() && hasImage && currentSection.isCalibrated() ) {
             g2.setPaint(controller.getCalibrationColor());
             PaintingUtils.paintPoint(g2,imageToPanel,currentSection.getClicked1(),nodeWidth,false);
             PaintingUtils.paintPoint(g2,imageToPanel,currentSection.getClicked2(),nodeWidth,false);
@@ -969,7 +969,7 @@ public final class SectionImagePanel extends ImagePanel implements SessionIO { /
         if (origin==null) {
             textLine = "null";
         } else {
-            textLine = origin.toString();
+            textLine = origin.toStringSpaces();
         }
         return FileUtils.writeLine(writer,textLine);
     }

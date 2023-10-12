@@ -209,7 +209,7 @@ public class NoImageCrossSection extends CrossSection {
         if (p==null) {
             input = Dialogs.input(con,prompt,title);
         } else {
-            input = Dialogs.input(con,prompt,title,p.toString());
+            input = Dialogs.input(con,prompt,title,p.toStringSpaces());
         }
         if (input==null) { return false; } // user cancelled
         input = input.trim();
@@ -246,7 +246,7 @@ public class NoImageCrossSection extends CrossSection {
         if (p==null) {
             input = Dialogs.input(con,prompt,title);
         } else {
-            input = Dialogs.input(con,prompt,title,p.toString());
+            input = Dialogs.input(con,prompt,title,p.toStringSpaces());
         }
         if (input==null) { return false; } // user cancelled
         input = input.trim();

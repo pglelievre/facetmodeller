@@ -38,16 +38,16 @@ public final class CursorTextBar extends TextBar {
         if ( section.isCalibrated() ) {
             MyPoint3D p3 = section.imageToSpace(p2);
             if (p3==null) {
-                s = "Uncalibrated = " + p2.print();
+                s = "Uncalibrated = " + p2.toStringParentheses();
             } else {
-                s = "Calibrated = " + p3.print();
+                s = "Calibrated = " + p3.toStringParentheses();
                 // Add the along-profile coordinates if required:
                 //if (ndim==2) {
                 //    s += " ; r = " + p3.normXY();
                 //}
             }
         } else {
-            s = "Uncalibrated = " + p2.print();
+            s = "Uncalibrated = " + p2.toStringParentheses();
         }
         // Display the text:
         setText(s);

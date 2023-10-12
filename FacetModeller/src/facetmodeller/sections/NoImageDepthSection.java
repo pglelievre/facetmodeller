@@ -75,8 +75,16 @@ public class NoImageDepthSection extends DepthSection {
         this.noImageSection.deepCopyTo(newSection.noImageSection);
         // Deep copy the rest of the properties for NoImageDepthSection objects:
         newSection.isTopo = this.isTopo;
-        newSection.nodeFile = new File(this.nodeFile.toURI());
-        newSection.eleFile = new File(this.eleFile.toURI());
+        URI nodeURI=null;
+        URI eleURI=null;
+        if (nodeFile!=null) nodeURI = this.nodeFile.toURI();
+        if (eleFile!=null) eleURI = this.eleFile.toURI();
+        File nodeF=null;
+        File eleF=null;
+        if (nodeURI!=null) nodeF = new File(nodeURI);
+        if (eleURI!=null) eleF = new File(eleURI);
+        newSection.nodeFile = nodeF;
+        newSection.eleFile = eleF;
         // Return the new object:
         return newSection;
     }
@@ -239,7 +247,7 @@ public class NoImageDepthSection extends DepthSection {
         if (p1==null) {
             input = Dialogs.input(con,prompt,title);
         } else {
-            input = Dialogs.input(con,prompt,title,p1.toString());
+            input = Dialogs.input(con,prompt,title,p1.toStringSpaces());
         }
         if (input==null) { return false; } // user cancelled
         input = input.trim();
@@ -265,7 +273,7 @@ public class NoImageDepthSection extends DepthSection {
         if (p2==null) {
             input = Dialogs.input(con,prompt,title);
         } else {
-            input = Dialogs.input(con,prompt,title,p2.toString());
+            input = Dialogs.input(con,prompt,title,p2.toStringSpaces());
         }
         if (input==null) { return false; } // user cancelled
         input = input.trim();

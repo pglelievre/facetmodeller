@@ -202,7 +202,7 @@ public final class Projector3D implements SessionIO {
         if (spaceOrigin==null) {
             textLine = "null";
         } else {
-            textLine = spaceOrigin.toString();
+            textLine = spaceOrigin.toStringSpaces();
         }
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         
@@ -210,7 +210,7 @@ public final class Projector3D implements SessionIO {
         if (imageOrigin==null) {
             textLine = "null";
         } else {
-            textLine = imageOrigin.toString();
+            textLine = imageOrigin.toStringSpaces();
         }
         if (!FileUtils.writeLine(writer,textLine)) { return false; }
         

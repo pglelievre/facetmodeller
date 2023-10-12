@@ -10,7 +10,7 @@ import java.io.File;
 public final class SaveSessionMenuTask extends ControlledMenuTask {
     
     private final boolean saveAs;
-    private boolean saved=false; // set to true once a session has been saved successfully
+    //private boolean saved=false; // set to true once a session has been saved successfully
     
     public SaveSessionMenuTask(FacetModeller con, boolean b) {
         super(con);
@@ -56,7 +56,8 @@ public final class SaveSessionMenuTask extends ControlledMenuTask {
         // Ask for the file name for saving if required:
         // The filter doesn't seem to be working, but it is actually doing what it should
         // according to Mac look-and-feel guidelines, which I think are pretty silly here.
-        boolean ok = controller.saveSession(title(),new SessionFilter(),(saveAs || !saved));
+        boolean saved=controller.getSaved();
+        boolean ok = controller.chooseSaveSession(title(),(saveAs || !saved));
         if (!ok) { return; }
         // Give the file the .fms extension:
         File sessionFile = controller.getSessionFile();
@@ -80,7 +81,7 @@ public final class SaveSessionMenuTask extends ControlledMenuTask {
             return;
         }
         // Set the saved flag to true:
-        saved = true;
+        controller.setSaved(true);
         // Set the window title bar to include the name of the session:
         controller.resetTitle();
     }
