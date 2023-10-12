@@ -9,6 +9,6 @@ The "FacetModeller/dist19" folder contains the FacetModeller distribution as a c
 
 If you are just hoping to run FacetModeller, grab one of those "dist" directories and launch file "FacetModeller.jar" inside it. If you want to do some development, read on.
 
-Directory "FacetModeller" contains Java source code. That code is dependend on the source code in my "mylibrary" repository, subdirectory "MyLibrary".
+Directory "FacetModeller" contains Java source code. That code is dependent on the source code in my "mylibrary" repository, subdirectory "MyLibrary".
 
 Directory "Documentation" contains ... you guessed it ... documentation. Please see the other readme file inside that directory for more information.
