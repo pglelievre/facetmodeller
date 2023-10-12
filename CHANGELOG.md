@@ -1,7 +1,11 @@
 # Changelog
-All notable changes to this project will be documented in this file. Dates are in format YYYY-MM-DD.
+All notable changes to this project will be documented in this file. Dates are in format YYYY-MM-DD. These changes relate only to the compiled jar files in the dist directories. See commit logs for the src files for more granular information on changes.
 
 ## [Unreleased]
+### Changed
+### Bugs squashed
+
+## 2023-10-12
 ### Changed
 - Added radio button to turn on or off plotting of calibration points.
 - Region points are now shown in the 3D viewing panel when rotating.
