@@ -113,12 +113,9 @@ public final class FacetModeller extends JFrameExit {
     
     // -------------------- Implemented methods from class JFrameExit --------------------
     
-    private String versionNumberString() {
-        return "3.0"; // you must be able to parse this as a double
-    }
     @Override
-    protected String versionString() {
-        return versionNumberString(); // I could add more information here e.g. a date.
+    protected String versionNumberString() {
+        return "3.0"; // you must be able to parse this as a double
     }
     @Override
     protected String rulesString() {
@@ -133,11 +130,6 @@ public final class FacetModeller extends JFrameExit {
     @Override
     protected String contactString() {
         return "Contact: plelievre@mta.ca";
-    }
-    
-    public int versionInt() {
-        double d =  Double.parseDouble( versionNumberString() );
-        return (int)Math.floor(d);
     }
     
     // -------------------- Methods called by the old read methods in the SessionLoader class (should not be used elsewhere) --------------------
@@ -251,14 +243,6 @@ public final class FacetModeller extends JFrameExit {
         }
     }
     
-    public void openSession(boolean prev) {
-        fileIOManager.openSession(prev);
-        // Clear the undo information:
-        undoVector.clear();
-        // Enable or disable menu items:
-        checkItemsEnabled();
-    }
-    
     public void clearOriginNode3D() {
         // Clear the origin:
         viewManager.clearOrigin3D();
@@ -310,6 +294,7 @@ public final class FacetModeller extends JFrameExit {
     // TODO: make sure wrapper methods are all used. I may want to comment them or make them private.
     
     // Wrappers for the OpenAndSave class:
+    public boolean chooseOpenSession(String title) { return fileIOManager.chooseOpenSession(this,title,new SessionFilter()); }
     public boolean chooseSaveSession(String title, boolean saveAs) { return fileIOManager.chooseSaveSession(this,title,new SessionFilter(),saveAs); }
     
     // Wrappers for the managers that should be used sparingly:
@@ -614,5 +599,6 @@ public final class FacetModeller extends JFrameExit {
     public Command undoVectorGet() { return undoVector.get(); }
     public void undoVectorAdd(Command com) { undoVector.add(com); }
     public void undoVectorRemove() { undoVector.remove(); }
+    public void undoVectorClear() { undoVector.clear(); }
 
 }

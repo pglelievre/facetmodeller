@@ -1,18 +1,10 @@
 package facetmodeller;
 
 import dialogs.Dialogs;
-import facetmodeller.commands.AddFacetCommandVector;
-import facetmodeller.commands.AddGroupCommand;
-import facetmodeller.commands.AddNodeCommandVector;
-import facetmodeller.filters.SessionFilter;
 import facetmodeller.filters.VTUFilter;
 import facetmodeller.groups.Group;
 import facetmodeller.groups.GroupVector;
-import facetmodeller.plc.FacetVector;
-import facetmodeller.plc.NodeVector;
 import facetmodeller.plc.PLC;
-import facetmodeller.sections.NoImageDepthSection;
-import facetmodeller.sections.Section;
 import fileio.FileUtils;
 import fileio.PreviousSession;
 import fileio.SessionIO;
@@ -20,7 +12,6 @@ import filters.EleFilter;
 import filters.NodeFilter;
 import filters.PolyFilter;
 import geometry.Dir3D;
-import geometry.MyPoint3D;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -73,13 +64,15 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         }
         int response = Dialogs.question(controller,message,title,"0","1","Cancel",def);
         switch (response) {
-            case Dialogs.YES_OPTION:
+            case Dialogs.YES_OPTION -> {
                 startingIndex = 0;
-                break;
-            case Dialogs.NO_OPTION:
+            }
+            case Dialogs.NO_OPTION -> {
                 startingIndex = 1;
-                break;
-            default: // user cancelled
+            }
+            default -> {
+                // user cancelled (do nothing)
+            }
         }
     }
     
@@ -105,181 +98,6 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         precision = p;
     }
     
-    /** Loads a previously saved FacetModeller session.
-     * @param prev If true then the previous session is opened without asking user for the file. */
-    public void openSession(boolean prev) {
-
-        String title = "Open Session"; // a title for some dialogs
-        
-        // Ask for the name of the saved session file:
-        if ( !prev || getSessionFile()==null ) {
-            boolean ok = chooseOpenSession(controller,title,new SessionFilter());
-            if (!ok) { return; }
-        }
-
-        // Ask if they want to overwrite or merge into the currently loaded session:
-        boolean merge;
-        final int ndim = controller.numberOfDimensions();
-        if ( ndim==2 || ( controller.plcIsEmpty() && !controller.hasSections() && !controller.hasGroups() ) ) {
-            merge = false;
-        } else {
-            int response = Dialogs.question(controller,"Overwrite or Merge with currently loaded session?", title,"Overwrite","Merge","Cancel","Overwrite");
-            switch (response) {
-                case Dialogs.YES_OPTION:
-                    // "Overwrite"
-                    merge = false;
-                    break;
-                case Dialogs.NO_OPTION:
-                    // "Merge"
-                    merge = true;
-                    break;
-                default:
-                    return; // user cancelled
-            }
-        }
-
-        // Tell user to be patient:
-        Dialogs.inform(controller,"This may take a while if there are large section images. Please patiently wait for the confirmation dialog.",title);
-        
-        // Load the session file:
-        SessionLoader.LoadSessionReturnObject out = SessionLoader.loadSessionAscii(controller, getSessionFile(),merge);
-
-        // Check for error:
-        if (out.message!=null) {
-            String s = "Failed to open session.";
-            if (!out.message.isEmpty()) {
-                s = s + " Error message follows:" + System.lineSeparator() + out.message;
-            }
-            Dialogs.error(controller,s,title);
-            return;
-        }
-
-        // Don't allow the number of dimensions to change:
-        if (ndim!=controller.numberOfDimensions()) { 
-            Dialogs.error(controller,"The number of dimensions was not correct.",title);
-            return;
-        }
-        
-        // May need to perform some further processing:
-        String errmsg=null;
-        if (out.version==2) {
-            // Loop over each section:
-            for (int i=0 ; i<controller.numberOfSections() ; i++ ) {
-                // Check for NoImageDepthSection:
-                Section section = controller.getSection(i);
-                if (section instanceof NoImageDepthSection) {
-                    NoImageDepthSection noImageDepthSection = (NoImageDepthSection) section; // cast
-                    // Read the node and ele file and do all the required processing:
-                    errmsg = loadNodeAndEle(noImageDepthSection);
-                    if (errmsg!=null) { break; }
-                }
-            }
-        }
-        
-        // Show or hide panels as indicated in the session file:
-        controller.showOrHidePanels();
-        
-        // Load the new section image:
-        //resetSectionImage();
-        // Enable or disable menu items:
-        controller.checkItemsEnabled();
-        // Repaint:
-        controller.redraw();
-        
-        // Set the window title bar to include the name of the session:
-        controller.resetTitle();
-        
-        // Indicate that a session has been saved:
-        setSaved(true);
-
-        // Show success dialog:
-        if (errmsg==null) {
-            if (out.version==controller.versionInt()) {
-                Dialogs.inform(controller,"Session loaded successfully.",title);
-            } else {
-                Dialogs.warning(controller,"Session loaded successfully from earlier version " + out.version + " of FacetModeller.",title);
-            }
-        } else {
-            String s = "Failed to open session completely from earlier" + System.lineSeparator()
-                    + "version 2 of FacetModeller. Error message follows:" + System.lineSeparator() + errmsg;
-            Dialogs.warning(controller,s,title);
-        }
-        
-    }
-    
-    public String loadNodeAndEle(NoImageDepthSection section) {
-        
-        // Get the node and ele files:
-        File nodeFile = section.getNodeFile();
-        File eleFile = section.getEleFile();
-        
-        // Check for a node file:
-        if (nodeFile==null) { return null; }
-        
-        // Read the node file:
-        NodeVector nodes = new NodeVector();
-        NodeVector.ReadNodesReturnObject readNodesReturnObj = nodes.readNodes(nodeFile,-2);
-        String errmsg = readNodesReturnObj.getErrmsg();
-        if (errmsg!=null) {
-            return errmsg + System.lineSeparator() + nodeFile;
-        }
-        
-        // Get number of dimensions:
-        int ndim = controller.numberOfDimensions();
-
-        // Read the ele file if present:
-        FacetVector facets = new FacetVector();
-        if (eleFile!=null) {
-            int startInd = readNodesReturnObj.getStartingIndex();
-            FacetVector.ReadFacetsReturnObject readFacetsReturnObj = facets.readEle(controller,"",eleFile,startInd,nodes,ndim,false);
-            errmsg = readFacetsReturnObj.getErrmsg();
-            if (errmsg!=null) {
-                return errmsg + System.lineSeparator() + eleFile;
-            }
-            // Delete any unrequired nodes:
-            if (readFacetsReturnObj.getDoRem()) {
-                nodes.removeUnused();
-            }
-        }
-        
-        // Define a new group for the nodes and facets:
-        Group group = new Group("TOPOGRAPHY");
-        
-        // Add section and group membership to the new nodes and optional facets:
-        nodes.setSection(section);
-        nodes.setGroup(group);
-        facets.setGroup(group);
-        
-        // Calculate the range of the nodes:
-        MyPoint3D p1 = nodes.rangeMin();
-        MyPoint3D p2 = nodes.rangeMax();
-        // Add a little padding:
-        p1.times(1.1); // HARDWIRE
-        p2.times(1.1); // HARDWIRE
-        
-        // Calibrate the section:
-        double x1 = p1.getX();
-        double x2 = p2.getX();
-        double y1 = p1.getY();
-        double y2 = p2.getY();
-        double z1 = p1.getZ();
-        double z2 = p2.getZ();
-        section.setTyped1( new MyPoint3D(x1,y2,z1) ); // corresponds to top left pixel (0,0)
-        section.setTyped2( new MyPoint3D(x2,y1,z2) ); // corresponds to bottom right pixel (height,width)
-        
-        // Add the new group:
-        new AddGroupCommand(controller,group,0).execute();
-        
-        // Add the new nodes and optional facets to the plc, section, group:
-        ModelManager model = controller.getModelManager();
-        new AddNodeCommandVector(model,nodes,"").execute();
-        new AddFacetCommandVector(model,facets).execute();
-        
-        // Return successfully:
-        return null;
-        
-    }
-    
     /** Exports to a poly file.
      * @param whatToExport Specifies what to export using one of the EXPORT_* integers defined in this class. */
     public void exportPoly(int whatToExport) {
@@ -295,24 +113,22 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         PLC plc;
         controller.resetIDs();
         switch (whatToExport) {
-            case EXPORT_CURRENT:
+            case EXPORT_CURRENT -> {
                 Group g = controller.getSelectedCurrentGroup();
                 plc = new PLC();
                 plc.addNodes(g.getNodes());
                 plc.addFacets(g.getFacets());
                 plc.resetIDs();
-                break;
-            case EXPORT_DISPLAYED:
+            }
+            case EXPORT_DISPLAYED -> {
                 GroupVector gn = controller.getSelectedNodeGroups();
                 GroupVector gf = controller.getSelectedFacetGroups();
                 plc = new PLC();
                 plc.addNodes(gn.getNodes());
                 plc.addFacets(gf.getFacets());
                 plc.resetIDs();
-                break;
-            default:
-                plc = controller.getPLC();
-                break;
+            }
+            default -> plc = controller.getPLC();
         }
 
         // Check nodes and facets exist:
@@ -331,14 +147,12 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
             String message = "The region attributes can be the region indices or region group IDs. Which would you like to use?";
             int response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
             switch (response) {
-                case Dialogs.YES_OPTION:
-                    byIndex = true;
-                    break;
-                case Dialogs.NO_OPTION:
-                    byIndex = false;
-                    break;
-                default: // user cancelled
+                case Dialogs.YES_OPTION -> byIndex = true;
+                case Dialogs.NO_OPTION -> byIndex = false;
+                default -> {
+                    // user cancelled
                     return;
+                }
             }
         }
 
@@ -408,14 +222,14 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         PLC plc;
         controller.resetIDs();
         switch (whatToExport) {
-            case EXPORT_CURRENT:
+            case EXPORT_CURRENT -> {
                 Group g = controller.getSelectedCurrentGroup();
                 plc = new PLC();
                 plc.addNodes(g.getNodes());
                 plc.addFacets(g.getFacets());
                 plc.resetIDs();
-                break;
-            case EXPORT_DISPLAYED:
+            }
+            case EXPORT_DISPLAYED -> {
                 GroupVector gn = controller.getSelectedNodeGroups();
                 GroupVector gf = controller.getSelectedFacetGroups();
                 if (gn==null && gf==null) {
@@ -426,10 +240,8 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
                 if (gn!=null) { plc.addNodes(gn.getNodes()); }
                 if (gf!=null) { plc.addFacets(gf.getFacets()); }
                 plc.resetIDs();
-                break;
-            default:
-                plc = controller.getPLC();
-                break;
+            }
+            default -> plc = controller.getPLC();
         }
 
         // Check nodes and facets exist:
@@ -607,16 +419,13 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
                     + "or you can write a non-standard variable facet type .ele file.";
             int response = Dialogs.question(controller,message,title,"Standard","Non-Standard","Cancel");
             switch (response) {
-                case Dialogs.YES_OPTION:
-                    // standard
+                case Dialogs.YES_OPTION -> // standard
                     writevar = false;
-                    break;
-                case Dialogs.NO_OPTION:
-                    // non-standard
+                case Dialogs.NO_OPTION -> // non-standard
                     writevar = true;
-                    break;
-                default:
+                default -> {
                     return;
+                }
             }
         } else {
             writevar = false; // standard
@@ -694,14 +503,12 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
         String message = "The region attributes can be the region indices or region group IDs. Which would you like to use?";
         int response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
         switch (response) {
-            case Dialogs.YES_OPTION:
-                byIndex = true;
-                break;
-            case Dialogs.NO_OPTION:
-                byIndex = false;
-                break;
-            default: // user cancelled
+            case Dialogs.YES_OPTION -> byIndex = true;
+            case Dialogs.NO_OPTION -> byIndex = false;
+            default -> {
+                // user cancelled
                 return;
+            }
         }
         
         // Ask for the file name for saving:
@@ -959,14 +766,12 @@ public final class FileIOManager extends PreviousSession implements SessionIO {
             String message = "The region attributes can be the region indices or region group IDs. Which would you like to use?";
             response = Dialogs.question(controller,message,title,"Indices","Group IDs","Cancel","Indices");
             switch (response) {
-                case Dialogs.YES_OPTION:
-                    byIndex = true;
-                    break;
-                case Dialogs.NO_OPTION:
-                    byIndex = false;
-                    break;
-                default: // user cancelled
+                case Dialogs.YES_OPTION -> byIndex = true;
+                case Dialogs.NO_OPTION -> byIndex = false;
+                default -> {
+                    // user cancelled
                     return;
+                }
             }
         }
         

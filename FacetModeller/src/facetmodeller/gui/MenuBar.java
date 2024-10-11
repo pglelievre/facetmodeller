@@ -26,7 +26,6 @@ public final class MenuBar extends JMenuBar {
 
     // Second level menu items:
     private JMenuItem miAbout, miExit,
-            miOpenSession, miOpenPreviousSession,
             miExportPoly, miExportPolyGroup, miExportPolyDisplayed, 
             miExportPair, miExportPairGroup, miExportPairDisplayed,
             miExportNodes, miExportNodes3D, miExportFacets, miExportRegionsNode, miExportRegionsVTU, miExportVTU, miExportAll,
@@ -45,7 +44,7 @@ public final class MenuBar extends JMenuBar {
             miDefinePolyFacets,miDefinePolyFacetsTri,miDefineTriFacets,miDefineLineFacets,miDeleteFacets,miChangeFacets,
             miReverseFacets,miEdgeFlip,miMarkFacetsToggle,miMarkFacetsTrue,miMarkFacetsFalse,miAddNodesInTriFacets,miAddNodesOnEdges,
             miAddRegions,miDeleteRegions,miPropagateNormals;
-    private MenuTaskMenuItem miUndo,miSaveSession,miSaveSessionAs,miLoadNodesAndFacets,
+    private MenuTaskMenuItem miUndo,miLoadSession,miLoadLastSession,miSaveSession,miSaveSessionAs,miLoadNodesAndFacets,
             miLoadCrossSectionImages,miLoadDepthSectionImages,miLoadGroups,miSaveGroups,
             miSectionInfo,miNewNoImageCrossSection,miNewNoImageDepthSection,miNewSnapshotSection,miResetSnapshotSection,miReduceSectionImage,
             miReverseGroupOrder,miGroupUp1,miGroupUp2,miGroupTop,miGroupDown1,miGroupDown2,miGroupBottom,
@@ -87,8 +86,8 @@ public final class MenuBar extends JMenuBar {
         miLoadCrossSectionImages = makeMenuTaskMenuItem(new LoadSectionFilesMenuTask(controller,true),listener);
         miLoadDepthSectionImages = makeMenuTaskMenuItem(new LoadSectionFilesMenuTask(controller,false),listener);
         miLoadNodesAndFacets = makeMenuTaskMenuItem(new LoadNodesAndFacetsMenuTask(controller),listener);
-        miOpenSession = makeMenuItem("Open session","Open a previously saved session",listener);
-        miOpenPreviousSession = makeMenuItem("Open previous session","Open the last opened session",listener);
+        miLoadSession = makeMenuTaskMenuItem(new LoadSessionMenuTask(controller,false),listener);
+        miLoadLastSession = makeMenuTaskMenuItem(new LoadSessionMenuTask(controller,true),listener);
         miSaveSession = makeMenuTaskMenuItem(new SaveSessionMenuTask(controller,false),listener);
         miSaveSessionAs = makeMenuTaskMenuItem(new SaveSessionMenuTask(controller,true),listener);
         miExportPoly = makeMenuItem("Model to .poly file",listener);
@@ -311,8 +310,8 @@ public final class MenuBar extends JMenuBar {
         fileMenu.add(miLoadCrossSectionImages);
         fileMenu.add(miLoadDepthSectionImages);
         fileMenu.add(miLoadNodesAndFacets);
-        fileMenu.add(miOpenSession);
-        fileMenu.add(miOpenPreviousSession);
+        fileMenu.add(miLoadSession);
+        fileMenu.add(miLoadLastSession);
         fileMenu.add(miSaveSession);
         fileMenu.add(miSaveSessionAs);
         // Export submenu:
@@ -567,8 +566,6 @@ public final class MenuBar extends JMenuBar {
             // Deal with the other menu items:
             if (src == miExit) { controller.exit(); }
             else if (src == miAbout) { controller.about(); }
-            else if (src == miOpenSession) { controller.openSession(false); }
-            else if (src == miOpenPreviousSession) { controller.openSession(true); }
             else if (src == miExportPoly) { controller.exportPoly(FileIOManager.EXPORT_ALL); }
             else if (src == miExportPair) { controller.exportPair(FileIOManager.EXPORT_ALL); }
             else if (src == miExportVTU) { controller.exportVTU(); }
@@ -688,8 +685,6 @@ public final class MenuBar extends JMenuBar {
         miExit.setEnabled(true);
         
         // File menu items:
-        miOpenSession.setEnabled(true);
-        miOpenPreviousSession.setEnabled(true);
         miExportPoly.setEnabled(hasPLCandAllCalibrated);
         miExportPair.setEnabled(hasPLCandAllCalibrated);
         miExportVTU.setEnabled(hasPLCandAllCalibrated);

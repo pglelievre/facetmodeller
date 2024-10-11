@@ -26,7 +26,8 @@ import java.net.URISyntaxException;
 import geometry.Matrix3D;
 
 /** Static methods for loading a previously saved session.
- * Everytime the version is changed a new load method should be added to this class.
+ * Every time the floored version number (e.g. 1.*) is changed, a new load method should be added to this class.
+ * The floored version number should only be changed if a new load method is completely required!
  * The names of the older static methods should be suffixed with their version numbers.
  * @author Peter Lelievre
  */
@@ -69,7 +70,8 @@ public class SessionLoader {
     }
 
     private static LoadSessionReturnObject loadSessionAscii3(FacetModeller controller, File file, boolean merge) {
-        int loadVersion = 3;
+        
+        int loadVersion = 3; // THIS VALUE MUST BE THE SAME AS THE METHOD PREFIX
 
         // Open the file for reading:
         BufferedReader reader = FileUtils.openForReading(file);
@@ -81,18 +83,21 @@ public class SessionLoader {
         boolean ok = true;
         String message = "Unspecified file format error.";
         while(true) {
+            String textLine;
+            String[] ss;
 
             // Skip the first line if commented:
-            String textLine = FileUtils.readLine(reader);
+            textLine = FileUtils.readLine(reader);
             if (textLine==null) { ok=false; message="Skipping first line."; break; }
-            
-            // Read the floored version number:
             if (textLine.startsWith("#")) { // (skip the first line if commented)
                 textLine = FileUtils.readLine(reader);
             }
+            
+            // Read the floored version number:
             if (textLine==null) { ok=false; message="Reading floored version number."; break; }
             textLine = textLine.trim();
-            String[] ss = textLine.split("[ ]+",2);
+            ss = textLine.split("[ ]+");
+            if (ss.length<1) { ok=false; message="Not enough values on floored version line."; break; }
             int version;
             try {
                 version = Integer.parseInt(ss[0].trim()); // converts to integer
