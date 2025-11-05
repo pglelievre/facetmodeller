@@ -11,8 +11,9 @@ CONDITIONS OF USE:
 Directory "Documentation" contains ... you guessed it ... documentation. Please see the other readme file inside that directory for more information.
 
 If you are just hoping to run FacetModeller, grab one of the "dist" directories and launch file "FacetModeller.jar" inside it:
-- The "FacetModeller/dist8" folder contains the FacetModeller distribution as a compiled .jar file using JDK 8.
-- The "FacetModeller/dist19" folder contains the FacetModeller distribution as a compiled .jar file using JDK 19.
+- The "FacetModeller/dist24" folder contains the FacetModeller distribution as a compiled .jar file using JDK 24.
+
+If you want a distribution for a different JDK version than those listed directly above, please contact the developers.
 
 If you want to do some development, read on.
 

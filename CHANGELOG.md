@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file. Dates are i
 ### Changed
 ### Bugs squashed
 
+## [2025-11-05]
+### Bugs squashed
+- Loading a new session file was not working. You had to open it twice.
+
 ## 2023-10-12
 ### Changed
 - Added radio button to turn on or off plotting of calibration points.
