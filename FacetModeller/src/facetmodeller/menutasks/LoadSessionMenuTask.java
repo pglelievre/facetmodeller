@@ -68,6 +68,7 @@ public final class LoadSessionMenuTask extends ControlledMenuTask {
         if ( !loadLast || sessionFile==null ) {
             boolean ok = controller.chooseOpenSession(title());
             if (!ok) { return; }
+            sessionFile = controller.getSessionFile();
         }
 
         // Ask if they want to overwrite or merge into the currently loaded session:
